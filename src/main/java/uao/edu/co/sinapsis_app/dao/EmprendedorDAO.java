@@ -307,6 +307,15 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             }
         }
 
+        if (primeraAtencion.getFileAutodiagnostico() != null) {
+            if (updateEmprendedor){
+                sqlEmprendimiento+= ", fileAutodiagnostico = '" + primeraAtencion.getFileAutodiagnosticoURL() + "'";
+            } else {
+                sqlEmprendimiento+= "fileAutodiagnostico = '" + primeraAtencion.getFileAutodiagnosticoURL() + "'";
+                updateEmprendimiento = true;
+            }
+        }
+
         if (updateEmprendimiento) {
             sqlEmprendimiento += " , emprendedor_id = " + primeraAtencion.getIdEmprendedor();
             Query query = entityManager.createNativeQuery(sqlEmprendimiento);

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 public class Emprendimiento {
     @Id
     private Long id;
+    private String nombreEmprendimiento;
     private String estadoEmprendimiento;
     private Long emprendedorId;
 }

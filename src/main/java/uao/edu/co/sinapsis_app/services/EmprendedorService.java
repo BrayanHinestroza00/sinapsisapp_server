@@ -46,6 +46,11 @@ public class EmprendedorService implements IEmprendedorService {
             primeraAtencion.setFotoPerfilURL(filePathLogoEmpresa);
         }
 
+        if (primeraAtencion.getFileAutodiagnostico() != null) {
+            String filePathFileAutodiagnostico = storageService.store(primeraAtencion.getFileAutodiagnostico());
+            primeraAtencion.setFileAutodiagnosticoURL(filePathFileAutodiagnostico);
+        }
+
         return emprendedorDAO.registrarPrimeraAtencion(primeraAtencion);
     }
 

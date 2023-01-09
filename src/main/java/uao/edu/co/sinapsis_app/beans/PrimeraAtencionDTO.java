@@ -65,4 +65,6 @@ public class PrimeraAtencionDTO implements Serializable {
     private String equipoTrabajo;
     private MultipartFile logoEmpresa;
     private String logoEmpresaURL;
+    private MultipartFile fileAutodiagnostico;
+    private String fileAutodiagnosticoURL;
 }

@@ -79,6 +79,7 @@ public class AppService implements IAppService {
             Object[] dataArray = (Object[]) data;
             Emprendimiento emprendimiento = new Emprendimiento();
             emprendimiento.setId(Long.parseLong(String.valueOf(dataArray[0])));
+            emprendimiento.setNombreEmprendimiento(String.valueOf(dataArray[1]));
             emprendimiento.setEstadoEmprendimiento(String.valueOf(dataArray[17]));
             emprendimiento.setEmprendedorId(Long.parseLong(String.valueOf(dataArray[18])));
             datos.add(emprendimiento);
