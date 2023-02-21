@@ -1,11 +1,11 @@
 package uao.edu.co.sinapsis_app.services.interfaces;
 
-import uao.edu.co.sinapsis_app.beans.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.beans.PrimeraAtencionDTO;
-import uao.edu.co.sinapsis_app.model.Emprendedor;
+import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
+import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 
 public interface IEmprendedorService {
-    Emprendedor getInformacionEmprendedor(long idUsuario);
+    EmprendedoresView getInformacionEmprendedor(long idUsuario);
 
     boolean registrarPrimeraAtencion(PrimeraAtencionDTO primeraAtencion) throws Exception;
 

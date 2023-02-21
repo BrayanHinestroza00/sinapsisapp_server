@@ -1,13 +1,13 @@
 package uao.edu.co.sinapsis_app.dao.interfaces;
 
-import uao.edu.co.sinapsis_app.beans.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.beans.PrimeraAtencionDTO;
-import uao.edu.co.sinapsis_app.model.Emprendedor;
+import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
+import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 
 import java.util.List;
 
 public interface IEmprendedorDAO {
-    List<Emprendedor> getInformacionEmprendedor(long idUsuario);
+    List<EmprendedoresView> getInformacionEmprendedor(long idUsuario);
 
     boolean registrarPrimeraAtencion(PrimeraAtencionDTO primeraAtencion) throws Exception;
 

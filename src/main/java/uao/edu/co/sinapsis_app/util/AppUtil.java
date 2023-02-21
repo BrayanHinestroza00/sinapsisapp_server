@@ -1,5 +1,6 @@
 package uao.edu.co.sinapsis_app.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -38,5 +39,26 @@ public class AppUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Convierte una cadena de texto en un Date
+     * @param inDate Cadena de texto con fecha a convertir
+     * @param inFormat Formato de entrada
+     * @param outFormat Formato de salida
+     * @return Date
+     * @throws ParseException
+     */
+    public static Date stringToDateFormatter(String inDate, String inFormat, String outFormat) throws ParseException {
+        SimpleDateFormat dt = new SimpleDateFormat(inFormat);
+        Date date = dt.parse(inDate);
+
+        SimpleDateFormat dt1 = new SimpleDateFormat(outFormat);
+        return dt1.parse(dt1.format(date));
+    }
+
+    public static Date dateToStringFormatter(Date inDate, String outFormat) throws ParseException {
+        SimpleDateFormat dt1 = new SimpleDateFormat(outFormat);
+        return dt1.parse(dt1.format(inDate));
     }
 }

@@ -12,7 +12,7 @@ public interface IAppService {
 
     public int getPreFetchEmprendedor(long idUsuario);
 
-    List<Emprendimiento> getProyectosEmprendimientoEmprendedor(int idUsuario);
+    List<ProyectoEmprendimiento> getProyectosEmprendimientoEmprendedor(int idUsuario);
 
     List<Departamento> getDepartamentos();
     List<Departamento> getDepartamentosByMunicipio(long idMunicipio);
@@ -23,4 +23,13 @@ public interface IAppService {
 
     List<Municipio> getMunicipiosById(long idMunicipio);
 
+    List<Facultad> getFacultades();
+
+    List<Facultad> getFacultadesByProgramaAcademico(int idPrograma);
+
+    List<ProgramaAcademico> getProgramasAcademicosByidFacultad(int idFacultad);
+
+    List<ProgramaAcademico> getProgramasAcademicosById(long idPrograma);
+
+    List<ProgramaAcademico> getProgramasAcademicos();
 }

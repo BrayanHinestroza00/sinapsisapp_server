@@ -1,6 +1,5 @@
-package uao.edu.co.sinapsis_app.beans;
+package uao.edu.co.sinapsis_app.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;

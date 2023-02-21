@@ -52,6 +52,48 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<connection.driver>com.mysql.cj.jdbc.Driver</connection.driver>
+				<connection.dialect>org.hibernate.dialect.MariaDB103Dialect</connection.dialect>
+				<connection.url>jdbc:mysql://localhost:3306/sinapsis_app</connection.url>
+				<connection.username>root</connection.username>
+				<connection.password></connection.password>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>dev</id>
+			<properties>
+				<connection.driver>com.mysql.cj.jdbc.Driver</connection.driver>
+				<connection.dialect>org.hibernate.dialect.MariaDB103Dialect</connection.dialect>
+				<connection.url>jdbc:mysql://localhost:3306/sinapsis</connection.url>
+				<connection.username>root</connection.username>
+				<connection.password></connection.password>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>dev_oracle</id>
+			<properties>
+				<connection.driver>oracle.jdbc.OracleDriver</connection.driver>
+				<connection.dialect>org.hibernate.dialect.Oracle12cDialect</connection.dialect>
+				<connection.url>jdbc:oracle:thin:@//localhost:49161/xe</connection.url>
+				<connection.username>sinapsis_app</connection.username>
+				<connection.password>DEV_MOVILIDAD_ACTIVOS</connection.password>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.oracle</groupId>
+					<artifactId>ojdbc10</artifactId>
+					<version>19.15.0.1</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>

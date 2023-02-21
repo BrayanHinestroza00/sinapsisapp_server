@@ -1,4 +1,4 @@
-package uao.edu.co.sinapsis_app.beans;
+package uao.edu.co.sinapsis_app.dto;
 
 import lombok.Data;
 

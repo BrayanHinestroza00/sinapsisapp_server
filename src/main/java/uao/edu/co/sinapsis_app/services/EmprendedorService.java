@@ -2,15 +2,13 @@ package uao.edu.co.sinapsis_app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uao.edu.co.sinapsis_app.beans.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.beans.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
+import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
-import uao.edu.co.sinapsis_app.model.Emprendedor;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
 import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
 
-import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,13 +20,15 @@ public class EmprendedorService implements IEmprendedorService {
     IStorageService storageService;
 
     @Override
-    public Emprendedor getInformacionEmprendedor(long idUsuario) {
-        List<Emprendedor> response = emprendedorDAO.getInformacionEmprendedor(idUsuario);
+    public EmprendedoresView getInformacionEmprendedor(long idUsuario) {
+        List<EmprendedoresView> response = emprendedorDAO.getInformacionEmprendedor(idUsuario);
 
         if (response.size() > 0 ) {
-            Object data = response.get(0);
-            Object[] dataArray = (Object[]) data;
-            return new Emprendedor(dataArray);
+//            Object data = response.get(0);
+//            Object[] dataArray = (Object[]) data;
+//            return new Emprendedor(/*dataArray*/);
+
+            return response.get(0);
         } else {
             return null;
         }

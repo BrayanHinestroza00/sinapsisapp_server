@@ -5,10 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uao.edu.co.sinapsis_app.beans.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.beans.PrimeraAtencionDTO;
-import uao.edu.co.sinapsis_app.beans.ResponseDTO;
-import uao.edu.co.sinapsis_app.model.Emprendedor;
+import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
+import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.ResponseDTO;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
 
 import static uao.edu.co.sinapsis_app.util.Constants.*;
@@ -25,7 +25,7 @@ public class EmprendedorController {
     public ResponseEntity<ResponseDTO> getInformacionEmprendedor(@RequestParam String idUsuario) {
         ResponseDTO response = new ResponseDTO();
         try {
-            Emprendedor emprendedor = emprendedorService.getInformacionEmprendedor(Long.parseLong(idUsuario));
+            EmprendedoresView emprendedor = emprendedorService.getInformacionEmprendedor(Long.parseLong(idUsuario));
 
             if (emprendedor == null) {
                 response.setCode(1);

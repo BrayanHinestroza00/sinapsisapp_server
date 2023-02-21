@@ -9,13 +9,11 @@ import javax.persistence.Table;
 
 @Entity
 @Data
-@Table(name = "T_SINAPSIS_MUNICIPIOS")
-public class Municipio {
+@Table(name = "T_SINAPSIS_FACULTADES")
+public class Facultad {
     @Id
     @Column(name = "ID")
     private Long id;
     @Column(name = "NOMBRE")
     private String nombre;
-    @Column(name = "DEPARTAMENTOS_ID")
-    private Integer departamentoId;
 }

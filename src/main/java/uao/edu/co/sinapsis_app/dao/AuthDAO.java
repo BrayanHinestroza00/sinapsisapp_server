@@ -5,13 +5,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAuthDAO;
+import uao.edu.co.sinapsis_app.dto.EmprendedorSignUpDTO;
 import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.IntegrationTable;
 import uao.edu.co.sinapsis_app.model.Usuario;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.util.List;
+
+import static uao.edu.co.sinapsis_app.util.Constants.*;
 
 @Repository
 public class AuthDAO implements IAuthDAO {
@@ -19,46 +23,63 @@ public class AuthDAO implements IAuthDAO {
     private EntityManager entityManager;
 
     @Override
-    public Usuario findByTipoDocumentoAndNumeroDocumento(int tipoDocumento, String numeroDocumento) {
-        String sql = "SELECT * FROM USUARIOS WHERE tipoDocumento = '"+tipoDocumento+"' AND numeroDocumento = '"+numeroDocumento+"'";
+    public Usuario findUsuarioByTipoDocumentoAndNumeroDocumento(long tipoDocumento, String numeroDocumento) {
+        String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE TIPOS_DOCUMENTO_ID = '"+tipoDocumento+"' AND NUMERO_DOCUMENTO = '"+numeroDocumento+"'";
 
-        Query q = entityManager.createNativeQuery(sql);
+        Query q = entityManager.createNativeQuery(sql, Usuario.class);
 
-        List<Object> result =  q.getResultList();
+        List<Usuario> resultado = q.getResultList();
 
-        if (result.size() > 0) {
-            return new Usuario(result.get(0));
+        if (resultado.size() > 0) {
+            return resultado.get(0);
         }
 
         return null;
     }
 
     @Override
-    public IntegrationTable findByUserNameInITB(String usuario) {
-        String sql = "SELECT * FROM integration_table WHERE UPPER(username) = UPPER('"+usuario+"')";
+    public Usuario buscarUsuario(int tipoDocumento, String numeroDocumento, String usuario) {
+        String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE (TIPOS_DOCUMENTO_ID = '"
+                +tipoDocumento+"' AND NUMERO_DOCUMENTO = '"
+                +numeroDocumento+"') OR USERNAME = '"+usuario+"'";
 
-        Query q = entityManager.createNativeQuery(sql);
+        Query q = entityManager.createNativeQuery(sql, Usuario.class);
 
-        List<Object> result =  q.getResultList();
+        List<Usuario> resultado = q.getResultList();
 
-        if (result.size() > 0) {
-            return new IntegrationTable((Object[]) result.get(0));
+        if (resultado.size() > 0) {
+            return resultado.get(0);
         }
 
         return null;
     }
 
     @Override
-    public IntegrationTable findByDocumentoInITB(int tipoDocumento, String numeroDocumento) {
-        String sql = "SELECT * FROM integration_table WHERE tipoDocumento = '"+tipoDocumento+"' AND numeroDocumento = '"+numeroDocumento+"' "  +
-                "ORDER BY vinculoConU ASC";
+    public IntegrationTable findUsuarioByUserNameInITB(String usuario) {
+        String sql = "SELECT * FROM T_SINAPSIS_INTEGRATION WHERE UPPER(USERNAME) = UPPER('"+usuario+"')";
+
+        Query q = entityManager.createNativeQuery(sql, IntegrationTable.class);
+
+        List<IntegrationTable> result =  q.getResultList();
+
+        if (result.size() > 0) {
+            return result.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public IntegrationTable findUsuarioByDocumentoInITB(int tipoDocumento, String numeroDocumento) {
+        String sql = "SELECT * FROM T_SINAPSIS_INTEGRATION WHERE TIPO_DOCUMENTO = '"+tipoDocumento+"' AND NUMERO_DOCUMENTO = '"+numeroDocumento+"' "  +
+                "ORDER BY VINCULO_CON_U ASC";
 
         Query q = entityManager.createNativeQuery(sql);
 
-        List<Object> result =  q.getResultList();
+        List<IntegrationTable> result =  q.getResultList();
 
         if (result.size() > 0) {
-            return new IntegrationTable((Object[]) result.get(0));
+            return result.get(0);
         }
 
         return null;
@@ -66,221 +87,87 @@ public class AuthDAO implements IAuthDAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public boolean registrarEmprendedor(Emprendedor emprendedor) throws Exception {
-        String sqlUsuario = "INSERT INTO usuarios SET ";
-        boolean areThereFields = false;
+    public boolean registrarEmprendedor(EmprendedorSignUpDTO emprendedorDTO) throws Exception {
+        String sqlNextVal = "SELECT SEC_T_SINAPSIS_USUARIOS.nextval FROM dual";
 
-        if (emprendedor.getNumeroDocumento() != null) {
-            sqlUsuario+= "numeroDocumento = '" + emprendedor.getNumeroDocumento() + "'";
-            areThereFields = true;
+        Query queryNextVal = entityManager.createNativeQuery(sqlNextVal);
+
+        long ID_NEW_USER = ((BigDecimal) queryNextVal.getSingleResult()).longValue();
+
+//        long ID_NEW_USER = 15L;
+
+        Usuario usuario = new Usuario();
+        Emprendedor emprendedor = new Emprendedor();
+
+        usuario.setId(ID_NEW_USER);
+        usuario.setNumeroDocumento(emprendedorDTO.getNumeroDocumento());
+        usuario.setNombres(emprendedorDTO.getNombres());
+        usuario.setApellidos(emprendedorDTO.getApellidos());
+        usuario.setCorreoInstitucional(emprendedorDTO.getCorreoInstitucional());
+        usuario.setCorreoPersonal(emprendedorDTO.getCorreoPersonal());
+        usuario.setPassword(emprendedorDTO.getPassword());
+        usuario.setUsername(emprendedorDTO.getUsername());
+        usuario.setTelefonoContacto(emprendedorDTO.getTelefonoContacto());
+        usuario.setEstado(emprendedorDTO.getEstado());
+        usuario.setAceptoTratamientoDatos(emprendedorDTO.getAceptoTratamientoDatos());
+        usuario.setFotoUrl(emprendedorDTO.getFotoUrl());
+        usuario.setTipoDocumento(emprendedorDTO.getIdTipoDocumento());
+        usuario.setEstadoCuenta(emprendedorDTO.getEstadoCuenta());
+
+        emprendedor.setIdEmprendedor(ID_NEW_USER);
+        emprendedor.setGenero(emprendedorDTO.getGenero());
+        emprendedor.setDireccion(emprendedorDTO.getDireccion());
+        emprendedor.setMunicipio(emprendedorDTO.getIdMunicipio());
+        emprendedor.setFechaNacimiento(emprendedorDTO.getFechaNacimiento());
+        emprendedor.setTipoContacto(emprendedorDTO.getTipoContacto());
+
+        // Datos de Estudiante
+        if (emprendedorDTO.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_ESTUDIANTE)) {
+            emprendedor.setCodigoEstudiantil(emprendedorDTO.getCodigoEstudiantil());
+            emprendedor.setNivelAcademico(emprendedorDTO.getNivelAcademico());
+            emprendedor.setModalidadTrabajoGrado(emprendedorDTO.getModalidadTrabajoGrado());
+            /**
+             * Realizar manejo de cursos de emprendimiento
+             */
+            // ....
+
+//            if (emprendedorDTO.getIdProgramaAcademico() == 1) {
+//                /**
+//                 * Realizar manejo de Programa academico cuando es otro
+//                 */
+//                // ....
+//            } else {
+//                emprendedor.setProgramaAcademico(emprendedorDTO.getIdProgramaAcademico());
+//            }
         }
 
-        if (emprendedor.getTipoDocumento() != 0) {
-            if (areThereFields){
-                sqlUsuario+= ", tipoDocumento = '" + emprendedor.getTipoDocumento() + "'";
-            } else {
-                sqlUsuario+= "tipoDocumento = '" + emprendedor.getTipoDocumento() + "'";
-                areThereFields = true;
-            }
+        // Datos de Egresado
+        if (emprendedorDTO.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_EGRESADO)) {
+            emprendedor.setCodigoEstudiantil(emprendedorDTO.getCodigoEstudiantil());
+            emprendedor.setNivelAcademico(emprendedorDTO.getNivelAcademico());
+
+//            if (emprendedorDTO.getIdProgramaAcademico() == 1) {
+//                /**
+//                 * Realizar manejo de Programa academico cuando es otro
+//                 */
+//                // ....
+//            } else {
+//                emprendedor.setProgramaAcademico(emprendedorDTO.getIdProgramaAcademico());
+//            }
         }
 
-        if (emprendedor.getNombres() != null) {
-            if (areThereFields){
-                sqlUsuario+= ", nombres = '" + emprendedor.getNombres() + "'";
-            } else {
-                sqlUsuario+= "nombres = '" + emprendedor.getNombres() + "'";
-                areThereFields = true;
-            }
+        if (emprendedorDTO.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_COLABORADOR)) {
+            emprendedor.setCargo(emprendedorDTO.getCargo());
+            emprendedor.setDependencia(emprendedorDTO.getDependencia());
         }
+        emprendedor.setPrimeraVez(emprendedorDTO.getPrimeraVez());
 
-        if (emprendedor.getApellidos() != null) {
-            if (areThereFields){
-                sqlUsuario+= ", apellidos = '" + emprendedor.getApellidos() + "'";
-            } else {
-                sqlUsuario+= "apellidos = '" + emprendedor.getApellidos() + "'";
-                areThereFields = true;
-            }
-        }
+        entityManager.persist(usuario);
+        entityManager.flush();
 
-        if (emprendedor.getCorreo() != null) {
-            if (areThereFields){
-                sqlUsuario+= ", correo = '" + emprendedor.getCorreo() + "'";
-            } else {
-                sqlUsuario+= "correo = '" + emprendedor.getCorreo() + "'";
-                areThereFields = true;
-            }
-        }
+        entityManager.persist(emprendedor);
+        entityManager.flush();
 
-        if (emprendedor.getPassword() != null) {
-            if (areThereFields){
-                sqlUsuario+= ", password = '" + emprendedor.getPassword() + "'";
-            } else {
-                sqlUsuario+= "password = '" + emprendedor.getPassword() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getUsername() != null) {
-            if (areThereFields){
-                sqlUsuario+= ", username = '" + emprendedor.getUsername() + "'";
-            } else {
-                sqlUsuario+= "username = '" + emprendedor.getUsername() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getTelefono() != null) {
-            if (areThereFields){
-                sqlUsuario+= ", telefono = '" + emprendedor.getTelefono() + "'";
-            } else {
-                sqlUsuario+= "telefono = '" + emprendedor.getTelefono() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getCelular() != null) {
-            if (areThereFields){
-                sqlUsuario+= ", celular = '" + emprendedor.getCelular() + "'";
-            } else {
-                sqlUsuario+= "celular = '" + emprendedor.getCelular() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (!areThereFields) {
-            throw new Exception("No se ingresaron campos del usuario");
-        }
-
-        sqlUsuario += ", aceptoTratamientoDatos = 1";
-
-        System.out.println(sqlUsuario);
-
-        Query queryUsuario = entityManager.createNativeQuery(sqlUsuario);
-        int resultUsuario = queryUsuario.executeUpdate();
-
-        if (resultUsuario != 1) {
-            throw new Exception("Problema al almacenar el usuario");
-        }
-
-        Query queryIdResultUsuario = entityManager.createNativeQuery("SELECT LAST_INSERT_ID()");
-        long idResultUsuario =  Long.parseLong(String.valueOf(queryIdResultUsuario.getSingleResult()));
-
-        String sqlUsuariosRol = "INSERT INTO usuarios_rol SET roles_id = 3, usuarios_id = " + idResultUsuario;
-
-        Query queryUsuariosRol = entityManager.createNativeQuery(sqlUsuariosRol);
-        int resultUsuarioRol = queryUsuariosRol.executeUpdate();
-
-        if (resultUsuarioRol != 1) {
-            throw new Exception("Problema al almacenar usuarios_rol");
-        }
-
-        // Se actualiza informacion del emprendedor
-        areThereFields = false;
-        String sqlEmprendedor = "UPDATE emprendedores SET ";
-
-        if (emprendedor.getGenero() != null) {
-            sqlEmprendedor+= "genero = '" + emprendedor.getGenero() + "'";
-            areThereFields = true;
-        }
-
-        if (emprendedor.getDireccion() != null) {
-            if (areThereFields){
-                sqlEmprendedor+= ", direccion = '" + emprendedor.getDireccion() + "'";
-            } else {
-                sqlEmprendedor+= "direccion = '" + emprendedor.getDireccion() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getFechaNacimiento() != null) {
-            if (areThereFields){
-                sqlEmprendedor+= ", fechaNacimiento = '" + emprendedor.getFechaNacimiento() + "'";
-            } else {
-                sqlEmprendedor+= "fechaNacimiento = '" + emprendedor.getFechaNacimiento() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getCodigoEstudiantil() != null) {
-            if (areThereFields){
-                sqlEmprendedor+= ", codigoEstudiantil = '" + emprendedor.getCodigoEstudiantil() + "'";
-            } else {
-                sqlEmprendedor+= "codigoEstudiantil = '" + emprendedor.getCodigoEstudiantil() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getVinculoConU() != null) {
-            if (areThereFields){
-                sqlEmprendedor+= ", vinculoConU = '" + emprendedor.getVinculoConU() + "'";
-            } else {
-                sqlEmprendedor+= "vinculoConU = '" + emprendedor.getVinculoConU() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getTipoEstudiante() != null) {
-            if (areThereFields){
-                sqlEmprendedor+= ", tipoEstudiante = '" + emprendedor.getTipoEstudiante() + "'";
-            } else {
-                sqlEmprendedor+= "tipoEstudiante = '" + emprendedor.getTipoEstudiante() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getModTrabajoGrado() != 0) {
-            if (areThereFields){
-                sqlEmprendedor+= ", modTrabajoGrado = '" + emprendedor.getModTrabajoGrado() + "'";
-            } else {
-                sqlEmprendedor+= "modTrabajoGrado = '" + emprendedor.getModTrabajoGrado() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getDependencia() != null) {
-            if (areThereFields){
-                sqlEmprendedor+= ", dependencia = '" + emprendedor.getDependencia() + "'";
-            } else {
-                sqlEmprendedor+= "dependencia = '" + emprendedor.getDependencia() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getCargo() != null) {
-            if (areThereFields){
-                sqlEmprendedor+= ", cargo = '" + emprendedor.getCargo() + "'";
-            } else {
-                sqlEmprendedor+= "cargo = '" + emprendedor.getCargo() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getMunicipioId() != 0) {
-            if (areThereFields){
-                sqlEmprendedor+= ", municipio_id = '" + emprendedor.getMunicipioId() + "'";
-            } else {
-                sqlEmprendedor+= "municipio_id = '" + emprendedor.getMunicipioId() + "'";
-                areThereFields = true;
-            }
-        }
-
-        if (emprendedor.getProgramaAcademicoId() != 0) {
-            if (areThereFields){
-                sqlEmprendedor+= ", programaAcademico_id = '" + emprendedor.getProgramaAcademicoId() + "'";
-            } else {
-                sqlEmprendedor+= "programaAcademico_id = '" + emprendedor.getProgramaAcademicoId() + "'";
-                areThereFields = true;
-            }
-        }
-        if (areThereFields) {
-            sqlEmprendedor += " WHERE idEmprendedor = " + idResultUsuario;
-            Query query = entityManager.createNativeQuery(sqlEmprendedor);
-            int result = query.executeUpdate();
-
-            if (result != 1) {
-                throw new Exception("Problema al almacenar el emprendedor");
-            }
-        }
         return true;
     }
 }

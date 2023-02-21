@@ -4,11 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uao.edu.co.sinapsis_app.beans.ResponseDTO;
-import uao.edu.co.sinapsis_app.model.Departamento;
-import uao.edu.co.sinapsis_app.model.Municipio;
-import uao.edu.co.sinapsis_app.model.Emprendimiento;
-import uao.edu.co.sinapsis_app.model.TipoDocumento;
+import uao.edu.co.sinapsis_app.dto.ResponseDTO;
+import uao.edu.co.sinapsis_app.model.*;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 
 import java.util.HashMap;
@@ -57,7 +54,7 @@ public class AppController {
         try {
             int idUsuario = Integer.parseInt(requestData.get("idUsuario"));
 
-            List<Emprendimiento> proyectos = appService.getProyectosEmprendimientoEmprendedor(idUsuario);
+            List<ProyectoEmprendimiento> proyectos = appService.getProyectosEmprendimientoEmprendedor(idUsuario);
             int primeraVez = appService.getPreFetchEmprendedor(idUsuario);
 
             Map<String, Object> data = new HashMap<>();
@@ -65,7 +62,7 @@ public class AppController {
             data.put("proyectosEmprendimiento", proyectos);
 
             response.setCode(1);
-            response.setResponse(data);
+            response.setResponse(data);   
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
@@ -121,6 +118,69 @@ public class AppController {
                 }
             }else{
                 data = appService.getMunicipios();
+            }
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(1);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/facultades", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> getFacultades(@RequestParam(required = false) Map<String,String> requestData){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<Facultad> data;
+            if (requestData.size() > 0) {
+                int idPrograma = Integer.parseInt(requestData.get("idPrograma"));
+                data = appService.getFacultadesByProgramaAcademico(idPrograma);
+            }else{
+                data = appService.getFacultades();
+            }
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(1);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/programas_academicos", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> getProgramasAcademicos(@RequestParam(required = false) Map<String,String> requestData){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<ProgramaAcademico> data;
+            if (requestData.size() > 0) {
+                if (requestData.containsKey("idFacultad")){
+                    int idFacultad = Integer.parseInt(requestData.get("idFacultad"));
+                    data = appService.getProgramasAcademicosByidFacultad(idFacultad);
+                } else {
+                    long idPrograma = Long.parseLong(requestData.get("idPrograma"));
+                    data = appService.getProgramasAcademicosById(idPrograma);
+                }
+            }else{
+                data = appService.getProgramasAcademicos();
             }
 
             if (data.size() > 0) {

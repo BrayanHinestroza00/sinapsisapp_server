@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uao.edu.co.sinapsis_app.beans.AuthUser;
-import uao.edu.co.sinapsis_app.beans.ResponseDTO;
+import uao.edu.co.sinapsis_app.dto.ResponseDTO;
 import uao.edu.co.sinapsis_app.beans.SignUpExterno;
 import uao.edu.co.sinapsis_app.beans.SignUpIntegration;
 import uao.edu.co.sinapsis_app.services.interfaces.IAuthService;

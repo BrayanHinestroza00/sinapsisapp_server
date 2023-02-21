@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uao.edu.co.sinapsis_app.beans.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.beans.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
+import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
-import uao.edu.co.sinapsis_app.model.Emprendedor;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -19,10 +19,10 @@ public class EmprendedorDAO implements IEmprendedorDAO {
     private EntityManager entityManager;
 
     @Override
-    public List<Emprendedor> getInformacionEmprendedor(long idUsuario) {
-        String sql = "SELECT * FROM USUARIOS U JOIN EMPRENDEDORES E ON U.ID = E.IDEMPRENDEDOR WHERE U.ID = " + idUsuario;
-        Query q = entityManager.createNativeQuery(sql);
-        return (List<Emprendedor>) q.getResultList();
+    public List<EmprendedoresView> getInformacionEmprendedor(long idUsuario) {
+        String sql = "SELECT vse.* FROM V_SINAPSIS_EMPRENDEDORES vse WHERE vse.ID = " + idUsuario;
+        Query q = entityManager.createNativeQuery(sql, EmprendedoresView.class);
+        return (List<EmprendedoresView>) q.getResultList();
     }
 
     @Override
