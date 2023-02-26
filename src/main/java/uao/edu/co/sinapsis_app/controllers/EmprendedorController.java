@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
-import uao.edu.co.sinapsis_app.dto.ResponseDTO;
+import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
 
@@ -46,11 +46,22 @@ public class EmprendedorController {
     }
 
     @CrossOrigin( origins = "http://localhost:3000")
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO> actualizarEmprendedor(@ModelAttribute EmprendedorDTO emprendedorDTO) {
+    @RequestMapping(value = "", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> actualizarEmprendedor(@ModelAttribute EmprendedorUpdateDTO emprendedorUpdateDTO, @RequestBody(required = false) EmprendedorUpdateDTO empDTO ) {
         ResponseDTO response = new ResponseDTO();
         try {
-            boolean esActualizado = emprendedorService.actualizarEmprendedor(emprendedorDTO);
+            boolean esActualizado;
+            if (empDTO.getIdEmprendedor() != null) {
+                esActualizado = emprendedorService.actualizarEmprendedor(empDTO);
+            } else if (emprendedorUpdateDTO.getIdEmprendedor() != null) {
+                esActualizado = emprendedorService.actualizarEmprendedor(emprendedorUpdateDTO);
+            }else {
+                esActualizado = false;
+                response.setCode(HttpStatus.NOT_ACCEPTABLE.value());
+                response.setMessage("Parametros no validos");
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+            }
+
 
             if (esActualizado) {
                 response.setCode(STATUS_OK);

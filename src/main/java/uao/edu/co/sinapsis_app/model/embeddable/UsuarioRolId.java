@@ -10,7 +10,14 @@ import java.io.Serializable;
 @Embeddable
 public class UsuarioRolId implements Serializable {
     @Column(name = "ROLES_ID")
-    private Integer rolId;
+    private Long rolId;
     @Column(name = "USUARIOS_ID")
     private Long usuarioId;
+
+    public UsuarioRolId() {
+    }
+    public UsuarioRolId(Long usuarioId, Long rolId) {
+        this.rolId = rolId;
+        this.usuarioId = usuarioId;
+    }
 }

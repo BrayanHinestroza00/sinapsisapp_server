@@ -2,8 +2,8 @@ package uao.edu.co.sinapsis_app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
@@ -24,10 +24,6 @@ public class EmprendedorService implements IEmprendedorService {
         List<EmprendedoresView> response = emprendedorDAO.getInformacionEmprendedor(idUsuario);
 
         if (response.size() > 0 ) {
-//            Object data = response.get(0);
-//            Object[] dataArray = (Object[]) data;
-//            return new Emprendedor(/*dataArray*/);
-
             return response.get(0);
         } else {
             return null;
@@ -55,11 +51,11 @@ public class EmprendedorService implements IEmprendedorService {
     }
 
     @Override
-    public boolean actualizarEmprendedor(EmprendedorDTO emprendedorDTO) throws Exception {
-        if (emprendedorDTO.getFotoPerfil() != null) {
-            String filePathFotoPerfil = storageService.store(emprendedorDTO.getFotoPerfil());
-            emprendedorDTO.setFotoPerfilURL(filePathFotoPerfil);
+    public boolean actualizarEmprendedor(EmprendedorUpdateDTO emprendedorUpdateDTO) throws Exception {
+        if (emprendedorUpdateDTO.getFotoPerfil() != null) {
+            String filePathFotoPerfil = storageService.store(emprendedorUpdateDTO.getFotoPerfil());
+            emprendedorUpdateDTO.setFotoPerfilURL(filePathFotoPerfil);
         }
-        return emprendedorDAO.actualizarEmprendedor(emprendedorDTO);
+        return emprendedorDAO.actualizarEmprendedor(emprendedorUpdateDTO);
     }
 }

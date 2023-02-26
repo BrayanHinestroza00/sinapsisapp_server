@@ -27,7 +27,7 @@ public class EmprendedorSignUpDTO implements Serializable {
     private Date fechaNacimiento;
     private String codigoEstudiantil;
     private Long idProgramaAcademico;
-    private String tipoContacto;
+    private Integer tipoContacto;
     private String nivelAcademico;
     private Integer modalidadTrabajoGrado;
     private String dependencia;
@@ -71,13 +71,6 @@ public class EmprendedorSignUpDTO implements Serializable {
             return null;
         }
         return direccion.toUpperCase();
-    }
-
-    public String getTipoContacto() {
-        if (tipoContacto == null){
-            return null;
-        }
-        return tipoContacto.toUpperCase();
     }
 
     public String getNivelAcademico() {

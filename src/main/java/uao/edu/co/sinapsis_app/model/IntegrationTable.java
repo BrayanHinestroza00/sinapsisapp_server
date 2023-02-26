@@ -2,7 +2,20 @@ package uao.edu.co.sinapsis_app.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import static uao.edu.co.sinapsis_app.util.Constants.INTEGRATION_TIPO_CONTACTO_COLABORADOR;
+import static uao.edu.co.sinapsis_app.util.Constants.INTEGRATION_TIPO_CONTACTO_EGRESADO;
+import static uao.edu.co.sinapsis_app.util.Constants.INTEGRATION_TIPO_CONTACTO_ESTUDIANTE;
+import static uao.edu.co.sinapsis_app.util.Constants.INTEGRATION_TIPO_CONTACTO_EXTERNO;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_COLABORADOR;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_EGRESADO;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_ESTUDIANTE;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_EXTERNO;
+
 
 @Entity
 @Data
@@ -78,27 +91,18 @@ public class IntegrationTable {
         return null;
     }
 
-    //    public IntegrationTable(Object[] obj) {
-//        this.id = Long.parseLong(Objects.toString(obj[0], String.valueOf(0)));
-//        this.numeroDocumento = Objects.toString(obj[1],null);
-//        this.nombres = Objects.toString(obj[2],null);
-//        this.apellidos = Objects.toString(obj[3],null);
-//        this.correo = Objects.toString(obj[4],null);
-//        this.username = Objects.toString(obj[5],null);
-//        this.celular = Objects.toString(obj[6],null);
-//        this.tipoDocumento = Integer.parseInt(Objects.toString(obj[7], String.valueOf(0)));
-//        this.fechaNacimiento = LocalDate.parse(Objects.toString(obj[8],null));
-//        this.genero = Objects.toString(obj[9],null);
-//        this.direccion = Objects.toString(obj[10],null);
-//        this.vinculoConU = Objects.toString(obj[11],null);
-//        this.codigoEstudiantil = Objects.toString(obj[12],null);
-//        this.tipoEstudiante = Objects.toString(obj[13],null);
-//        this.modTrabajoGrado = Integer.parseInt(Objects.toString(obj[14], String.valueOf(0)));
-//        this.cursosEmprendimiento = Objects.toString(obj[15],null);
-//        this.cargo = Objects.toString(obj[16],null);
-//        this.dependencia = Objects.toString(obj[17],null);
-//        this.tipoEstudianteEgresado = Objects.toString(obj[18],null);
-//        this.programaAcademico = Long.parseLong(Objects.toString(obj[19], String.valueOf(0)));
-//        this.profesionEgresado = Long.parseLong(Objects.toString(obj[20], String.valueOf(0)));
-//    }
+    public int getTipoContacto() {
+        switch (tipoContacto) {
+            case INTEGRATION_TIPO_CONTACTO_ESTUDIANTE :
+                return TIPO_CONTACTO_ESTUDIANTE;
+            case INTEGRATION_TIPO_CONTACTO_EGRESADO :
+                return TIPO_CONTACTO_EGRESADO;
+            case INTEGRATION_TIPO_CONTACTO_COLABORADOR :
+                return TIPO_CONTACTO_COLABORADOR;
+            case INTEGRATION_TIPO_CONTACTO_EXTERNO :
+                return TIPO_CONTACTO_EXTERNO;
+            default:
+                return 0;
+        }
+    }
 }

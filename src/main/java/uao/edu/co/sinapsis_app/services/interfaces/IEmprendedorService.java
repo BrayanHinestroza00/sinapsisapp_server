@@ -1,7 +1,7 @@
 package uao.edu.co.sinapsis_app.services.interfaces;
 
-import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 
 public interface IEmprendedorService {
@@ -9,5 +9,5 @@ public interface IEmprendedorService {
 
     boolean registrarPrimeraAtencion(PrimeraAtencionDTO primeraAtencion) throws Exception;
 
-    boolean actualizarEmprendedor(EmprendedorDTO emprendedorDTO) throws Exception;
+    boolean actualizarEmprendedor(EmprendedorUpdateDTO emprendedorUpdateDTO) throws Exception;
 }

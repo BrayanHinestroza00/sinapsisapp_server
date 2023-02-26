@@ -30,17 +30,14 @@ public class EmprendedoresView {
     private String correoInstitucional;
     @Column(name = "CORREO_PERSONAL")
     private String correoPersonal;
-    @JsonIgnore
-    @Column(name = "PASSWORD")
-    private String password;
     @Column(name = "USERNAME")
     private String username;
     @Column(name = "TELEFONO_CONTACTO")
     private String telefonoContacto;
-    @Column(name = "ESTADO")
-    private String estado;
     @Column(name = "ACEPTO_TRATAMIENTO_DATOS")
     private Boolean aceptoTratamientoDatos;
+    @Column(name = "ESTADO")
+    private String estado;
     @Column(name = "FOTO_URL")
     private String fotoUrl;
     @Column(name = "TIPOS_DOCUMENTO_ID")
@@ -51,6 +48,8 @@ public class EmprendedoresView {
     private String acronimoTipoDocumento;
     @Column(name = "ESTADO_CUENTA")
     private Integer estadoCuenta;
+
+    // Datos de Emprendedor
     @Column(name = "GENERO")
     private String genero;
     @Column(name = "DIRECCION_RESIDENCIA")
@@ -64,12 +63,20 @@ public class EmprendedoresView {
     private Long programaAcademicoId;
     @Column(name = "PROGRAMA_ACADEMICO")
     private String programaAcademico;
+    @Column(name = "PROGRAMA_ACADEMICO_CODIGO")
+    private String programaAcademicoCodigo;
+    @Column(name = "PROGRAMA_ACADEMICO_ACRONIMO")
+    private String programaAcademicoAcronimo;
     @Column(name = "FACULTAD")
     private String facultad;
+    @Column(name = "FACULTAD_ID")
+    private String facultadId;
     @Column(name = "TIPO_CONTACTO")
     private String tipoContacto;
+    @Column(name = "TIPO_CONTACTO_ID")
+    private Integer tipoContactoId;
     @Column(name = "NIVEL_ACADEMICO")
-    private Long nivelAcademico;
+    private String nivelAcademico;
     @Column(name = "MODALIDAD_TRABAJO_GRADO")
     private Long modalidadTrabajoGrado;
     @Column(name = "DEPENDENCIA_COLABORADOR")
@@ -89,14 +96,4 @@ public class EmprendedoresView {
     private String departamento;
     @Column(name = "PRIMERA_VEZ")
     private Integer primeraVez;
-
-    @JsonIgnore
-    public String getPassword() {
-        return password;
-    }
-
-    @JsonProperty
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

@@ -9,6 +9,8 @@ import uao.edu.co.sinapsis_app.dto.EmprendedorSignUpDTO;
 import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.IntegrationTable;
 import uao.edu.co.sinapsis_app.model.Usuario;
+import uao.edu.co.sinapsis_app.model.UsuarioRol;
+import uao.edu.co.sinapsis_app.model.embeddable.UsuarioRolId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -23,7 +25,7 @@ public class AuthDAO implements IAuthDAO {
     private EntityManager entityManager;
 
     @Override
-    public Usuario findUsuarioByTipoDocumentoAndNumeroDocumento(long tipoDocumento, String numeroDocumento) {
+    public Usuario buscarUsuarioPorTipoDocumentoYNumeroDocumento(long tipoDocumento, String numeroDocumento) {
         String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE TIPOS_DOCUMENTO_ID = '"+tipoDocumento+"' AND NUMERO_DOCUMENTO = '"+numeroDocumento+"'";
 
         Query q = entityManager.createNativeQuery(sql, Usuario.class);
@@ -42,6 +44,25 @@ public class AuthDAO implements IAuthDAO {
         String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE (TIPOS_DOCUMENTO_ID = '"
                 +tipoDocumento+"' AND NUMERO_DOCUMENTO = '"
                 +numeroDocumento+"') OR USERNAME = '"+usuario+"'";
+
+        Query q = entityManager.createNativeQuery(sql, Usuario.class);
+
+        List<Usuario> resultado = q.getResultList();
+
+        if (resultado.size() > 0) {
+            return resultado.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Usuario buscarUsuarioByCorreo(String correo) {
+        String sql = "SELECT usuarios.* \n" +
+                "FROM T_SINAPSIS_USUARIOS usuarios \n" +
+                "WHERE CORREO_PERSONAL = '" +
+                correo +"' OR CORREO_INSTITUCIONAL = '" +
+                correo + "'";
 
         Query q = entityManager.createNativeQuery(sql, Usuario.class);
 
@@ -122,7 +143,7 @@ public class AuthDAO implements IAuthDAO {
         emprendedor.setTipoContacto(emprendedorDTO.getTipoContacto());
 
         // Datos de Estudiante
-        if (emprendedorDTO.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_ESTUDIANTE)) {
+        if (emprendedorDTO.getTipoContacto() == TIPO_CONTACTO_ESTUDIANTE) {
             emprendedor.setCodigoEstudiantil(emprendedorDTO.getCodigoEstudiantil());
             emprendedor.setNivelAcademico(emprendedorDTO.getNivelAcademico());
             emprendedor.setModalidadTrabajoGrado(emprendedorDTO.getModalidadTrabajoGrado());
@@ -142,7 +163,7 @@ public class AuthDAO implements IAuthDAO {
         }
 
         // Datos de Egresado
-        if (emprendedorDTO.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_EGRESADO)) {
+        if (emprendedorDTO.getTipoContacto() == TIPO_CONTACTO_EGRESADO) {
             emprendedor.setCodigoEstudiantil(emprendedorDTO.getCodigoEstudiantil());
             emprendedor.setNivelAcademico(emprendedorDTO.getNivelAcademico());
 
@@ -156,16 +177,22 @@ public class AuthDAO implements IAuthDAO {
 //            }
         }
 
-        if (emprendedorDTO.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_COLABORADOR)) {
+        if (emprendedorDTO.getTipoContacto() == TIPO_CONTACTO_COLABORADOR ) {
             emprendedor.setCargo(emprendedorDTO.getCargo());
             emprendedor.setDependencia(emprendedorDTO.getDependencia());
         }
+
         emprendedor.setPrimeraVez(emprendedorDTO.getPrimeraVez());
+
+        UsuarioRol usuarioRol = new UsuarioRol(new UsuarioRolId(ID_NEW_USER, T_SINAPSIS_ROLES_EMPRENDEDOR));
 
         entityManager.persist(usuario);
         entityManager.flush();
 
         entityManager.persist(emprendedor);
+        entityManager.flush();
+
+        entityManager.persist(usuarioRol);
         entityManager.flush();
 
         return true;

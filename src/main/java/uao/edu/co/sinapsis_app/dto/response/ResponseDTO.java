@@ -1,4 +1,4 @@
-package uao.edu.co.sinapsis_app.dto;
+package uao.edu.co.sinapsis_app.dto.response;
 
 import lombok.Data;
 

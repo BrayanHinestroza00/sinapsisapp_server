@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.beans.*;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAuthDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorSignUpDTO;
-import uao.edu.co.sinapsis_app.dto.ResponseDTO;
+import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.*;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 import uao.edu.co.sinapsis_app.services.interfaces.IAuthService;
@@ -25,7 +25,7 @@ public class AuthService implements IAuthService {
     @Override
     public ResponseDTO login(AuthUser authUser) {
         ResponseDTO response = new ResponseDTO();
-        Usuario usuario = authDAO.findUsuarioByTipoDocumentoAndNumeroDocumento(
+        Usuario usuario = authDAO.buscarUsuarioPorTipoDocumentoYNumeroDocumento(
                 authUser.getTipoDocumento(),
                 authUser.getNumeroDocumento()
         );
@@ -49,7 +49,7 @@ public class AuthService implements IAuthService {
         }
 
         List<UsuarioRol> usuariosRol = appService.getRolesByUser(usuario.getId());
-        int[] roles = new int[usuariosRol.size()];
+        long[] roles = new long[usuariosRol.size()];
 
         for (int i = 0; i < usuariosRol.size(); i++){
             roles[i] = usuariosRol.get(i).getId().getRolId();
@@ -136,7 +136,7 @@ public class AuthService implements IAuthService {
         emprendedor.setTipoContacto(usuarioIntegration.getTipoContacto());
 
         // Datos de Estudiante
-        if (usuarioIntegration.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_ESTUDIANTE)) {
+        if (usuarioIntegration.getTipoContacto() == TIPO_CONTACTO_ESTUDIANTE) {
             emprendedor.setCodigoEstudiantil(usuarioIntegration.getCodigoEstudiantil());
             emprendedor.setNivelAcademico(usuarioIntegration.getNivelAcademico());
             emprendedor.setModalidadTrabajoGrado(usuarioIntegration.getModalidadTrabajoGrado());
@@ -152,7 +152,7 @@ public class AuthService implements IAuthService {
         }
 
         // Datos de Egresado
-        if (usuarioIntegration.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_EGRESADO)) {
+        if (usuarioIntegration.getTipoContacto() == TIPO_CONTACTO_EGRESADO) {
             emprendedor.setCodigoEstudiantil(usuarioIntegration.getCodigoEstudiantil());
             emprendedor.setNivelAcademico(usuarioIntegration.getNivelAcademicoEgresado());
             /**
@@ -161,7 +161,7 @@ public class AuthService implements IAuthService {
             //emprendedor.setIdProgramaAcademico(usuarioIntegration.getProgramaAcademicoEgresado());
         }
 
-        if (usuarioIntegration.getTipoContacto().equalsIgnoreCase(TIPO_CONTACTO_COLABORADOR)) {
+        if (usuarioIntegration.getTipoContacto() == TIPO_CONTACTO_COLABORADOR) {
             emprendedor.setCargo(usuarioIntegration.getCargo());
             emprendedor.setDependencia(usuarioIntegration.getDependencia());
         }
@@ -190,7 +190,7 @@ public class AuthService implements IAuthService {
             return response;
         }
 
-        Usuario usuarioRegistrado = authDAO.findUsuarioByTipoDocumentoAndNumeroDocumento(
+        Usuario usuarioRegistrado = authDAO.buscarUsuarioPorTipoDocumentoYNumeroDocumento(
                 signUpUser.getTipoDocumento(),
                 signUpUser.getNumeroDocumento()
         );
@@ -201,14 +201,14 @@ public class AuthService implements IAuthService {
             return response;
         }
 
-//        Usuario correoRegistrado = authDAO.findUsuarioByCorreo(
-//                signUpUser.getCorreo());
-//
-//        if (correoRegistrado != null) {
-//            response.setCode(409);
-//            response.setMessage("El correo electronico YA se encuentra REGISTRADO");
-//            return response;
-//        }
+        Usuario correoRegistrado = authDAO.buscarUsuarioByCorreo(
+                signUpUser.getCorreo());
+
+        if (correoRegistrado != null) {
+            response.setCode(409);
+            response.setMessage("El correo electronico YA se encuentra REGISTRADO");
+            return response;
+        }
 
 
         EmprendedorSignUpDTO emprendedor  = new EmprendedorSignUpDTO();

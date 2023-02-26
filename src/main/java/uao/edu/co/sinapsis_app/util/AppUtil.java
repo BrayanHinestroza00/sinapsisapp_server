@@ -18,23 +18,31 @@ public class AppUtil {
         return name + "." + ext;
     }
 
+    /**
+     * Obtiene el String de una fecha con un formato especifico pasado por parametros
+     * @param fecha y formato deseado
+     * @param formato
+     * @return la fecha en String en el formato deseado
+     * */
+    public static String getFormatoFecha(Date fecha, String formato) {
+        SimpleDateFormat format = new SimpleDateFormat(formato);
+
+        return format.format(fecha);
+    }
+
+    public static Date getFormatoFecha(String fecha, String formato) throws ParseException {
+
+        SimpleDateFormat format = new SimpleDateFormat(formato);
+
+        return format.parse(fecha);
+    }
+
     public static String formatStringDate(String inFormat, String newFormat, String date) {
         SimpleDateFormat from = new SimpleDateFormat(inFormat);
         SimpleDateFormat to = new SimpleDateFormat(newFormat);
 
         try {
             return to.format(from.parse(date));
-        }catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static String formatDate(String newFormat, Date date) {
-        SimpleDateFormat to = new SimpleDateFormat(newFormat);
-
-        try {
-            return to.format(date);
         }catch (Exception e) {
             e.printStackTrace();
             return null;

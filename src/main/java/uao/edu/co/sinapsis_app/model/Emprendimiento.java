@@ -2,7 +2,13 @@ package uao.edu.co.sinapsis_app.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
@@ -20,8 +26,6 @@ public class Emprendimiento {
     private String nombreEmpresa;
     @Column(name = "SECTOR_EMPRENDIMIENTO")
     private String sectorEmprendimiento;
-    @Column(name = "FECHA_CREACION")
-    private Date fechaCreacion;
     @Column(name = "SITIO_WEB")
     private String sitioWeb;
     @Column(name = "ESTA_CONSTITUIDA")
@@ -42,8 +46,8 @@ public class Emprendimiento {
     private String descripcionClientes;
     @Column(name = "ENFOQUE_SOCIAL")
     private String enfoqueSocial;
-    @Column(name = "TIENE_EQUIPO_TRABAJO")
-    private String tieneEquipoTrabajo;
-    @Column(name = "EQUIPO_TRABAJO")
-    private String equipoTrabajo;
+    @Column(name = "URL_FILE_AUTODIAGNOSTICO")
+    private String urlFileAutodiagnostico;
+    @Column(name = "NECESIDADES_IDENTIFICADAS")
+    private String necesidadesIdentificadas;
 }

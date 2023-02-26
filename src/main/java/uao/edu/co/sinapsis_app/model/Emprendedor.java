@@ -2,10 +2,11 @@ package uao.edu.co.sinapsis_app.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import uao.edu.co.sinapsis_app.util.AppUtil;
 
-import javax.persistence.*;
-import java.text.ParseException;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 import static uao.edu.co.sinapsis_app.util.Constants.APP_DATE_OUT_FORMAT;
@@ -29,7 +30,7 @@ public class Emprendedor {
     @Column(name = "PROGRAMA_ACADEMICO_ID")
     private Long programaAcademico;
     @Column(name = "TIPO_CONTACTO")
-    private String tipoContacto;
+    private Integer tipoContacto;
     @Column(name = "NIVEL_ACADEMICO")
     private String nivelAcademico;
     @Column(name = "MODALIDAD_TRABAJO_GRADO")
@@ -38,11 +39,11 @@ public class Emprendedor {
     private String dependencia;
     @Column(name = "CARGO_COLABORADOR")
     private String cargo;
+    @Column(name = "ULTIMO_INGRESO")
+    private Date ultimoIngreso;
     @Column(name = "MUNICIPIOS_ID")
     private Long municipio;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = APP_DATE_OUT_FORMAT)
-    @Column(name = "ULTIMO_INGRESO")
-    private Date ultimoIngreso;
     @Column(name = "PRIMERA_VEZ")
     private Integer primeraVez;
     @Column(name = "OTRO_PROGRAMA_ACADEMICO")

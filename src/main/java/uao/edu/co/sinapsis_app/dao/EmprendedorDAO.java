@@ -4,18 +4,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import uao.edu.co.sinapsis_app.dto.EmprendedorDTO;
-import uao.edu.co.sinapsis_app.dto.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendimientoDAO;
+import uao.edu.co.sinapsis_app.dao.interfaces.IPrimeraAtencionDAO;
+import uao.edu.co.sinapsis_app.dao.interfaces.IProyectoEmprendimientoDAO;
+import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
+import uao.edu.co.sinapsis_app.model.Emprendedor;
+import uao.edu.co.sinapsis_app.model.Emprendimiento;
+import uao.edu.co.sinapsis_app.model.PrimeraAtencion;
+import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
+import uao.edu.co.sinapsis_app.model.Usuario;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.Date;
 import java.util.List;
+
+import static uao.edu.co.sinapsis_app.util.AppUtil.getFormatoFecha;
+import static uao.edu.co.sinapsis_app.util.Constants.APP_DATE_OUT_FORMAT;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_EMPRENDEDORES_PRIMERA_VEZ_FALSE;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_PROY_EMPRENDIMIENTO_DEFAULT_ESTADO;
 
 @Repository
 public class EmprendedorDAO implements IEmprendedorDAO {
     @Autowired
+    private IEmprendimientoDAO emprendimientoDAO;
+
+    @Autowired
+    private IPrimeraAtencionDAO primeraAtencionDAO;
+
+    @Autowired
+    private IProyectoEmprendimientoDAO proyectoEmprendimientoDAO;
+
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Override
@@ -27,450 +51,319 @@ public class EmprendedorDAO implements IEmprendedorDAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public boolean registrarPrimeraAtencion(PrimeraAtencionDTO primeraAtencion) throws Exception {
-        boolean updateUsuario = false;
-        String sqlUsuario = "UPDATE usuarios SET ";
+    public boolean registrarPrimeraAtencion(PrimeraAtencionDTO primeraAtencionDTO) throws Exception {
+        EmprendedorUpdateDTO emprendedorUpdateDTO = new EmprendedorUpdateDTO();
 
-        if (primeraAtencion.getTelefono() != null) {
-            sqlUsuario+= "telefono = '" + primeraAtencion.getTelefono() + "'";
-            updateUsuario = true;
+        emprendedorUpdateDTO.setIdEmprendedor(primeraAtencionDTO.getIdEmprendedor());
+        // Datos de usuario
+        if (primeraAtencionDTO.getTelefonoContacto() != null) {
+            emprendedorUpdateDTO.setTelefonoContacto(primeraAtencionDTO.getTelefonoContacto());
         }
-        if (primeraAtencion.getCelular() != null) {
-            if (updateUsuario){
-                sqlUsuario+= ", celular = '" + primeraAtencion.getCelular() + "'";
-            } else {
-                sqlUsuario+= "celular = '" + primeraAtencion.getCelular() + "'";
-                updateUsuario = true;
-            }
+        if (primeraAtencionDTO.getFotoPerfil() != null) {
+            emprendedorUpdateDTO.setFotoPerfilURL(primeraAtencionDTO.getFotoPerfilURL());
         }
-        if (primeraAtencion.getFotoPerfil() != null) {
-            if (updateUsuario){
-                sqlUsuario+= ", fotoUrl = '" + primeraAtencion.getFotoPerfilURL() + "'";
-            } else {
-                sqlUsuario+= "fotoUrl = '" + primeraAtencion.getFotoPerfilURL() + "'";
-                updateUsuario = true;
-            }
-        }
-        if (updateUsuario) {
-            sqlUsuario += " WHERE id = " + primeraAtencion.getIdEmprendedor();
-            Query queryUsuario = entityManager.createNativeQuery(sqlUsuario);
-            int resultUsuario = queryUsuario.executeUpdate();
-
-            if (resultUsuario != 1) {
-                throw new Exception("Problema al almacenar el usuario");
-            }
+        if (primeraAtencionDTO.getCorreoPersonal() != null) {
+            emprendedorUpdateDTO.setCorreoPersonal(primeraAtencionDTO.getCorreoPersonal());
         }
 
-        // Se actualiza informacion del emprendedor
-        boolean updateEmprendedor = false;
-        String sqlEmprendedor = "UPDATE emprendedores SET ";
-
-        if (primeraAtencion.getGenero() != null) {
-            sqlEmprendedor+= "genero = '" + primeraAtencion.getGenero() + "'";
-            updateEmprendedor = true;
+        // Datos de Emprendedor
+        if (primeraAtencionDTO.getGenero() != null) {
+            emprendedorUpdateDTO.setGenero(primeraAtencionDTO.getGenero());
         }
 
-        if (primeraAtencion.getDireccion() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", direccion = '" + primeraAtencion.getDireccion() + "'";
-            } else {
-                sqlEmprendedor+= "direccion = '" + primeraAtencion.getDireccion() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getDireccion() != null) {
+            emprendedorUpdateDTO.setDireccion(primeraAtencionDTO.getDireccion());
         }
 
-        if (primeraAtencion.getFechaNacimiento() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", fechaNacimiento = '" + primeraAtencion.getFechaNacimiento() + "'";
-            } else {
-                sqlEmprendedor+= "fechaNacimiento = '" + primeraAtencion.getFechaNacimiento() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getFechaNacimiento() != null) {
+            emprendedorUpdateDTO.setFechaNacimiento(primeraAtencionDTO.getFechaNacimiento());
         }
 
-        if (primeraAtencion.getCodigoEstudiantil() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", codigoEstudiantil = '" + primeraAtencion.getCodigoEstudiantil() + "'";
-            } else {
-                sqlEmprendedor+= "codigoEstudiantil = '" + primeraAtencion.getCodigoEstudiantil() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getMunicipio() != null) {
+            emprendedorUpdateDTO.setMunicipio(primeraAtencionDTO.getMunicipio());
         }
 
-        if (primeraAtencion.getVinculoConU() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", vinculoConU = '" + primeraAtencion.getVinculoConU() + "'";
-            } else {
-                sqlEmprendedor+= "vinculoConU = '" + primeraAtencion.getVinculoConU() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getTipoContacto() != null) {
+            emprendedorUpdateDTO.setTipoContacto(primeraAtencionDTO.getTipoContacto());
         }
 
-        if (primeraAtencion.getTipoEstudiante() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", tipoEstudiante = '" + primeraAtencion.getTipoEstudiante() + "'";
-            } else {
-                sqlEmprendedor+= "tipoEstudiante = '" + primeraAtencion.getTipoEstudiante() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getCodigoEstudiantil() != null) {
+            emprendedorUpdateDTO.setCodigoEstudiantil(primeraAtencionDTO.getCodigoEstudiantil());
         }
 
-        if (primeraAtencion.getModTrabajoGrado() != 0) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", modTrabajoGrado = '" + primeraAtencion.getModTrabajoGrado() + "'";
-            } else {
-                sqlEmprendedor+= "modTrabajoGrado = '" + primeraAtencion.getModTrabajoGrado() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getNivelAcademico() != null) {
+            emprendedorUpdateDTO.setNivelAcademico(primeraAtencionDTO.getNivelAcademico());
         }
 
-        if (primeraAtencion.getDependenciaColaborador() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", dependencia = '" + primeraAtencion.getDependenciaColaborador() + "'";
-            } else {
-                sqlEmprendedor+= "dependencia = '" + primeraAtencion.getDependenciaColaborador() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getProgramaAcademico() != null) {
+            emprendedorUpdateDTO.setProgramaAcademico(primeraAtencionDTO.getProgramaAcademico());
         }
 
-        if (primeraAtencion.getCargoColaborador() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", cargo = '" + primeraAtencion.getCargoColaborador() + "'";
-            } else {
-                sqlEmprendedor+= "cargo = '" + primeraAtencion.getCargoColaborador() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getOtroProgramaAcademico() != null) {
+            emprendedorUpdateDTO.setOtroProgramaAcademico(primeraAtencionDTO.getOtroProgramaAcademico());
         }
 
-        if (primeraAtencion.getMunicipio() != 0) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", municipio_id = '" + primeraAtencion.getMunicipio() + "'";
-            } else {
-                sqlEmprendedor+= "municipio_id = '" + primeraAtencion.getMunicipio() + "'";
-                updateEmprendedor = true;
-            }
+        if (primeraAtencionDTO.getModalidadTrabajoGrado() != null) {
+            emprendedorUpdateDTO.setModalidadTrabajoGrado(primeraAtencionDTO.getModalidadTrabajoGrado());
         }
 
-        if (primeraAtencion.getProgramaAcademico() != 0) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", programaAcademico_id = '" + primeraAtencion.getProgramaAcademico() + "'";
-            } else {
-                sqlEmprendedor+= "programaAcademico_id = '" + primeraAtencion.getProgramaAcademico() + "'";
-                updateEmprendedor = true;
-            }
-        }
-        if (updateEmprendedor) {
-            sqlEmprendedor += ", primeraVez = 0 WHERE idEmprendedor = " + primeraAtencion.getIdEmprendedor();
-            Query query = entityManager.createNativeQuery(sqlEmprendedor);
-            int result = query.executeUpdate();
+        /**
+         * Agregar Manejo Cursos de Emprendimiento
+         */
 
-            if (result != 1) {
-                throw new Exception("Problema al almacenar el emprendedor");
-            }
+        if (primeraAtencionDTO.getCursosEmprendimiento() != null) {
+            emprendedorUpdateDTO.setCursosEmprendimiento(primeraAtencionDTO.getCursosEmprendimiento());
+        }
+
+        if (primeraAtencionDTO.getDependenciaColaborador() != null) {
+            emprendedorUpdateDTO.setDependenciaColaborador(primeraAtencionDTO.getDependenciaColaborador());
+        }
+
+        if (primeraAtencionDTO.getCargoColaborador() != null) {
+            emprendedorUpdateDTO.setCargoColaborador(primeraAtencionDTO.getCargoColaborador());
+        }
+
+        emprendedorUpdateDTO.setPrimeraVez(T_SINAPSIS_EMPRENDEDORES_PRIMERA_VEZ_FALSE);
+
+        boolean usuarioUpdated = actualizarEmprendedor(emprendedorUpdateDTO);
+
+
+        if (!usuarioUpdated) {
+            throw new Exception("Problema al actualizar el emprendedor");
         }
 
         // Se actualiza informacion del emprendimiento
-        boolean updateEmprendimiento = false;
-        String sqlEmprendimiento = "INSERT INTO emprendimientos SET ";
 
-        if (primeraAtencion.getNombreEmprendimiento() != null) {
-            sqlEmprendimiento+= "nombreEmprendimiento = '" + primeraAtencion.getNombreEmprendimiento() + "'";
-            updateEmprendimiento = true;
-        }
+        Emprendimiento emprendimiento = new Emprendimiento();
 
-        if (primeraAtencion.getNombreEmpresa() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", nombreEmpresa = '" + primeraAtencion.getNombreEmpresa() + "'";
-            } else {
-                sqlEmprendimiento+= "nombreEmpresa = '" + primeraAtencion.getNombreEmpresa() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getNombreEmprendimiento() != null) {
+            emprendimiento.setNombreEmprendimiento(primeraAtencionDTO.getNombreEmprendimiento());
         }
 
-        if (primeraAtencion.getSectorEmprendimiento() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", sectorEmprendimiento = '" + primeraAtencion.getSectorEmprendimiento() + "'";
-            } else {
-                sqlEmprendimiento+= "sectorEmprendimiento = '" + primeraAtencion.getSectorEmprendimiento() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getNombreEmpresa() != null) {
+            emprendimiento.setNombreEmpresa(primeraAtencionDTO.getNombreEmpresa());
         }
 
-        if (primeraAtencion.getFechaCreacionEmpresa() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", fechaCreacion = '" + primeraAtencion.getFechaCreacionEmpresa() + "'";
-            } else {
-                sqlEmprendimiento+= "fechaCreacion = '" + primeraAtencion.getFechaCreacionEmpresa() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getSectorEmprendimiento() != null) {
+            emprendimiento.setSectorEmprendimiento(primeraAtencionDTO.getSectorEmprendimiento());
         }
 
-        if (primeraAtencion.getSitioWebEmpresa() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", sitioWeb = '" + primeraAtencion.getSitioWebEmpresa() + "'";
-            } else {
-                sqlEmprendimiento+= "sitioWeb = '" + primeraAtencion.getSitioWebEmpresa() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getSitioWebEmpresa() != null) {
+            emprendimiento.setSitioWeb(primeraAtencionDTO.getSitioWebEmpresa());
         }
 
-        if (primeraAtencion.getEstaConstituida() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", estaConstituida = '" + primeraAtencion.getEstaConstituida() + "'";
-            } else {
-                sqlEmprendimiento+= "estaConstituida = '" + primeraAtencion.getEstaConstituida() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getEstaConstituida() != null) {
+            emprendimiento.setEstaConstituida(primeraAtencionDTO.getEstaConstituida());
         }
-        if (primeraAtencion.getFechaConstitucion() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", fechaConstitucion = '" + primeraAtencion.getFechaConstitucion() + "'";
-            } else {
-                sqlEmprendimiento+= "fechaConstitucion = '" + primeraAtencion.getFechaConstitucion() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getFechaConstitucion() != null) {
+            emprendimiento.setFechaConstitucion(getFormatoFecha(primeraAtencionDTO.getFechaConstitucion(), APP_DATE_OUT_FORMAT));
         }
-        if (primeraAtencion.getNitEmpresa() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", nit = '" + primeraAtencion.getNitEmpresa() + "'";
-            } else {
-                sqlEmprendimiento+= "nit = '" + primeraAtencion.getNitEmpresa() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getNitEmpresa() != null) {
+            emprendimiento.setNit(primeraAtencionDTO.getNitEmpresa());
         }
 
-        if (primeraAtencion.getRazonSocialEmpresa() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", razonSocial = '" + primeraAtencion.getRazonSocialEmpresa() + "'";
-            } else {
-                sqlEmprendimiento+= "razonSocial = '" + primeraAtencion.getRazonSocialEmpresa() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getRazonSocialEmpresa() != null) {
+            emprendimiento.setRazonSocial(primeraAtencionDTO.getRazonSocialEmpresa());
         }
 
-        if (primeraAtencion.getLogoEmpresa() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", logoEmpresa = '" + primeraAtencion.getLogoEmpresaURL() + "'";
-            } else {
-                sqlEmprendimiento+= "logoEmpresa = '" + primeraAtencion.getLogoEmpresaURL() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getLogoEmpresa() != null) {
+            emprendimiento.setNombreEmprendimiento(primeraAtencionDTO.getLogoEmpresaURL());
         }
 
-        if (primeraAtencion.getDescripcionProducto() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", descripcionProducto = '" + primeraAtencion.getDescripcionProducto() + "'";
-            } else {
-                sqlEmprendimiento+= "descripcionProducto = '" + primeraAtencion.getDescripcionProducto() + "'";
-                updateEmprendimiento = true;
-            }
-        }
-        if (primeraAtencion.getMateriasPrimas() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", materiasPrimas = '" + primeraAtencion.getMateriasPrimas() + "'";
-            } else {
-                sqlEmprendimiento+= "materiasPrimas = '" + primeraAtencion.getMateriasPrimas() + "'";
-                updateEmprendimiento = true;
-            }
-        }
-        if (primeraAtencion.getClienteEmprendimiento() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", descripcionClientes = '" + primeraAtencion.getClienteEmprendimiento() + "'";
-            } else {
-                sqlEmprendimiento+= "descripcionClientes = '" + primeraAtencion.getClienteEmprendimiento() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getDescripcionProducto() != null) {
+            emprendimiento.setDescripcionProducto(primeraAtencionDTO.getDescripcionProducto());
         }
 
-        if (primeraAtencion.getEnfoqueSocial() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", enfoqueSocial = '" + primeraAtencion.getEnfoqueSocial() + "'";
-            } else {
-                sqlEmprendimiento+= "enfoqueSocial = '" + primeraAtencion.getEnfoqueSocial() + "'";
-                updateEmprendimiento = true;
-            }
-        }
-        if (primeraAtencion.getTieneEquipoTrabajo() != 0) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", tieneEquipoTrabajo = '" + primeraAtencion.getTieneEquipoTrabajo() + "'";
-            } else {
-                sqlEmprendimiento+= "tieneEquipoTrabajo = '" + primeraAtencion.getTieneEquipoTrabajo() + "'";
-                updateEmprendimiento = true;
-            }
-        }
-        if (primeraAtencion.getEquipoTrabajo() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", equipoTrabajo = '" + primeraAtencion.getEquipoTrabajo() + "'";
-            } else {
-                sqlEmprendimiento+= "equipoTrabajo = '" + primeraAtencion.getEquipoTrabajo() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getMateriasPrimas() != null) {
+            emprendimiento.setMateriasPrimas(primeraAtencionDTO.getMateriasPrimas());
         }
 
-        if (primeraAtencion.getFileAutodiagnostico() != null) {
-            if (updateEmprendedor){
-                sqlEmprendimiento+= ", fileAutodiagnostico = '" + primeraAtencion.getFileAutodiagnosticoURL() + "'";
-            } else {
-                sqlEmprendimiento+= "fileAutodiagnostico = '" + primeraAtencion.getFileAutodiagnosticoURL() + "'";
-                updateEmprendimiento = true;
-            }
+        if (primeraAtencionDTO.getDescripcionClientes() != null) {
+            emprendimiento.setDescripcionClientes(primeraAtencionDTO.getDescripcionClientes());
         }
 
-        if (updateEmprendimiento) {
-            sqlEmprendimiento += " , emprendedor_id = " + primeraAtencion.getIdEmprendedor();
-            Query query = entityManager.createNativeQuery(sqlEmprendimiento);
-            int result = query.executeUpdate();
-
-            if (result != 1) {
-                throw new Exception("Problema al almacenar el emprendimiento");
-            }
+        if (primeraAtencionDTO.getEnfoqueSocial() != null) {
+            emprendimiento.setEnfoqueSocial(primeraAtencionDTO.getEnfoqueSocial());
         }
+
+        if (primeraAtencionDTO.getNecesidadIdentificada() != null) {
+            emprendimiento.setNecesidadesIdentificadas(primeraAtencionDTO.getNecesidadIdentificada());
+        }
+
+        Emprendimiento updatedEmprendimiento = emprendimientoDAO.registrarEmprendimiento(emprendimiento);
+
+        if (updatedEmprendimiento == null) {
+            throw new Exception("Problema al almacenar el emprendimiento");
+        }
+
+        // Datos de primera atencion
+        PrimeraAtencion primeraAtencion = new PrimeraAtencion();
+
+        if (primeraAtencionDTO.getNombreProducto() != null) {
+            primeraAtencion.setNombreProducto(primeraAtencionDTO.getNombreProducto());
+        }
+
+        if (primeraAtencionDTO.getPromedioVentas() != null) {
+            primeraAtencion.setPromedioVentas(primeraAtencionDTO.getPromedioVentas());
+        }
+
+        if (primeraAtencionDTO.getEvidenciasProducto() != null) {
+            primeraAtencion.setEvidenciasProducto(primeraAtencionDTO.getEvidenciasProducto());
+        }
+
+        if (primeraAtencionDTO.getObtencionMateriasPrimas() != null) {
+            primeraAtencion.setMateriasPrimas(primeraAtencionDTO.getObtencionMateriasPrimas());
+        }
+
+        if (primeraAtencionDTO.getEquipoTrabajo() != null) {
+            primeraAtencion.setEquipoTrabajo(primeraAtencionDTO.getEquipoTrabajo());
+        }
+
+        if (primeraAtencionDTO.getCualEquipoTrabajo() != null) {
+            primeraAtencion.setCualEquipoTrabajo(primeraAtencionDTO.getCualEquipoTrabajo());
+        }
+
+        if (primeraAtencionDTO.getDedicacion() != null) {
+            primeraAtencion.setDedicacion(primeraAtencionDTO.getDedicacion());
+        }
+
+        if (primeraAtencionDTO.getDesdeFechaEjecucion() != null) {
+            primeraAtencion.setDesdeFechaEjecucion(primeraAtencionDTO.getDesdeFechaEjecucion());
+        }
+
+        if (primeraAtencionDTO.getHorasSemanales() != null) {
+            primeraAtencion.setHorasSemanales(primeraAtencionDTO.getHorasSemanales());
+        }
+
+        if (primeraAtencionDTO.getMotivacion() != null) {
+            primeraAtencion.setMotivacion(primeraAtencionDTO.getMotivacion());
+        }
+
+        if (primeraAtencionDTO.getDescubrioSinapsis() != null) {
+            primeraAtencion.setDescubrioSinapsis(primeraAtencionDTO.getDescubrioSinapsis());
+        }
+
+        if (primeraAtencionDTO.getFileAutodiagnosticoURL() != null) {
+            primeraAtencion.setFileAutodiagnosticoURL(primeraAtencionDTO.getFileAutodiagnosticoURL());
+        }
+
+        primeraAtencion.setCreatedAt(new Date());
+        primeraAtencion.setUpdatedAt(new Date());
+
+
+        PrimeraAtencion updatedPrimeraAtencion = primeraAtencionDAO.registrarPrimeraAtencion(primeraAtencion);
+
+        if (updatedPrimeraAtencion == null) {
+            throw new Exception("Problema al registrar la primera atencion");
+        }
+
+        ProyectoEmprendimiento proyectoEmprendimiento = new ProyectoEmprendimiento();
+
+        proyectoEmprendimiento.setEmprendimiento(updatedEmprendimiento.getId());
+        proyectoEmprendimiento.setEmprendedor(emprendedorUpdateDTO.getIdEmprendedor());
+        proyectoEmprendimiento.setPrimeraAtencion(updatedPrimeraAtencion.getId());
+        proyectoEmprendimiento.setEstadoEmprendimiento(T_SINAPSIS_PROY_EMPRENDIMIENTO_DEFAULT_ESTADO);
+        proyectoEmprendimiento.setFechaCreacion(new Date());
+        proyectoEmprendimiento.setFechaModificacion(new Date());
+
+        ProyectoEmprendimiento updatedProyectoEmprendimiento = proyectoEmprendimientoDAO.registrarProyectoEmprendimiento(proyectoEmprendimiento);
+
+        if (updatedProyectoEmprendimiento == null) {
+            throw new Exception("Problema al registrar el proyecto de emprendimiento");
+        }
+
         return true;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public boolean actualizarEmprendedor(EmprendedorDTO emprendedorDTO) throws Exception {
-        boolean updateUsuario = false;
-        String sqlUsuario = "UPDATE usuarios SET ";
+    public boolean actualizarEmprendedor(EmprendedorUpdateDTO emprendedorUpdateDTO) throws Exception {
+        Usuario usuario = entityManager.find(Usuario.class, emprendedorUpdateDTO.getIdEmprendedor());
 
-        if (emprendedorDTO.getTelefono() != null) {
-            sqlUsuario+= "telefono = '" + emprendedorDTO.getTelefono() + "'";
-            updateUsuario = true;
-        }
-        if (emprendedorDTO.getCelular() != null) {
-            if (updateUsuario){
-                sqlUsuario+= ", celular = '" + emprendedorDTO.getCelular() + "'";
-            } else {
-                sqlUsuario+= "celular = '" + emprendedorDTO.getCelular() + "'";
-                updateUsuario = true;
+        if (usuario != null) {
+            if (emprendedorUpdateDTO.getTelefonoContacto() != null) {
+                usuario.setTelefonoContacto(emprendedorUpdateDTO.getTelefonoContacto());
             }
-        }
-        if (emprendedorDTO.getFotoPerfil() != null) {
-            if (updateUsuario){
-                sqlUsuario+= ", fotoUrl = '" + emprendedorDTO.getFotoPerfilURL() + "'";
-            } else {
-                sqlUsuario+= "fotoUrl = '" + emprendedorDTO.getFotoPerfilURL() + "'";
-                updateUsuario = true;
+            if (emprendedorUpdateDTO.getFotoPerfil() != null) {
+                usuario.setFotoUrl(emprendedorUpdateDTO.getFotoPerfilURL());
             }
-        }
-        if (updateUsuario) {
-            sqlUsuario += " WHERE id = " + emprendedorDTO.getIdEmprendedor();
-            Query queryUsuario = entityManager.createNativeQuery(sqlUsuario);
-            int resultUsuario = queryUsuario.executeUpdate();
+            if (emprendedorUpdateDTO.getCorreoPersonal() != null) {
+                usuario.setCorreoPersonal(emprendedorUpdateDTO.getCorreoPersonal());
+            }
 
-            if (resultUsuario != 1) {
+            Usuario updatedUser = entityManager.merge(usuario);
+
+            if (updatedUser == null) {
                 throw new Exception("Problema al almacenar el usuario");
             }
+        } else {
+            throw new Exception("Problema al encontrar el usuario");
         }
 
-        // Se actualiza informacion del emprendedor
-        boolean updateEmprendedor = false;
-        String sqlEmprendedor = "UPDATE emprendedores SET ";
+        Emprendedor emprendedor = entityManager.find(Emprendedor.class, emprendedorUpdateDTO.getIdEmprendedor());
 
-        if (emprendedorDTO.getGenero() != null) {
-            sqlEmprendedor+= "genero = '" + emprendedorDTO.getGenero() + "'";
-            updateEmprendedor = true;
-        }
-
-        if (emprendedorDTO.getDireccion() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", direccion = '" + emprendedorDTO.getDireccion() + "'";
-            } else {
-                sqlEmprendedor+= "direccion = '" + emprendedorDTO.getDireccion() + "'";
-                updateEmprendedor = true;
+        if (emprendedor != null) {
+            if (emprendedorUpdateDTO.getGenero() != null) {
+                emprendedor.setGenero(emprendedorUpdateDTO.getGenero());
             }
+
+            if (emprendedorUpdateDTO.getDireccion() != null) {
+                emprendedor.setDireccion(emprendedorUpdateDTO.getDireccion());
+            }
+
+            if (emprendedorUpdateDTO.getFechaNacimiento() != null) {
+                emprendedor.setFechaNacimiento(getFormatoFecha(emprendedorUpdateDTO.getFechaNacimiento(), APP_DATE_OUT_FORMAT));
+            }
+
+            if (emprendedorUpdateDTO.getCodigoEstudiantil() != null) {
+                emprendedor.setCodigoEstudiantil(emprendedorUpdateDTO.getCodigoEstudiantil());
+            }
+
+            if (emprendedorUpdateDTO.getTipoContacto() != null) {
+                emprendedor.setTipoContacto(emprendedorUpdateDTO.getTipoContacto());
+            }
+
+            if (emprendedorUpdateDTO.getNivelAcademico() != null) {
+                emprendedor.setNivelAcademico(emprendedorUpdateDTO.getNivelAcademico());
+            }
+
+            if (emprendedorUpdateDTO.getModalidadTrabajoGrado() != null) {
+                emprendedor.setModalidadTrabajoGrado(emprendedorUpdateDTO.getModalidadTrabajoGrado());
+            }
+
+            if (emprendedorUpdateDTO.getDependenciaColaborador() != null) {
+                emprendedor.setDependencia(emprendedorUpdateDTO.getDependenciaColaborador());
+            }
+
+            if (emprendedorUpdateDTO.getCargoColaborador() != null) {
+                emprendedor.setCargo(emprendedorUpdateDTO.getCargoColaborador());
+            }
+
+            if (emprendedorUpdateDTO.getMunicipio() != null) {
+                emprendedor.setMunicipio(emprendedorUpdateDTO.getMunicipio());
+            }
+
+            if (emprendedorUpdateDTO.getProgramaAcademico() != null) {
+                emprendedor.setProgramaAcademico(emprendedorUpdateDTO.getProgramaAcademico());
+            }
+
+            if (emprendedorUpdateDTO.getOtroProgramaAcademico() != null) {
+                emprendedor.setOtroProgramaAcademico(emprendedorUpdateDTO.getOtroProgramaAcademico());
+            }
+
+            if (emprendedorUpdateDTO.getPrimeraVez() != null) {
+                emprendedor.setPrimeraVez(emprendedorUpdateDTO.getPrimeraVez());
+            }
+
+            Emprendedor updatedEmprendedor = entityManager.merge(emprendedor);
+
+            if (updatedEmprendedor == null) {
+                throw new Exception("Problema al almacenar el Emprendedor");
+            }
+        } else {
+            throw new Exception("Problema al encontrar el Emprendedor");
         }
 
-        if (emprendedorDTO.getFechaNacimiento() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", fechaNacimiento = '" + emprendedorDTO.getFechaNacimiento() + "'";
-            } else {
-                sqlEmprendedor+= "fechaNacimiento = '" + emprendedorDTO.getFechaNacimiento() + "'";
-                updateEmprendedor = true;
-            }
-        }
-
-        if (emprendedorDTO.getCodigoEstudiantil() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", codigoEstudiantil = '" + emprendedorDTO.getCodigoEstudiantil() + "'";
-            } else {
-                sqlEmprendedor+= "codigoEstudiantil = '" + emprendedorDTO.getCodigoEstudiantil() + "'";
-                updateEmprendedor = true;
-            }
-        }
-
-        if (emprendedorDTO.getVinculoConU() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", vinculoConU = '" + emprendedorDTO.getVinculoConU() + "'";
-            } else {
-                sqlEmprendedor+= "vinculoConU = '" + emprendedorDTO.getVinculoConU() + "'";
-                updateEmprendedor = true;
-            }
-        }
-
-        if (emprendedorDTO.getTipoEstudiante() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", tipoEstudiante = '" + emprendedorDTO.getTipoEstudiante() + "'";
-            } else {
-                sqlEmprendedor+= "tipoEstudiante = '" + emprendedorDTO.getTipoEstudiante() + "'";
-                updateEmprendedor = true;
-            }
-        }
-
-        if (emprendedorDTO.getModTrabajoGrado() != 0) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", modTrabajoGrado = '" + emprendedorDTO.getModTrabajoGrado() + "'";
-            } else {
-                sqlEmprendedor+= "modTrabajoGrado = '" + emprendedorDTO.getModTrabajoGrado() + "'";
-                updateEmprendedor = true;
-            }
-        }
-
-        if (emprendedorDTO.getDependenciaColaborador() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", dependencia = '" + emprendedorDTO.getDependenciaColaborador() + "'";
-            } else {
-                sqlEmprendedor+= "dependencia = '" + emprendedorDTO.getDependenciaColaborador() + "'";
-                updateEmprendedor = true;
-            }
-        }
-
-        if (emprendedorDTO.getCargoColaborador() != null) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", cargo = '" + emprendedorDTO.getCargoColaborador() + "'";
-            } else {
-                sqlEmprendedor+= "cargo = '" + emprendedorDTO.getCargoColaborador() + "'";
-                updateEmprendedor = true;
-            }
-        }
-
-        if (emprendedorDTO.getMunicipioId() != 0) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", municipio_id = '" + emprendedorDTO.getMunicipioId() + "'";
-            } else {
-                sqlEmprendedor+= "municipio_id = '" + emprendedorDTO.getMunicipioId() + "'";
-                updateEmprendedor = true;
-            }
-        }
-
-        if (emprendedorDTO.getProgramaAcademicoId() != 0) {
-            if (updateEmprendedor){
-                sqlEmprendedor+= ", programaAcademico_id = '" + emprendedorDTO.getProgramaAcademicoId() + "'";
-            } else {
-                sqlEmprendedor+= "programaAcademico_id = '" + emprendedorDTO.getProgramaAcademicoId() + "'";
-                updateEmprendedor = true;
-            }
-        }
-        if (updateEmprendedor) {
-            sqlEmprendedor += " WHERE idEmprendedor = " + emprendedorDTO.getIdEmprendedor();
-            Query query = entityManager.createNativeQuery(sqlEmprendedor);
-            int result = query.executeUpdate();
-
-            if (result != 1) {
-                throw new Exception("Problema al almacenar el emprendedor");
-            }
-        }
         return true;
     }
 }

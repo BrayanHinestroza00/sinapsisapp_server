@@ -3,7 +3,14 @@ package uao.edu.co.sinapsis_app.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.util.Date;
 
 import static uao.edu.co.sinapsis_app.util.Constants.APP_DATE_OUT_FORMAT;
@@ -23,6 +30,8 @@ public class ProyectoEmprendimiento {
     private Long emprendedor;
     @Column(name = "EMPRENDIMIENTOS_ID")
     private Long emprendimiento;
+    @Column(name = "PRIMERA_ATENCION_ID")
+    private Long primeraAtencion;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = APP_DATE_OUT_FORMAT)
     @Column(name = "CREATED_AT")
     private Date fechaCreacion;
