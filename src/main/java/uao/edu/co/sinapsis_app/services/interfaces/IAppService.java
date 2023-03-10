@@ -32,4 +32,8 @@ public interface IAppService {
     List<ProgramaAcademico> getProgramasAcademicosById(long idPrograma);
 
     List<ProgramaAcademico> getProgramasAcademicos();
+
+    List<Asignatura> getAsignaturas();
+
+    List<Asignatura> getAsignaturasById(int idAsignatura);
 }

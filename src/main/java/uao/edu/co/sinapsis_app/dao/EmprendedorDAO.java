@@ -10,11 +10,13 @@ import uao.edu.co.sinapsis_app.dao.interfaces.IProyectoEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
+import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.PrimeraAtencion;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.Usuario;
+import uao.edu.co.sinapsis_app.model.embeddable.AsignaturaEmprendedorId;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 
 import javax.persistence.EntityManager;
@@ -107,11 +109,7 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             emprendedorUpdateDTO.setModalidadTrabajoGrado(primeraAtencionDTO.getModalidadTrabajoGrado());
         }
 
-        /**
-         * Agregar Manejo Cursos de Emprendimiento
-         */
-
-        if (primeraAtencionDTO.getCursosEmprendimiento() != null) {
+        if (primeraAtencionDTO.getCursosEmprendimiento().size() > 0) {
             emprendedorUpdateDTO.setCursosEmprendimiento(primeraAtencionDTO.getCursosEmprendimiento());
         }
 
@@ -360,6 +358,30 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             if (updatedEmprendedor == null) {
                 throw new Exception("Problema al almacenar el Emprendedor");
             }
+
+            /**
+             * Logica para almacenar Cursos de Emprendimiento
+             */
+            if (emprendedorUpdateDTO.getCursosEmprendimiento().size() > 0 ) {
+                for (String cursoEmprendimiento: emprendedorUpdateDTO.getCursosEmprendimiento()) {
+                    Query query = entityManager.createNativeQuery("SELECT * FROM T_SINAPSIS_ASIG_EMPRENDEDOR " +
+                            "WHERE EMPRENDEDORES_ID = " + emprendedorUpdateDTO.getIdEmprendedor() + " AND " +
+                            "ASIGNATURAS_ID = " + cursoEmprendimiento, AsignaturaEmprendedor.class);
+
+                    List<AsignaturaEmprendedor> asignaturasEmprendedor = (List<AsignaturaEmprendedor>) query.getResultList();
+
+                    // Si no se encuentra asociada la asignatura al emprendedor
+                    if (! (asignaturasEmprendedor.size() > 0)) {
+                        AsignaturaEmprendedor asignaturaEmprendedor = new AsignaturaEmprendedor();
+                        asignaturaEmprendedor.setId(
+                                new AsignaturaEmprendedorId(
+                                        emprendedorUpdateDTO.getIdEmprendedor(), cursoEmprendimiento));
+                        entityManager.persist(asignaturaEmprendedor);
+                        entityManager.flush();
+                    }
+                }
+            }
+
         } else {
             throw new Exception("Problema al encontrar el Emprendedor");
         }

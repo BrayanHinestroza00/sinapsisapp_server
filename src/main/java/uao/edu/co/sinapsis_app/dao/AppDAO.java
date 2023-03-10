@@ -124,4 +124,19 @@ public class AppDAO implements IAppDAO {
         Query q = entityManager.createNativeQuery(sql, ProgramaAcademico.class);
         return (List<ProgramaAcademico>) q.getResultList();
     }
+
+    @Override
+    public List<Asignatura> getAsignaturas() {
+        String sql = "SELECT * FROM T_SINAPSIS_ASIGNATURAS";
+        Query q = entityManager.createNativeQuery(sql, Asignatura.class);
+        return (List<Asignatura>) q.getResultList();
+    }
+
+    @Override
+    public List<Asignatura> getAsignaturasById(int idAsignatura) {
+        String sql = "SELECT asignaturas.* FROM T_SINAPSIS_ASIGNATURAS asignaturas " +
+                "WHERE asignaturas.id =" + idAsignatura;
+        Query q = entityManager.createNativeQuery(sql, Asignatura.class);
+        return (List<Asignatura>) q.getResultList();
+    }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.Constants.APP_DATE_OUT_FORMAT;
 
@@ -30,7 +31,7 @@ public class EmprendedorUpdateDTO implements Serializable {
     private String cargoColaborador;
     private Integer primeraVez;
     private String otroProgramaAcademico;
-    private String cursosEmprendimiento;
+    private List<String> cursosEmprendimiento;
 
     //Datos de usuario
     private String correoPersonal;

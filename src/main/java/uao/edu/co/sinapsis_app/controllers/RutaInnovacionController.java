@@ -18,6 +18,9 @@ import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
 
 import java.util.List;
 
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_EMPTY;
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_OK;
+
 @RestController()
 @RequestMapping("/ruta_innovacion")
 public class RutaInnovacionController {
@@ -76,4 +79,28 @@ public class RutaInnovacionController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/primeraAtencion", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> asignarRutaPrimeraAtencion(@RequestBody AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = rutaInnovacionService.asignarRutaPrimeraAtencion(rutaPrimeraAtencionDTO);
+            if (esRegistrado) {
+                response.setCode(STATUS_OK);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("Ha ocurrido algun error");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

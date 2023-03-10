@@ -111,6 +111,10 @@ public class AuthService implements IAuthService {
 
         EmprendedorSignUpDTO emprendedor  = new EmprendedorSignUpDTO();
 
+        /**
+         * Pendiente de Agregar Roles de Usuario
+         */
+
         // Datos de usuario
         emprendedor.setNumeroDocumento(usuarioIntegration.getNumeroDocumento());
         emprendedor.setNombres(usuarioIntegration.getNombres());
@@ -210,6 +214,9 @@ public class AuthService implements IAuthService {
             return response;
         }
 
+        /**
+         * Pendiente de Agregar Roles de Usuario
+         */
 
         EmprendedorSignUpDTO emprendedor  = new EmprendedorSignUpDTO();
         emprendedor.setNombres(signUpUser.getNombres());

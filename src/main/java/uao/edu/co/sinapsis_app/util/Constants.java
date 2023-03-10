@@ -19,7 +19,9 @@ public class Constants {
     public static final int T_SINAPSIS_EMPRENDEDORES_DEFAULT_PRIMERA_VEZ = 1;
     public static final int T_SINAPSIS_EMPRENDEDORES_PRIMERA_VEZ_FALSE = 0;
     public static final long T_SINAPSIS_ROLES_EMPRENDEDOR = 3L;
+    public static final String T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO = "PENDIENTE";
     public static final String T_SINAPSIS_PROY_EMPRENDIMIENTO_DEFAULT_ESTADO = "PENDIENTE";
+    public static final String T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO = "APROBADO";
 
     /**
      * APP States

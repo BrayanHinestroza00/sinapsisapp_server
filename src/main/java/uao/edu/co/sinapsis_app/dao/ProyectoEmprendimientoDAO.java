@@ -22,4 +22,16 @@ public class ProyectoEmprendimientoDAO implements IProyectoEmprendimientoDAO {
 
         return isRegistered;
     }
+
+    @Override
+    public ProyectoEmprendimiento find(Long idProyectoEmprendimiento) {
+        return entityManager.find(ProyectoEmprendimiento.class, idProyectoEmprendimiento);
+    }
+
+    @Override
+    public boolean updateProyecto(ProyectoEmprendimiento proyectoEmprendimiento) {
+        ProyectoEmprendimiento emprendimiento = entityManager.merge(proyectoEmprendimiento);
+
+        return emprendimiento != null;
+    }
 }

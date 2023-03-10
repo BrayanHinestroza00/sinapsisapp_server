@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -42,7 +43,7 @@ public class PrimeraAtencionDTO implements Serializable {
     private Long programaAcademico;
     private String otroProgramaAcademico;
     private Integer modalidadTrabajoGrado;
-    private String cursosEmprendimiento; // idAsignaturas separadas por ','
+    private List<String> cursosEmprendimiento; // idAsignaturas separadas por ','
     private String cargoColaborador;
     private String dependenciaColaborador;
 

@@ -7,21 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
 @Data
-@Table(name = "T_SINAPSIS_PROGRAMAS")
-public class ProgramaAcademico {
+@Entity
+@Table(name = "T_SINAPSIS_ASIGNATURAS")
+public class Asignatura {
     @Id
     @Column(name = "ID")
-    private Long id;
+    private String id;
     @Column(name = "NOMBRE")
     private String nombre;
     @Column(name = "CODIGO")
     private String codigo;
-    @Column(name = "ACRONIMO")
-    private String acronimo;
-    @Column(name = "FACULTADES_ID")
-    private Integer facultades_id;
-    @Column(name = "NIVEL_ACADEMICO")
-    private String nivelAcademico;
 }

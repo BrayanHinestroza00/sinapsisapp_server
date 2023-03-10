@@ -2,7 +2,9 @@ package uao.edu.co.sinapsis_app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uao.edu.co.sinapsis_app.dao.interfaces.IProyectoEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
+import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.SolicitudesProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
@@ -28,5 +30,11 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     @Override
     public List<SolicitudesProyectoEmprendimientoView> listarPrimerasAtencionesPendientes() {
         return rutaInnovacionDAO.listarPrimerasAtencionesPendientes();
+    }
+
+    @Override
+    public boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception {
+
+        return rutaInnovacionDAO.asignarRutaPrimeraAtencion(rutaPrimeraAtencionDTO);
     }
 }

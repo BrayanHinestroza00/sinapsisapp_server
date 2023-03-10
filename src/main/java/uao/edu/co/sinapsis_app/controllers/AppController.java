@@ -35,7 +35,7 @@ public class AppController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(1);
+                response.setCode(0);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -90,7 +90,7 @@ public class AppController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(1);
+                response.setCode(0);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -124,7 +124,7 @@ public class AppController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(1);
+                response.setCode(0);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -153,7 +153,7 @@ public class AppController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(1);
+                response.setCode(0);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -187,7 +187,36 @@ public class AppController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
+                response.setCode(0);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/asignaturas", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> getAsignaturas(@RequestParam(required = false) Map<String,String> requestData){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<Asignatura> data;
+            if (requestData.size() > 0) {
+                int idAsignatura = Integer.parseInt(requestData.get("idAsignatura"));
+                data = appService.getAsignaturasById(idAsignatura);
+            }else{
+                data = appService.getAsignaturas();
+            }
+
+            if (data.size() > 0) {
                 response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(0);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
