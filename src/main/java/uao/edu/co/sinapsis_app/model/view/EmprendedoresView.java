@@ -1,15 +1,16 @@
 package uao.edu.co.sinapsis_app.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.Constants.APP_DATE_OUT_FORMAT;
 
@@ -96,4 +97,7 @@ public class EmprendedoresView {
     private String departamento;
     @Column(name = "PRIMERA_VEZ")
     private Integer primeraVez;
+
+    @Transient
+    List<AsignaturaEmprendedor> asignaturasEmprendedor;
 }

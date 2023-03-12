@@ -28,7 +28,7 @@ public class EmprendedorController {
             EmprendedoresView emprendedor = emprendedorService.getInformacionEmprendedor(Long.parseLong(idUsuario));
 
             if (emprendedor == null) {
-                response.setCode(1);
+                response.setCode(0);
                 response.setMessage("EMPRENDEDOR NO ENCONTRADO");
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             } else {
@@ -39,7 +39,7 @@ public class EmprendedorController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.setCode(0);
+            response.setCode(-1);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

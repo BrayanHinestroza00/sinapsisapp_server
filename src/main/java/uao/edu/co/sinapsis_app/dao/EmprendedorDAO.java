@@ -109,7 +109,8 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             emprendedorUpdateDTO.setModalidadTrabajoGrado(primeraAtencionDTO.getModalidadTrabajoGrado());
         }
 
-        if (primeraAtencionDTO.getCursosEmprendimiento().size() > 0) {
+        if (primeraAtencionDTO.getCursosEmprendimiento() != null &&
+                primeraAtencionDTO.getCursosEmprendimiento().size() > 0) {
             emprendedorUpdateDTO.setCursosEmprendimiento(primeraAtencionDTO.getCursosEmprendimiento());
         }
 
@@ -362,16 +363,13 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             /**
              * Logica para almacenar Cursos de Emprendimiento
              */
-            if (emprendedorUpdateDTO.getCursosEmprendimiento().size() > 0 ) {
-                for (String cursoEmprendimiento: emprendedorUpdateDTO.getCursosEmprendimiento()) {
-                    Query query = entityManager.createNativeQuery("SELECT * FROM T_SINAPSIS_ASIG_EMPRENDEDOR " +
-                            "WHERE EMPRENDEDORES_ID = " + emprendedorUpdateDTO.getIdEmprendedor() + " AND " +
-                            "ASIGNATURAS_ID = " + cursoEmprendimiento, AsignaturaEmprendedor.class);
+            if (emprendedorUpdateDTO.getCursosEmprendimiento() != null &&
+                    emprendedorUpdateDTO.getCursosEmprendimiento().size() > 0 ) {
+                String sqlDelete = "DELETE FROM T_SINAPSIS_ASIG_EMPRENDEDOR WHERE EMPRENDEDORES_ID = " + emprendedorUpdateDTO.getIdEmprendedor();
+                Query queryDelete = entityManager.createNativeQuery(sqlDelete);
 
-                    List<AsignaturaEmprendedor> asignaturasEmprendedor = (List<AsignaturaEmprendedor>) query.getResultList();
-
-                    // Si no se encuentra asociada la asignatura al emprendedor
-                    if (! (asignaturasEmprendedor.size() > 0)) {
+                if (queryDelete.executeUpdate() == 1)  {
+                    for (String cursoEmprendimiento: emprendedorUpdateDTO.getCursosEmprendimiento()) {
                         AsignaturaEmprendedor asignaturaEmprendedor = new AsignaturaEmprendedor();
                         asignaturaEmprendedor.setId(
                                 new AsignaturaEmprendedorId(
@@ -379,6 +377,8 @@ public class EmprendedorDAO implements IEmprendedorDAO {
                         entityManager.persist(asignaturaEmprendedor);
                         entityManager.flush();
                     }
+                } else {
+                    throw new Exception("Problema al registrar asignaturas del Emprendedor");
                 }
             }
 
@@ -387,5 +387,13 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         }
 
         return true;
+    }
+
+    @Override
+    public List<AsignaturaEmprendedor> obtenerAsignaturasEmprendedor(long idUsuario) {
+        String sql = "SELECT * FROM T_SINAPSIS_ASIG_EMPRENDEDOR WHERE EMPRENDEDORES_ID = " + idUsuario;
+        Query query = entityManager.createNativeQuery(sql, AsignaturaEmprendedor.class);
+
+        return (List<AsignaturaEmprendedor>) query.getResultList();
     }
 }

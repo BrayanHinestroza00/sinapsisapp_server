@@ -43,7 +43,7 @@ public class PrimeraAtencionDTO implements Serializable {
     private Long programaAcademico;
     private String otroProgramaAcademico;
     private Integer modalidadTrabajoGrado;
-    private List<String> cursosEmprendimiento; // idAsignaturas separadas por ','
+    private List<String> cursosEmprendimiento; // codigoAsignaturas separadas por ','
     private String cargoColaborador;
     private String dependenciaColaborador;
 

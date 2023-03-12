@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
+import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
 import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
@@ -24,7 +25,13 @@ public class EmprendedorService implements IEmprendedorService {
         List<EmprendedoresView> response = emprendedorDAO.getInformacionEmprendedor(idUsuario);
 
         if (response.size() > 0 ) {
-            return response.get(0);
+            EmprendedoresView emprendedor = response.get(0);
+
+            List<AsignaturaEmprendedor> asignaturaEmprendedor = emprendedorDAO.obtenerAsignaturasEmprendedor(idUsuario);
+
+            emprendedor.setAsignaturasEmprendedor(asignaturaEmprendedor);
+
+            return emprendedor;
         } else {
             return null;
         }
