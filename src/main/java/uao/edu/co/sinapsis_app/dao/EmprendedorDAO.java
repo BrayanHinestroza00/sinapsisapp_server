@@ -18,6 +18,7 @@ import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.Usuario;
 import uao.edu.co.sinapsis_app.model.embeddable.AsignaturaEmprendedorId;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
+import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -395,5 +396,21 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         Query query = entityManager.createNativeQuery(sql, AsignaturaEmprendedor.class);
 
         return (List<AsignaturaEmprendedor>) query.getResultList();
+    }
+
+    @Override
+    public List<Emprendimiento> obtenerEmprendimiento(String idEmprendimiento) {
+        String sql = "SELECT * FROM T_SINAPSIS_EMPRENDIMIENTOS WHERE ID = " + idEmprendimiento;
+        Query query = entityManager.createNativeQuery(sql, Emprendimiento.class);
+
+        return (List<Emprendimiento>) query.getResultList();
+    }
+
+    @Override
+    public List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDI_RED_SOCIAL WHERE ID_EMPRENDIMIENTO = " + idEmprendimiento;
+        Query query = entityManager.createNativeQuery(sql, RedSocialEmprendimientoView.class);
+
+        return (List<RedSocialEmprendimientoView>) query.getResultList();
     }
 }

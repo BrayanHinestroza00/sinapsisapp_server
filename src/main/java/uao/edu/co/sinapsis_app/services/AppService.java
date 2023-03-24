@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAppDAO;
 import uao.edu.co.sinapsis_app.model.*;
+import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class AppService implements IAppService {
     }
 
     @Override
-    public List<ProyectoEmprendimiento> getProyectosEmprendimientoEmprendedor(int idUsuario) {
+    public List<EmprendimientosEmprendedorView> getProyectosEmprendimientoEmprendedor(int idUsuario) {
         return appDAO.getProyectosEmprendimientoEmprendedor(idUsuario);
     }
 
@@ -97,5 +98,10 @@ public class AppService implements IAppService {
     @Override
     public List<Asignatura> getAsignaturasById(int idAsignatura) {
         return appDAO.getAsignaturasById(idAsignatura);
+    }
+
+    @Override
+    public List<RedSocial> obtenerRedesSociales() {
+        return appDAO.obtenerRedesSociales();
     }
 }

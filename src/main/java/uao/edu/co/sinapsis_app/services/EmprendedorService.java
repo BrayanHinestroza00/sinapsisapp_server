@@ -6,7 +6,9 @@ import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
+import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
+import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
 import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
 
@@ -64,5 +66,15 @@ public class EmprendedorService implements IEmprendedorService {
             emprendedorUpdateDTO.setFotoPerfilURL(filePathFotoPerfil);
         }
         return emprendedorDAO.actualizarEmprendedor(emprendedorUpdateDTO);
+    }
+
+    @Override
+    public List<Emprendimiento> obtenerEmprendimiento(String idEmprendimiento) {
+        return emprendedorDAO.obtenerEmprendimiento(idEmprendimiento);
+    }
+
+    @Override
+    public List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento) {
+        return emprendedorDAO.obtenerRedesSocialesEmprendimiento(idEmprendimiento);
     }
 }

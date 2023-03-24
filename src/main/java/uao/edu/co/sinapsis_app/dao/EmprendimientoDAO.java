@@ -61,9 +61,9 @@ public class EmprendimientoDAO implements IEmprendimientoDAO {
             if (emprendimientoDTO.getLogoEmpresaURL() != null) {
                 emprendimiento.setUrlLogoEmpresa(emprendimientoDTO.getLogoEmpresaURL());
             }
-            if (emprendimientoDTO.getFileAutodiagnosticoURL() != null) {
-                emprendimiento.setUrlFileAutodiagnostico(emprendimientoDTO.getFileAutodiagnosticoURL());
-            }
+//            if (emprendimientoDTO.getFileAutodiagnosticoURL() != null) {
+//                emprendimiento.setUrlFileAutodiagnostico(emprendimientoDTO.getFileAutodiagnosticoURL());
+//            }
 
             Emprendimiento updatedEmprendimiento = entityManager.merge(emprendimiento);
 

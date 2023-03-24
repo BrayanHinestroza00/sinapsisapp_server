@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
+import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
+import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
+
+import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.Constants.*;
 
@@ -101,6 +105,33 @@ public class EmprendedorController {
         } catch (Exception e) {
             e.printStackTrace();
             response.setCode(STATUS_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/emprendimiento", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerEmprendimiento(@RequestParam(required = true) String idEmprendimiento){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<Emprendimiento> data = emprendedorService.obtenerEmprendimiento(idEmprendimiento);
+
+            if (data.size() > 0) {
+                List<RedSocialEmprendimientoView> redesSociales = emprendedorService.obtenerRedesSocialesEmprendimiento(idEmprendimiento);
+
+                data.get(0).setRedesSociales(redesSociales);
+
+                response.setCode(1);
+                response.setResponse(data.get(0));
+            }else {
+                response.setCode(0);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

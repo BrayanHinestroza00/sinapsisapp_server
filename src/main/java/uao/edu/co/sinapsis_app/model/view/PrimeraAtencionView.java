@@ -116,8 +116,6 @@ public class PrimeraAtencionView {
     private String descripcionClientes;
     @Column(name = "ENFOQUE_SOCIAL")
     private String enfoqueSocial;
-    @Column(name = "URL_FILE_AUTODIAGNOSTICO")
-    private String urlFileAutodiagnostico;
     @Column(name = "NECESIDADES_IDENTIFICADAS")
     private String necesidadesIdentificadas;
 

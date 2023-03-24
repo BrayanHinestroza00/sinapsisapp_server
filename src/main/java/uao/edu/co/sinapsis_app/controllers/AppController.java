@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.*;
+import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class AppController {
         try {
             int idUsuario = Integer.parseInt(requestData.get("idUsuario"));
 
-            List<ProyectoEmprendimiento> proyectos = appService.getProyectosEmprendimientoEmprendedor(idUsuario);
+            List<EmprendimientosEmprendedorView> proyectos = appService.getProyectosEmprendimientoEmprendedor(idUsuario);
             int primeraVez = appService.getPreFetchEmprendedor(idUsuario);
 
             Map<String, Object> data = new HashMap<>();
@@ -211,6 +212,29 @@ public class AppController {
             }else{
                 data = appService.getAsignaturas();
             }
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(0);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/redes_sociales", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerRedesSociales(){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<RedSocial> data = appService.obtenerRedesSociales();
 
             if (data.size() > 0) {
                 response.setCode(1);

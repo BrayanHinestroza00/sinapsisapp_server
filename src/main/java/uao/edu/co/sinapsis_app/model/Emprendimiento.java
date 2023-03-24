@@ -1,6 +1,7 @@
 package uao.edu.co.sinapsis_app.model;
 
 import lombok.Data;
+import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -46,8 +49,8 @@ public class Emprendimiento {
     private String descripcionClientes;
     @Column(name = "ENFOQUE_SOCIAL")
     private String enfoqueSocial;
-    @Column(name = "URL_FILE_AUTODIAGNOSTICO")
-    private String urlFileAutodiagnostico;
     @Column(name = "NECESIDADES_IDENTIFICADAS")
     private String necesidadesIdentificadas;
+    @Transient
+    private List<RedSocialEmprendimientoView> redesSociales;
 }

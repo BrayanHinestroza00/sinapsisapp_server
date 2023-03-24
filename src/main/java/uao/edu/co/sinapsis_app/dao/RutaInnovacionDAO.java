@@ -7,10 +7,17 @@ import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IProyectoEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.EtapaRutaEmprendimiento;
+import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
+import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
+import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
+import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.SolicitudesProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -80,5 +87,193 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         } else  {
             throw new Exception("No se encontro el proyecto de emprendimiento");
         }
+    }
+
+    @Override
+    public RutaProyectoEmprendimiento obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM T_SINAPSIS_RUT_EMPRENDIMIENTO " +
+                "WHERE ESTADO_RUTA = 'PENDIENTE' AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+        Query query = entityManager.createNativeQuery(sql, RutaProyectoEmprendimiento.class);
+
+        List<RutaProyectoEmprendimiento> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public List<ActividadRuta> obtenerActividadesEtapa() {
+        String sql = "SELECT * FROM T_SINAPSIS_ACTIVIDADES_RUTA";
+        Query query = entityManager.createNativeQuery(sql, ActividadRuta.class);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ActividadRuta> obtenerActividadesEtapaById(Long idEtapa) {
+        String sql = "SELECT * FROM T_SINAPSIS_ACTIVIDADES_RUTA " +
+                "WHERE ESTADO = 'A' AND ETAPAS_RUTAS_ID = " + idEtapa;
+        Query query = entityManager.createNativeQuery(sql, ActividadRuta.class);
+
+        List<ActividadRuta> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<HerramientaRuta> obtenerHerramientasEtapa() {
+        String sql = "SELECT * FROM T_SINAPSIS_HERRAMIENTAS";
+        Query query = entityManager.createNativeQuery(sql, HerramientaRuta.class);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<HerramientaRuta> obtenerHerramientasEtapaById(Long idEtapa) {
+        String sql = "SELECT TH.* FROM T_SINAPSIS_HERRAMIENTAS TH \n" +
+                "    JOIN T_SINAPSIS_SUB_ACT_RUTA TSAR ON TH.SUB_ACTIVIDADES_RUTAS_ID = TSAR.ID\n" +
+                "    JOIN T_SINAPSIS_ACTIVIDADES_RUTA TAR ON TSAR.ACTIVIDADES_RUTAS_ID = TAR.ID \n" +
+                "    WHERE ETAPAS_RUTAS_ID = " + idEtapa;
+        Query query = entityManager.createNativeQuery(sql, HerramientaRuta.class);
+
+        List<HerramientaRuta> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<SubActividadesEmprendedorView> obtenerSubActividadesEmprendedor(Long idProyectoEmprendimiento, Long idRutaEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_ACT_EMPRENDEDOR \n" +
+                "    WHERE PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento + "\n" +
+                "    AND RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
+        Query query = entityManager.createNativeQuery(sql, SubActividadesEmprendedorView.class);
+
+        List<SubActividadesEmprendedorView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ActividadesEmprendedorView> obtenerActividadesEmprendedor(Long idRutaEmprendimiento) {
+        String sql = "SELECT * FROM T_SINAPSIS_ACT_RUTA_EMP \n" +
+                "    WHERE RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
+
+        Query query = entityManager.createNativeQuery(sql, ActividadesEmprendedorView.class);
+
+        List<ActividadesEmprendedorView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento, String tipoBusqueda) {
+        String sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
+                "WHERE ESTADO_ENTREGA = '" + tipoBusqueda + "' " +
+                "AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+
+        Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
+
+        List<TareasProyectoEmprendimientoView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
+                "WHERE ESTADO_ENTREGA NOT IN ('PENDIENTE', 'ENTREGADA') " +
+                "AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+
+        Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
+
+        List<TareasProyectoEmprendimientoView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoria(Long idConsultoria) {
+        String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
+                "WHERE ID_CONSULTORIA = " + idConsultoria + " " +
+                "ORDER BY FECHA_CONSULTORIA DESC";
+
+        Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+
+        List<ConsultoriasView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoriaNormal(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
+                "WHERE ID_SUB_ACT_RUTA IS NULL " +
+                "AND ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
+                "ORDER BY FECHA_CONSULTORIA DESC";
+
+        Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+
+        List<ConsultoriasView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoriaEspecializada(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
+                "WHERE ID_SUB_ACT_RUTA IS NOT NULL " +
+                "AND ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
+                "ORDER BY FECHA_CONSULTORIA DESC";
+
+        Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+
+        List<ConsultoriasView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerHistoricoConsultoria(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
+                "WHERE ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
+                "ORDER BY FECHA_CONSULTORIA DESC";
+
+        Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+
+        List<ConsultoriasView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAppDAO;
 import uao.edu.co.sinapsis_app.model.*;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
+import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -45,10 +46,10 @@ public class AppDAO implements IAppDAO {
     }
 
     @Override
-    public List<ProyectoEmprendimiento> getProyectosEmprendimientoEmprendedor(int idUsuario) {
-        String sql = "SELECT * FROM T_SINAPSIS_PROY_EMPRENDIMIENTO WHERE EMPRENDEDORES_ID = " + idUsuario;
-        Query q = entityManager.createNativeQuery(sql, ProyectoEmprendimiento.class);
-        return (List<ProyectoEmprendimiento>) q.getResultList();
+    public List<EmprendimientosEmprendedorView> getProyectosEmprendimientoEmprendedor(int idUsuario) {
+        String sql = "SELECT * FROM V_SINAPSIS_PROY_EMPRENDIMIENTO WHERE ID_EMPRENDEDOR = " + idUsuario;
+        Query q = entityManager.createNativeQuery(sql, EmprendimientosEmprendedorView.class);
+        return (List<EmprendimientosEmprendedorView>) q.getResultList();
     }
 
     @Override
@@ -138,5 +139,12 @@ public class AppDAO implements IAppDAO {
                 "WHERE asignaturas.id =" + idAsignatura;
         Query q = entityManager.createNativeQuery(sql, Asignatura.class);
         return (List<Asignatura>) q.getResultList();
+    }
+
+    @Override
+    public List<RedSocial> obtenerRedesSociales() {
+        String sql = "SELECT * FROM T_SINAPSIS_REDES_SOCIALES";
+        Query q = entityManager.createNativeQuery(sql, RedSocial.class);
+        return (List<RedSocial>) q.getResultList();
     }
 }

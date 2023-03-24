@@ -1,6 +1,7 @@
 package uao.edu.co.sinapsis_app.services.interfaces;
 
 import uao.edu.co.sinapsis_app.model.*;
+import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface IAppService {
 
     public int getPreFetchEmprendedor(long idUsuario);
 
-    List<ProyectoEmprendimiento> getProyectosEmprendimientoEmprendedor(int idUsuario);
+    List<EmprendimientosEmprendedorView> getProyectosEmprendimientoEmprendedor(int idUsuario);
 
     List<Departamento> getDepartamentos();
     List<Departamento> getDepartamentosByMunicipio(long idMunicipio);
@@ -36,4 +37,6 @@ public interface IAppService {
     List<Asignatura> getAsignaturas();
 
     List<Asignatura> getAsignaturasById(int idAsignatura);
+
+    List<RedSocial> obtenerRedesSociales();
 }
