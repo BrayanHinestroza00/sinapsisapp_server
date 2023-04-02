@@ -155,7 +155,7 @@ public class RutaInnovacionController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(0);
+                response.setCode(1);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -184,7 +184,7 @@ public class RutaInnovacionController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(0);
+                response.setCode(1);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -210,7 +210,7 @@ public class RutaInnovacionController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(0);
+                response.setCode(1);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -238,7 +238,7 @@ public class RutaInnovacionController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(0);
+                response.setCode(1);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -272,7 +272,7 @@ public class RutaInnovacionController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(0);
+                response.setCode(1);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -323,7 +323,52 @@ public class RutaInnovacionController {
                     response.setCode(1);
                     response.setResponse(data);
                 }else {
+                    response.setCode(1);
+                    response.setMessage("Sin datos");
+                }
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/consultorias_programadas", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerConsultorias(
+            @RequestParam(required = true) Long idUsuario,
+            @RequestParam(required = true) Integer tipoUsuario){
+
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<ConsultoriasView> data = new ArrayList<>();
+
+            if (idUsuario == null || tipoUsuario == null)  {
+                response.setCode(0);
+                response.setMessage("Datos no validos");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } else {
+                final int TYPE_EMPRENDEDOR = 1;
+                final int TYPE_MENTOR = 2;
+
+                if (tipoUsuario == TYPE_EMPRENDEDOR) {
+                    data =rutaInnovacionService.obtenerConsultoriaProgramadaEmprendedor(idUsuario);
+                } else if (tipoUsuario == TYPE_MENTOR){
+                    data =rutaInnovacionService.obtenerConsultoriaProgramadaMentor(idUsuario);
+                } else {
                     response.setCode(0);
+                    response.setMessage("Datos no validos");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+
+                if (data != null && data.size() > 0) {
+                    response.setCode(1);
+                    response.setResponse(data);
+                }else {
+                    response.setCode(1);
                     response.setMessage("Sin datos");
                 }
                 return new ResponseEntity<>(response, HttpStatus.OK);

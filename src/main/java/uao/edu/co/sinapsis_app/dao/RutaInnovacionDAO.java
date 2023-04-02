@@ -211,6 +211,8 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         return null;
     }
 
+
+
     @Override
     public List<ConsultoriasView> obtenerConsultoria(Long idConsultoria) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
@@ -266,6 +268,38 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
                 "WHERE ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
                 "ORDER BY FECHA_CONSULTORIA DESC";
+
+        Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+
+        List<ConsultoriasView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor) {
+        String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
+                "WHERE EMPRENDEDORES_ID = " + idEmprendedor + " " +
+                "AND FECHA_CONSULTORIA >= SYSDATE ORDER BY FECHA_CONSULTORIA DESC";
+
+        Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+
+        List<ConsultoriasView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor) {
+        String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
+                "WHERE ID_MENTOR = " + idMentor + " " +
+                "AND FECHA_CONSULTORIA >= SYSDATE ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 

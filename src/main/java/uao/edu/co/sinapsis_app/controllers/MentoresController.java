@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uao.edu.co.sinapsis_app.dto.response.HorarioMentorResponseDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
+import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
 
@@ -70,6 +72,58 @@ public class MentoresController {
                 } else {
                     response.setResponse(data);
                 }
+            }else {
+                response.setCode(0);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/emprendedores", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerEmprendedoresPorMentor(
+            @RequestParam(required = true) Long idMentor ){
+
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<AsesoramientosView> data =
+                    mentoresService.obtenerEmprendedoresPorMentor(idMentor);
+
+            if (data != null && data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(0);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/horario", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerHorarioMentor(
+            @RequestParam(required = true) Long idMentor ){
+
+        ResponseDTO response = new ResponseDTO();
+        try {
+            HorarioMentorResponseDTO horarioMentor =
+                    mentoresService.obtenerHorarioMentor(idMentor);
+
+            if (horarioMentor != null ) {
+                response.setCode(1);
+                response.setResponse(horarioMentor);
             }else {
                 response.setCode(0);
                 response.setMessage("Sin datos");

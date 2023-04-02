@@ -52,4 +52,21 @@ public class ConsultoriasView {
     private String apellidoMentor;
     @Column(name = "CORREO_INSTITUCIONAL_MENTOR")
     private String correoInstitucionalMentor;
+
+    @Column(name = "NUMERO_DOCUMENTO_EMP")
+    private String numeroDocumentoEmprendedor;
+    @Column(name = "NOMBRES_EMP")
+    private String nombreEmprendedor;
+    @Column(name = "APELLIDOS_EMP")
+    private String apellidoEmprendedor;
+    @Column(name = "CORREO_INSTITUCIONAL_EMP")
+    private String correoInstitucionalEmprendedor;
+    @Column(name = "TELEFONO_CONTACTO_EMP")
+    private String telefonoEmprendedor;
+    @Column(name = "FOTO_URL_EMP")
+    private String fotoUrlEmprendedor;
+    @Column(name = "TIPOS_DOCUMENTO_ID_EMP")
+    private String tipoDocumentoEmprendedor;
+    @Column(name = "CORREO_PERSONAL_EMP")
+    private String correoPersonalEmprendedor;
 }

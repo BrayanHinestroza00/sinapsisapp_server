@@ -117,4 +117,14 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     public List<ConsultoriasView> obtenerHistoricoConsultoria(Long idProyectoEmprendimiento) {
         return rutaInnovacionDAO.obtenerHistoricoConsultoria(idProyectoEmprendimiento);
     }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor) {
+        return rutaInnovacionDAO.obtenerConsultoriaProgramadaEmprendedor(idEmprendedor);
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor) {
+        return rutaInnovacionDAO.obtenerConsultoriaProgramadaMentor(idMentor);
+    }
 }

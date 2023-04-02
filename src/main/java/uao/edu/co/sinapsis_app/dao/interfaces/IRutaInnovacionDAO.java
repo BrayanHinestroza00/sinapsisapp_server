@@ -44,4 +44,7 @@ public interface IRutaInnovacionDAO {
     List<ConsultoriasView> obtenerConsultoriaEspecializada(Long idProyectoEmprendimiento);
 
     List<ConsultoriasView> obtenerHistoricoConsultoria(Long idProyectoEmprendimiento);
+
+    List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor);
+    List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
 }
