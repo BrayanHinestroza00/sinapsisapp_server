@@ -147,4 +147,11 @@ public class AppDAO implements IAppDAO {
         Query q = entityManager.createNativeQuery(sql, RedSocial.class);
         return (List<RedSocial>) q.getResultList();
     }
+
+    @Override
+    public List<EtapaRutaInnovacion> obtenerEtapasRutaInnovacionEmprendimiento() {
+        String sql = "SELECT * FROM T_SINAPSIS_ETAPAS_RUTA WHERE ESTADO = 'A' ORDER BY ID ASC";
+        Query q = entityManager.createNativeQuery(sql, EtapaRutaInnovacion.class);
+        return (List<EtapaRutaInnovacion>) q.getResultList();
+    }
 }

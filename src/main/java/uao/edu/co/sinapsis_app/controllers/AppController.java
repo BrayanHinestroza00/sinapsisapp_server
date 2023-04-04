@@ -251,4 +251,27 @@ public class AppController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/etapas_ruta", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerEtapasRutaInnovacionEmprendimiento(){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<EtapaRutaInnovacion> data = appService.obtenerEtapasRutaInnovacionEmprendimiento();
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(1);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

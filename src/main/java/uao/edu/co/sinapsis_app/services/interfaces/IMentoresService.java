@@ -1,7 +1,7 @@
 package uao.edu.co.sinapsis_app.services.interfaces;
 
 import uao.edu.co.sinapsis_app.dto.response.HorarioMentorResponseDTO;
-import uao.edu.co.sinapsis_app.model.HorarioMentor;
+import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 
@@ -19,4 +19,10 @@ public interface IMentoresService {
     List<AsesoramientosView> obtenerEmprendedoresPorMentor(Long idMentor);
 
     HorarioMentorResponseDTO obtenerHorarioMentor(Long idMentor);
+
+    List<Mentor> obtenerMentores();
+
+    List<Mentor> obtenerMentoresPorId(Long idMentor);
+
+    List<Mentor> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion);
 }

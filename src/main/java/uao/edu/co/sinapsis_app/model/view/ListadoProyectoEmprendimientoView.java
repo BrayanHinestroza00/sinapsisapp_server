@@ -10,10 +10,14 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "V_SINAPSIS_SOLICITUDES_PA")
 @Data
-public class SolicitudesProyectoEmprendimientoView {
+public class ListadoProyectoEmprendimientoView {
     @Id
     @Column(name = "PROYECTO_EMPRENDIMIENTO_ID")
     private Long proyectoEmprendimientoId;
+    @Column(name = "EMPRENDIMIENTOS_ID")
+    private Long emprendimientoId;
+    @Column(name = "EMPRENDEDORES_ID")
+    private Long emprendedorId;
     @Column(name = "CORREO_EMPRENDEDOR")
     private String correoEmprendedor;
     @Column(name = "DOCUMENTO_EMPRENDEDOR")
@@ -28,4 +32,10 @@ public class SolicitudesProyectoEmprendimientoView {
     private String nombreProducto;
     @Column(name = "TELEFONO_CONTACTO")
     private String telefonoContacto;
+    @Column(name = "NOMBRE_EMPRENDIMIENTO")
+    private String nombreEmprendimiento;
+    @Column(name = "ETAPA_RUTA")
+    private String etapaRuta;
+    @Column(name = "ESTADO_RUTA")
+    private String estadoRuta;
 }

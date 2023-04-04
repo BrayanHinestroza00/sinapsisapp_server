@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.response.HorarioMentorResponseDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
+import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,6 +23,47 @@ import java.util.List;
 public class MentoresController {
     @Autowired
     private IMentoresService mentoresService;
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerMentores(
+            @RequestParam(required = false) Long idMentor,
+            @RequestParam(required = false) Long idEtapaRutaInnovacion){
+
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<Mentor> data = new ArrayList<>();
+
+            if ((idMentor != null && idEtapaRutaInnovacion != null) )  {
+                response.setCode(0);
+                response.setMessage("Datos no validos");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } else {
+
+                if (idMentor != null) {
+                    data =mentoresService.obtenerMentoresPorId(idMentor);
+                } else if (idEtapaRutaInnovacion != null) {
+                    data =mentoresService.obtenerMentoresPorEtapaRutaInnovacion(idEtapaRutaInnovacion);
+                } else {
+                    data =mentoresService.obtenerMentores();
+                }
+
+                if (data != null && data.size() > 0) {
+                    response.setCode(1);
+                    response.setResponse(data);
+                }else {
+                    response.setCode(1);
+                    response.setMessage("Sin datos");
+                }
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @CrossOrigin( origins = "http://localhost:3000")
     @RequestMapping(value = "/ruta_emprendimiento", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")

@@ -14,9 +14,10 @@ import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
-import uao.edu.co.sinapsis_app.model.view.SolicitudesProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 
 import javax.persistence.EntityManager;
@@ -37,7 +38,15 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     private EntityManager entityManager;
 
     @Override
-    public List<PrimeraAtencionView> detallePrimeraAtencionPendiente(Integer idProyectoEmprendimiento) {
+    public List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento() {
+        String sql = "SELECT * FROM V_SINAPSIS_LISTADO_PE WHERE ESTADO_EMPRENDIMIENTO = 'APROBADO' ORDER BY FECHA_REGISTRO_PA DESC";
+        Query query = entityManager.createNativeQuery(sql, ListadoProyectoEmprendimientoView.class);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<PrimeraAtencionView> detallePrimeraAtencion(Integer idProyectoEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_PRIMERA_ATENCION WHERE PROYECTO_EMPRENDIMIENTO_ID = ?";
         Query query = entityManager.createNativeQuery(sql, PrimeraAtencionView.class);
 
@@ -47,9 +56,9 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     }
 
     @Override
-    public List<SolicitudesProyectoEmprendimientoView> listarPrimerasAtencionesPendientes() {
-        String sql = "SELECT * FROM V_SINAPSIS_SOLICITUDES_PA ORDER BY FECHA_REGISTRO_PA DESC";
-        Query query = entityManager.createNativeQuery(sql, SolicitudesProyectoEmprendimientoView.class);
+    public List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes() {
+        String sql = "SELECT * FROM V_SINAPSIS_LISTADO_PE WHERE ESTADO_EMPRENDIMIENTO = 'PENDIENTE' ORDER BY FECHA_REGISTRO_PA DESC";
+        Query query = entityManager.createNativeQuery(sql, ListadoProyectoEmprendimientoView.class);
 
         return query.getResultList();
     }
@@ -304,6 +313,21 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
         List<ConsultoriasView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<EmprendedoresView> obtenerEmprendedores() {
+        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDEDORES " +
+                "ORDER BY NOMBRES DESC, APELLIDOS DESC";
+
+        Query query = entityManager.createNativeQuery(sql, EmprendedoresView.class);
+
+        List<EmprendedoresView> resultados = query.getResultList();
 
         if (resultados.size() > 0) {
             return resultados;

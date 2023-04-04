@@ -39,4 +39,6 @@ public interface IAppDAO {
     List<Asignatura> getAsignaturasById(int idAsignatura);
 
     List<RedSocial> obtenerRedesSociales();
+
+    List<EtapaRutaInnovacion> obtenerEtapasRutaInnovacionEmprendimiento();
 }

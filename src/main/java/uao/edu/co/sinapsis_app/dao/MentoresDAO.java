@@ -3,6 +3,7 @@ package uao.edu.co.sinapsis_app.dao;
 import org.springframework.stereotype.Repository;
 import uao.edu.co.sinapsis_app.dao.interfaces.IMentoresDAO;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
+import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 
@@ -102,6 +103,50 @@ public class MentoresDAO implements IMentoresDAO {
         Query query = entityManager.createNativeQuery(sql, HorarioMentor.class);
 
         List<HorarioMentor> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<Mentor> obtenerMentores() {
+        String sql = "SELECT * FROM T_SINAPSIS_MENTORES";
+
+        Query query = entityManager.createNativeQuery(sql, Mentor.class);
+
+        List<Mentor> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<Mentor> obtenerMentoresPorId(Long idMentor) {
+        String sql = "SELECT * FROM T_SINAPSIS_MENTORES WHERE " +
+                "ID = "+ idMentor + " ORDER BY CREATED_AT DESC";
+
+        Query query = entityManager.createNativeQuery(sql, Mentor.class);
+
+        List<Mentor> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<Mentor> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
+        String sql = "SELECT * FROM T_SINAPSIS_MENTORES WHERE " +
+                "ETAPA_RUTA = "+ idEtapaRutaInnovacion + " ORDER BY ID";
+
+        Query query = entityManager.createNativeQuery(sql, Mentor.class);
+
+        List<Mentor> resultados = query.getResultList();
 
         if (resultados.size() > 0) {
             return resultados;

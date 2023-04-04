@@ -6,16 +6,18 @@ import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
-import uao.edu.co.sinapsis_app.model.view.SolicitudesProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 
 import java.util.List;
 
 public interface IRutaInnovacionService {
-    PrimeraAtencionView detallePrimeraAtencionPendiente(Integer idProyectoEmprendimiento);
-    List<SolicitudesProyectoEmprendimientoView> listarPrimerasAtencionesPendientes();
+    List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento();
+    PrimeraAtencionView detallePrimeraAtencion(Integer idProyectoEmprendimiento);
+    List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes();
 
     boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception;
 
@@ -45,4 +47,6 @@ public interface IRutaInnovacionService {
 
     List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor);
     List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
+
+    List<EmprendedoresView> obtenerEmprendedores();
 }

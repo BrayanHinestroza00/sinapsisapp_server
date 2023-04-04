@@ -104,4 +104,9 @@ public class AppService implements IAppService {
     public List<RedSocial> obtenerRedesSociales() {
         return appDAO.obtenerRedesSociales();
     }
+
+    @Override
+    public List<EtapaRutaInnovacion> obtenerEtapasRutaInnovacionEmprendimiento() {
+        return appDAO.obtenerEtapasRutaInnovacionEmprendimiento();
+    }
 }

@@ -9,9 +9,10 @@ import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
-import uao.edu.co.sinapsis_app.model.view.SolicitudesProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
 
@@ -24,8 +25,13 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     IRutaInnovacionDAO rutaInnovacionDAO;
 
     @Override
-    public PrimeraAtencionView detallePrimeraAtencionPendiente(Integer idProyectoEmprendimiento) {
-        List<PrimeraAtencionView> respuesta = rutaInnovacionDAO.detallePrimeraAtencionPendiente(idProyectoEmprendimiento);
+    public List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento() {
+        return rutaInnovacionDAO.listarProyectosDeEmprendimiento();
+    }
+
+    @Override
+    public PrimeraAtencionView detallePrimeraAtencion(Integer idProyectoEmprendimiento) {
+        List<PrimeraAtencionView> respuesta = rutaInnovacionDAO.detallePrimeraAtencion(idProyectoEmprendimiento);
 
         if (respuesta.size() > 0) {
             return respuesta.get(0);
@@ -35,7 +41,7 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     }
 
     @Override
-    public List<SolicitudesProyectoEmprendimientoView> listarPrimerasAtencionesPendientes() {
+    public List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes() {
         return rutaInnovacionDAO.listarPrimerasAtencionesPendientes();
     }
 
@@ -126,5 +132,10 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     @Override
     public List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor) {
         return rutaInnovacionDAO.obtenerConsultoriaProgramadaMentor(idMentor);
+    }
+
+    @Override
+    public List<EmprendedoresView> obtenerEmprendedores() {
+        return rutaInnovacionDAO.obtenerEmprendedores();
     }
 }

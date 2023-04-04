@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IMentoresDAO;
 import uao.edu.co.sinapsis_app.dto.response.HorarioMentorResponseDTO;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
+import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
@@ -72,5 +73,20 @@ public class MentoresService implements IMentoresService {
         }
 
         return horarioMentorDTO;
+    }
+
+    @Override
+    public List<Mentor> obtenerMentores() {
+        return mentoresDAO.obtenerMentores();
+    }
+
+    @Override
+    public List<Mentor> obtenerMentoresPorId(Long idMentor) {
+        return mentoresDAO.obtenerMentoresPorId(idMentor);
+    }
+
+    @Override
+    public List<Mentor> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
+        return mentoresDAO.obtenerMentoresPorEtapaRutaInnovacion(idEtapaRutaInnovacion);
     }
 }

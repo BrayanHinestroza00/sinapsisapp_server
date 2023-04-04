@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
+import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
-import uao.edu.co.sinapsis_app.model.view.SolicitudesProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
 
@@ -37,12 +39,39 @@ public class RutaInnovacionController {
     IRutaInnovacionService rutaInnovacionService;
 
     @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/proyectos_emprendimiento", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> listarProyectosDeEmprendimiento(
+            @RequestParam(required = false) Integer tipoDocumento, @RequestParam(required = false) String numeroDocumento,
+            @RequestParam(required = false) String nombres, @RequestParam(required = false) String apellidos) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<ListadoProyectoEmprendimientoView> solicitudes = rutaInnovacionService.listarProyectosDeEmprendimiento();
+
+            if (solicitudes == null) {
+                response.setCode(0);
+                response.setMessage("SIN PROYECTOS REGISTRADOS");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            } else {
+                response.setCode(1);
+                response.setMessage("OK");
+                response.setResponse(solicitudes);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(0);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
     @RequestMapping(value = "/primeraAtencion/detalle", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO> detallePrimeraAtencionPendiente(
             @RequestParam(required = true) Integer idProyectoEmprendimiento) {
         ResponseDTO response = new ResponseDTO();
         try {
-            PrimeraAtencionView solicitud = rutaInnovacionService.detallePrimeraAtencionPendiente(idProyectoEmprendimiento);
+            PrimeraAtencionView solicitud = rutaInnovacionService.detallePrimeraAtencion(idProyectoEmprendimiento);
 
             if (solicitud == null) {
                 response.setCode(0);
@@ -69,7 +98,7 @@ public class RutaInnovacionController {
             @RequestParam(required = false) String nombres, @RequestParam(required = false) String apellidos) {
         ResponseDTO response = new ResponseDTO();
         try {
-            List<SolicitudesProyectoEmprendimientoView> solicitudes = rutaInnovacionService.listarPrimerasAtencionesPendientes();
+            List<ListadoProyectoEmprendimientoView> solicitudes = rutaInnovacionService.listarPrimerasAtencionesPendientes();
 
             if (solicitudes == null) {
                 response.setCode(0);
@@ -373,6 +402,29 @@ public class RutaInnovacionController {
                 }
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/emprendedores", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerEmprendedores(){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<EmprendedoresView> data = rutaInnovacionService.obtenerEmprendedores();
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(1);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);
