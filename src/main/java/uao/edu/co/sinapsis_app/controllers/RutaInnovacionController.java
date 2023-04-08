@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
-import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
-import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
-import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
-import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresView;
+import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
+import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
 
@@ -147,7 +147,7 @@ public class RutaInnovacionController {
             @RequestParam(required = true) Long idProyectoEmprendimiento) {
         ResponseDTO response = new ResponseDTO();
         try {
-            RutaProyectoEmprendimiento solicitud = rutaInnovacionService.obtenerEtapaProyectoEmprendimiento(idProyectoEmprendimiento);
+            AsesoramientosView solicitud = rutaInnovacionService.obtenerEtapaProyectoEmprendimiento(idProyectoEmprendimiento);
 
             if (solicitud == null) {
                 response.setCode(0);
@@ -382,8 +382,9 @@ public class RutaInnovacionController {
             } else {
                 final int TYPE_EMPRENDEDOR = 1;
                 final int TYPE_MENTOR = 2;
+                final int TYPE_ADMINISTRADOR = 3;
 
-                if (tipoUsuario == TYPE_EMPRENDEDOR) {
+                if (tipoUsuario == TYPE_EMPRENDEDOR || tipoUsuario == TYPE_ADMINISTRADOR) {
                     data =rutaInnovacionService.obtenerConsultoriaProgramadaEmprendedor(idUsuario);
                 } else if (tipoUsuario == TYPE_MENTOR){
                     data =rutaInnovacionService.obtenerConsultoriaProgramadaMentor(idUsuario);
@@ -416,6 +417,29 @@ public class RutaInnovacionController {
         ResponseDTO response = new ResponseDTO();
         try {
             List<EmprendedoresView> data = rutaInnovacionService.obtenerEmprendedores();
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(1);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/mentores", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerMentores(){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<MentoresView> data = rutaInnovacionService.obtenerMentores();
 
             if (data.size() > 0) {
                 response.setCode(1);

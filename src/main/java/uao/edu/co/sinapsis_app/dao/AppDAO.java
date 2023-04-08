@@ -3,7 +3,16 @@ package uao.edu.co.sinapsis_app.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAppDAO;
-import uao.edu.co.sinapsis_app.model.*;
+import uao.edu.co.sinapsis_app.model.Anuncio;
+import uao.edu.co.sinapsis_app.model.Asignatura;
+import uao.edu.co.sinapsis_app.model.Departamento;
+import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
+import uao.edu.co.sinapsis_app.model.Facultad;
+import uao.edu.co.sinapsis_app.model.Municipio;
+import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
+import uao.edu.co.sinapsis_app.model.RedSocial;
+import uao.edu.co.sinapsis_app.model.TipoDocumento;
+import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 
@@ -153,5 +162,17 @@ public class AppDAO implements IAppDAO {
         String sql = "SELECT * FROM T_SINAPSIS_ETAPAS_RUTA WHERE ESTADO = 'A' ORDER BY ID ASC";
         Query q = entityManager.createNativeQuery(sql, EtapaRutaInnovacion.class);
         return (List<EtapaRutaInnovacion>) q.getResultList();
+    }
+
+    @Override
+    public List<Anuncio> obtenerAnuncios() {
+        String sql = "SELECT \n" +
+                "    * \n" +
+                "FROM T_SINAPSIS_ANUNCIOS \n" +
+                "WHERE ESTADO = 1\n" +
+                "        AND ( PERMANENTE = 1 OR FECHA_HASTA >= SYSDATE ) \n" +
+                "ORDER BY CREATED_AT ASC";
+        Query q = entityManager.createNativeQuery(sql, Anuncio.class);
+        return (List<Anuncio>) q.getResultList();
     }
 }

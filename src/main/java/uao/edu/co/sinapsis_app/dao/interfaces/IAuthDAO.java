@@ -8,9 +8,12 @@ public interface IAuthDAO {
     public Usuario buscarUsuarioPorTipoDocumentoYNumeroDocumento(long tipoDocumento, String numeroDocumento);
     public Usuario buscarUsuario(int tipoDocumento, String numeroDocumento, String usuario);
     Usuario buscarUsuarioByCorreo(String correo);
+    Usuario buscarUsuarioById(Long idUsuario);
 
     IntegrationTable findUsuarioByUserNameInITB(String usuario);
     IntegrationTable findUsuarioByDocumentoInITB(int tipoDocumento, String numeroDocumento);
 
     boolean registrarEmprendedor(EmprendedorSignUpDTO emprendedor) throws Exception;
+
+    boolean actualizarContrasena(Usuario usuarioActualizado);
 }

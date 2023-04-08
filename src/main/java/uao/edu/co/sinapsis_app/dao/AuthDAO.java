@@ -17,7 +17,10 @@ import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static uao.edu.co.sinapsis_app.util.Constants.*;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_COLABORADOR;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_EGRESADO;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_ESTUDIANTE;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_ROLES_EMPRENDEDOR;
 
 @Repository
 public class AuthDAO implements IAuthDAO {
@@ -63,6 +66,24 @@ public class AuthDAO implements IAuthDAO {
                 "WHERE CORREO_PERSONAL = '" +
                 correo +"' OR CORREO_INSTITUCIONAL = '" +
                 correo + "'";
+
+        Query q = entityManager.createNativeQuery(sql, Usuario.class);
+
+        List<Usuario> resultado = q.getResultList();
+
+        if (resultado.size() > 0) {
+            return resultado.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Usuario buscarUsuarioById(Long idUsuario) {
+        String sql = "SELECT usuarios.* \n" +
+                "FROM T_SINAPSIS_USUARIOS usuarios \n" +
+                "WHERE ID = '" +
+                idUsuario + "'";
 
         Query q = entityManager.createNativeQuery(sql, Usuario.class);
 
@@ -193,6 +214,15 @@ public class AuthDAO implements IAuthDAO {
         entityManager.flush();
 
         entityManager.persist(usuarioRol);
+        entityManager.flush();
+
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean actualizarContrasena(Usuario usuarioActualizado) {
+        entityManager.merge(usuarioActualizado);
         entityManager.flush();
 
         return true;

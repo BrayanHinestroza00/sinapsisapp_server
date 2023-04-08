@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IPrimeraAtencionDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IProyectoEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
-import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
@@ -23,6 +23,7 @@ import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -396,6 +397,22 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         Query query = entityManager.createNativeQuery(sql, AsignaturaEmprendedor.class);
 
         return (List<AsignaturaEmprendedor>) query.getResultList();
+    }
+
+    @Override
+    public List<Emprendimiento> obtenerEmprendimientos(String idEmprendedor) {
+        List<Emprendimiento> datos = new ArrayList<>();
+        String sql = "SELECT \n" +
+                "    TE.* \n" +
+                "FROM T_SINAPSIS_EMPRENDIMIENTOS TE \n" +
+                "JOIN T_SINAPSIS_PROY_EMPRENDIMIENTO TPE ON TPE.EMPRENDIMIENTOS_ID = TE.ID " +
+                "WHERE TPE.EMPRENDEDORES_ID = " + idEmprendedor;
+
+        Query query = entityManager.createNativeQuery(sql, Emprendimiento.class);
+
+        datos = (List<Emprendimiento>) query.getResultList();
+
+        return datos;
     }
 
     @Override

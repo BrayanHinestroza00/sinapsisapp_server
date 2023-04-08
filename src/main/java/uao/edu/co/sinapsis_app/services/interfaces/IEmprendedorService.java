@@ -15,6 +15,7 @@ public interface IEmprendedorService {
 
     boolean actualizarEmprendedor(EmprendedorUpdateDTO emprendedorUpdateDTO) throws Exception;
 
+    List<Emprendimiento> obtenerEmprendimientos(String idEmprendedor);
     List<Emprendimiento> obtenerEmprendimiento(String idEmprendimiento);
     List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento);
 }

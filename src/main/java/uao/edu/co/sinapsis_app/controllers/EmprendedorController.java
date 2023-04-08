@@ -4,7 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
@@ -13,9 +19,12 @@ import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static uao.edu.co.sinapsis_app.util.Constants.*;
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_EMPTY;
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_ERROR;
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_OK;
 
 
 @RestController
@@ -124,6 +133,37 @@ public class EmprendedorController {
 
                 response.setCode(1);
                 response.setResponse(data.get(0));
+            }else {
+                response.setCode(1);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/emprendimientos", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerEmprendimientos(@RequestParam(required = true) String idEmprendedor){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<Emprendimiento> emprendimientos = emprendedorService.obtenerEmprendimientos(idEmprendedor);
+            List<Emprendimiento> data = new ArrayList<>();
+
+            if (emprendimientos.size() > 0) {
+                for (Emprendimiento emprendimiento: emprendimientos ) {
+                    List<RedSocialEmprendimientoView> redesSociales =
+                            emprendedorService.obtenerRedesSocialesEmprendimiento(String.valueOf(emprendimiento.getId()));
+
+                    emprendimiento.setRedesSociales(redesSociales);
+                    data.add(emprendimiento);
+                }
+                response.setCode(1);
+                response.setResponse(data);
             }else {
                 response.setCode(0);
                 response.setMessage("Sin datos");

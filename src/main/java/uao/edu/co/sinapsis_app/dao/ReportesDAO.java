@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 import uao.edu.co.sinapsis_app.dao.interfaces.IReportesDAO;
 import uao.edu.co.sinapsis_app.dto.request.ReporteConsultoriasMentorDTO;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
-import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,11 +20,11 @@ public class ReportesDAO implements IReportesDAO {
         String sql = "SELECT * \n" +
                 "FROM V_SINAPSIS_CONSULTORIAS \n" +
                 "WHERE ID_MENTOR =:id \n" +
-                "    AND (FECHA_CONSULTORIA) \n" +
+                "    AND TRUNC(FECHA_CONSULTORIA) \n" +
 //                "    BETWEEN TO_DATE('"+reportesFilters.getFechaInicio()+"', 'DD/MM/YYYY') \n" +
 //                "        AND TO_DATE('"+reportesFilters.getFechaFin()+"', 'DD/MM/YYYY')";
-                "    BETWEEN TO_DATE('"+reportesFilters.getFechaInicio()+"', 'YYYY-MM-DD') \n" +
-                "        AND TO_DATE('"+reportesFilters.getFechaFin()+"', 'YYYY-MM-DD')";
+                "    BETWEEN TRUNC(TO_DATE('"+reportesFilters.getFechaInicio()+"', 'YYYY-MM-DD')) \n" +
+                "        AND TRUNC(TO_DATE('"+reportesFilters.getFechaFin()+"', 'YYYY-MM-DD'))";
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
         query.setParameter("id", reportesFilters.getIdMentor());

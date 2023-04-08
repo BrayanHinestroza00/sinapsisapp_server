@@ -3,13 +3,14 @@ package uao.edu.co.sinapsis_app.dao.interfaces;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
-import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
-import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
-import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresView;
+import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
+import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public interface IRutaInnovacionDAO {
 
     boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception;
 
-    RutaProyectoEmprendimiento obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento);
+    AsesoramientosView obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento);
 
     List<ActividadRuta> obtenerActividadesEtapa();
 
@@ -52,4 +53,6 @@ public interface IRutaInnovacionDAO {
     List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
 
     List<EmprendedoresView> obtenerEmprendedores();
+
+    List<MentoresView> obtenerMentores();
 }

@@ -18,6 +18,8 @@ public interface IEmprendedorDAO {
 
     List<AsignaturaEmprendedor> obtenerAsignaturasEmprendedor(long idUsuario);
 
+    List<Emprendimiento> obtenerEmprendimientos(String idEmprendedor);
+
     List<Emprendimiento> obtenerEmprendimiento(String idEmprendimiento);
 
     List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento);

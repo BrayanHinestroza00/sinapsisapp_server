@@ -20,12 +20,19 @@ public class Constants {
     public static final int T_SINAPSIS_EMPRENDEDORES_PRIMERA_VEZ_FALSE = 0;
     public static final long T_SINAPSIS_ROLES_EMPRENDEDOR = 3L;
     public static final String T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO = "PENDIENTE";
+    public static final String T_SINAPSIS_RUT_EMPRENDIMIENTO_ESTADO_COMPLETADO = "COMPLETADO";
     public static final String T_SINAPSIS_PROY_EMPRENDIMIENTO_DEFAULT_ESTADO = "PENDIENTE";
     public static final String T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO = "APROBADO";
+
+    public static final String T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO = "EN CURSO";
+    public static final String T_SINAPSIS_ASESORAMIENTO_ESTADO_SIN_MENTOR = "SIN_MENTOR";
+    public static final String T_SINAPSIS_ASESORAMIENTO_ESTADO_FINALIZADA = "FINALIZADA";
 
     /**
      * APP States
      */
+    public static final int MAX_ETAPA_RUTA_INNOVACION_EMPRENDIMIENTO = 4;
+
     public static final int TIPO_CONTACTO_ESTUDIANTE = 1;
     public static final int TIPO_CONTACTO_EGRESADO = 2;
     public static final int TIPO_CONTACTO_COLABORADOR = 3;

@@ -3,11 +3,16 @@ package uao.edu.co.sinapsis_app.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.beans.AuthUser;
-import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.beans.SignUpExterno;
 import uao.edu.co.sinapsis_app.beans.SignUpIntegration;
+import uao.edu.co.sinapsis_app.dto.request.ActualizarContrasenaDTO;
+import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.services.interfaces.IAuthService;
 
 @RestController
@@ -73,6 +78,29 @@ public class AuthController {
             e.printStackTrace();
             System.out.println(e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/actualizar_contrasena", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> actualizarContrasena(@RequestBody ActualizarContrasenaDTO actualizarContrasenaDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            response = authService.actualizarContrasena(actualizarContrasenaDTO);
+            if (response.getCode() == 200){
+                response.setCode(0);
+                return new ResponseEntity<>(response, null, HttpStatus.OK);
+            }else if (response.getCode() == 409){
+                response.setCode(0);
+                return new ResponseEntity<>(response, null, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

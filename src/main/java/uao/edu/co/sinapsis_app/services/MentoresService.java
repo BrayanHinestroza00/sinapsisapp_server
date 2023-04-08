@@ -3,13 +3,17 @@ package uao.edu.co.sinapsis_app.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IMentoresDAO;
-import uao.edu.co.sinapsis_app.dto.response.HorarioMentorResponseDTO;
+import uao.edu.co.sinapsis_app.dto.HorarioMentorDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.FinalizarAcompanamientoDTO;
+import uao.edu.co.sinapsis_app.dto.request.HorarioMentorRequestDTO;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
 import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,13 +42,13 @@ public class MentoresService implements IMentoresService {
     }
 
     @Override
-    public List<AsesoramientosView> obtenerEmprendedoresPorMentor(Long idMentor) {
-        return mentoresDAO.obtenerEmprendedoresPorMentor(idMentor);
+    public List<AsesoramientosView> obtenerEmprendedoresPorMentor(EmprendedoresAsignadosFilterDTO emprendedoresAsignadosFilterDTO) {
+        return mentoresDAO.obtenerEmprendedoresPorMentor(emprendedoresAsignadosFilterDTO);
     }
 
     @Override
-    public HorarioMentorResponseDTO obtenerHorarioMentor(Long idMentor) {
-        HorarioMentorResponseDTO horarioMentorDTO = new HorarioMentorResponseDTO();
+    public HorarioMentorDTO obtenerHorarioMentor(Long idMentor) {
+        HorarioMentorDTO horarioMentorDTO = new HorarioMentorDTO();
         List<HorarioMentor> horariosMentor = mentoresDAO.obtenerHorarioMentor(idMentor);
 
         if (horariosMentor.size() > 0) {
@@ -88,5 +92,39 @@ public class MentoresService implements IMentoresService {
     @Override
     public List<Mentor> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
         return mentoresDAO.obtenerMentoresPorEtapaRutaInnovacion(idEtapaRutaInnovacion);
+    }
+
+    @Override
+    public boolean actualizarHorarioMentor(HorarioMentorRequestDTO horarioMentorDTO) throws Exception {
+        List<HorarioMentor> horarios = new ArrayList<>();
+
+        if (horarioMentorDTO.getHorarioMentor().getLunes() != null) {
+            horarios.addAll(horarioMentorDTO.getHorarioMentor().getLunes());
+        }
+        if (horarioMentorDTO.getHorarioMentor().getMartes() != null) {
+            horarios.addAll(horarioMentorDTO.getHorarioMentor().getMartes());
+        }
+        if (horarioMentorDTO.getHorarioMentor().getMiercoles() != null) {
+            horarios.addAll(horarioMentorDTO.getHorarioMentor().getMiercoles());
+        }
+        if (horarioMentorDTO.getHorarioMentor().getJueves() != null) {
+            horarios.addAll(horarioMentorDTO.getHorarioMentor().getJueves());
+        }
+        if (horarioMentorDTO.getHorarioMentor().getViernes() != null) {
+            horarios.addAll(horarioMentorDTO.getHorarioMentor().getViernes());
+        }
+        if (horarioMentorDTO.getHorarioMentor().getSabado() != null) {
+            horarios.addAll(horarioMentorDTO.getHorarioMentor().getSabado());
+        }
+
+        return mentoresDAO.actualizarHorarioMentor(horarioMentorDTO.getIdMentor(), horarios);
+    }
+
+    @Override
+    public boolean finalizarAcompanamiento(FinalizarAcompanamientoDTO finalizarAcompanamientoDTO) throws Exception {
+        return mentoresDAO.finalizarAcompanamiento(
+                finalizarAcompanamientoDTO.getIdRutaProyectoEmprendimiento(),
+                finalizarAcompanamientoDTO.getIdMentorCrea(),
+                finalizarAcompanamientoDTO.getObservaciones());
     }
 }

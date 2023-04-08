@@ -3,9 +3,21 @@ package uao.edu.co.sinapsis_app.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
-import uao.edu.co.sinapsis_app.model.*;
+import uao.edu.co.sinapsis_app.model.Anuncio;
+import uao.edu.co.sinapsis_app.model.Asignatura;
+import uao.edu.co.sinapsis_app.model.Departamento;
+import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
+import uao.edu.co.sinapsis_app.model.Facultad;
+import uao.edu.co.sinapsis_app.model.Municipio;
+import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
+import uao.edu.co.sinapsis_app.model.RedSocial;
+import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 
@@ -258,6 +270,29 @@ public class AppController {
         ResponseDTO response = new ResponseDTO();
         try {
             List<EtapaRutaInnovacion> data = appService.obtenerEtapasRutaInnovacionEmprendimiento();
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(1);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/anuncios", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerAnuncios(){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<Anuncio> data = appService.obtenerAnuncios();
 
             if (data.size() > 0) {
                 response.setCode(1);

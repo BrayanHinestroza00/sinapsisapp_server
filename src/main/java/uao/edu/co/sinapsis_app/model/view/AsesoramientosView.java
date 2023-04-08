@@ -6,10 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "V_SINAPSIS_EMPRENDEDORES")
+@Table(name = "V_SINAPSIS_ASESORAMIENTOS")
 public class AsesoramientosView {
     @Id
     @Column(name = "ID_ASESORAMIENTO")
@@ -30,8 +31,22 @@ public class AsesoramientosView {
     private Long idProyectoEmprendimiento;
     @Column(name = "ID_EMPRENDIMIENTO")
     private Long idEmprendimiento;
+    @Column(name = "ID_MENTOR")
+    private Long idMentor;
     @Column(name = "CORREO_PERSONAL")
     private String correoPersonal;
     @Column(name = "CORREO_INSTITUCIONAL")
     private String correoInstitucional;
+
+    //T_SINAPSIS_RUT_EMPRENDIMIENTO
+    @Column(name = "ID_RUTA_EMPRENDI")
+    private Long idRutaProyEmprendimiento;
+    @Column(name = "ID_ETAPA")
+    private Long idEtapa;
+    @Column(name = "ESTADO_RUTA_EMPRENDI")
+    private String estadoRuta;
+    @Column(name = "FECHA_ESTADO_RUTA_EMPRENDI")
+    private Date fechaEstadoRuta;
+    @Column(name = "CREATED_BY")
+    private Long creadoPor;
 }

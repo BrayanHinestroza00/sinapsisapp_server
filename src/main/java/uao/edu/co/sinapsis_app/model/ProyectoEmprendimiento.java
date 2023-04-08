@@ -3,7 +3,6 @@ package uao.edu.co.sinapsis_app.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

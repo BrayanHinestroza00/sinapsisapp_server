@@ -1,4 +1,4 @@
-package uao.edu.co.sinapsis_app.dto.response;
+package uao.edu.co.sinapsis_app.dto;
 
 import lombok.Data;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class HorarioMentorResponseDTO {
+public class HorarioMentorDTO {
     private List<HorarioMentor> lunes;
     private List<HorarioMentor> martes;
     private List<HorarioMentor> miercoles;

@@ -11,13 +11,14 @@ import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.EtapaRutaEmprendimiento;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
-import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
-import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
-import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresView;
+import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
+import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 
 import javax.persistence.EntityManager;
@@ -99,12 +100,12 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     }
 
     @Override
-    public RutaProyectoEmprendimiento obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
-        String sql = "SELECT * FROM T_SINAPSIS_RUT_EMPRENDIMIENTO " +
-                "WHERE ESTADO_RUTA = 'PENDIENTE' AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
-        Query query = entityManager.createNativeQuery(sql, RutaProyectoEmprendimiento.class);
+    public AsesoramientosView obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_ASESORAMIENTOS " +
+                "WHERE (ESTADO_RUTA_EMPRENDI = 'PENDIENTE' or ESTADO_RUTA_EMPRENDI= 'PENDIENTE_APROBAR') AND ID_PROY_EMPRENDIMIENTO = " + idProyectoEmprendimiento;
+        Query query = entityManager.createNativeQuery(sql, AsesoramientosView.class);
 
-        List<RutaProyectoEmprendimiento> resultados = query.getResultList();
+        List<AsesoramientosView> resultados = query.getResultList();
 
         if (resultados.size() > 0) {
             return resultados.get(0);
@@ -161,7 +162,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<SubActividadesEmprendedorView> obtenerSubActividadesEmprendedor(Long idProyectoEmprendimiento, Long idRutaEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_ACT_EMPRENDEDOR \n" +
-                "    WHERE PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento + "\n" +
+                "    WHERE ESTADO_ACTIVIDAD = 'COMPLETADA' AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento + "\n" +
                 "    AND RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
         Query query = entityManager.createNativeQuery(sql, SubActividadesEmprendedorView.class);
 
@@ -176,7 +177,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ActividadesEmprendedorView> obtenerActividadesEmprendedor(Long idRutaEmprendimiento) {
         String sql = "SELECT * FROM T_SINAPSIS_ACT_RUTA_EMP \n" +
-                "    WHERE RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
+                "    WHERE ESTADO = 'COMPLETADA' AND RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
 
         Query query = entityManager.createNativeQuery(sql, ActividadesEmprendedorView.class);
 
@@ -308,7 +309,8 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     public List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
                 "WHERE ID_MENTOR = " + idMentor + " " +
-                "AND FECHA_CONSULTORIA >= SYSDATE ORDER BY FECHA_CONSULTORIA DESC";
+                "AND TRUNC(FECHA_CONSULTORIA) >= TRUNC(SYSDATE) " +
+                "AND ESTADO_CONSULTORIA = 'PROGRAMADA' ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
@@ -328,6 +330,21 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         Query query = entityManager.createNativeQuery(sql, EmprendedoresView.class);
 
         List<EmprendedoresView> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados;
+        }
+        return null;
+    }
+
+    @Override
+    public List<MentoresView> obtenerMentores() {
+        String sql = "SELECT * FROM v_sinapsis_mentores " +
+                "ORDER BY NOMBRES DESC, APELLIDOS DESC";
+
+        Query query = entityManager.createNativeQuery(sql, MentoresView.class);
+
+        List<MentoresView> resultados = query.getResultList();
 
         if (resultados.size() > 0) {
             return resultados;

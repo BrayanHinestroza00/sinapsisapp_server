@@ -2,9 +2,9 @@ package uao.edu.co.sinapsis_app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
-import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
@@ -66,6 +66,11 @@ public class EmprendedorService implements IEmprendedorService {
             emprendedorUpdateDTO.setFotoPerfilURL(filePathFotoPerfil);
         }
         return emprendedorDAO.actualizarEmprendedor(emprendedorUpdateDTO);
+    }
+
+    @Override
+    public List<Emprendimiento> obtenerEmprendimientos(String idEmprendedor) {
+        return emprendedorDAO.obtenerEmprendimientos(idEmprendedor);
     }
 
     @Override

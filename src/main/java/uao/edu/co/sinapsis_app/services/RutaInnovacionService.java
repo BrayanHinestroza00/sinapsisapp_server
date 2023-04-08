@@ -6,13 +6,14 @@ import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
-import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
-import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
-import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresView;
+import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
+import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
 
@@ -52,7 +53,7 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     }
 
     @Override
-    public RutaProyectoEmprendimiento obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
+    public AsesoramientosView obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
         return rutaInnovacionDAO.obtenerEtapaProyectoEmprendimiento(idProyectoEmprendimiento);
     }
 
@@ -137,5 +138,10 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     @Override
     public List<EmprendedoresView> obtenerEmprendedores() {
         return rutaInnovacionDAO.obtenerEmprendedores();
+    }
+
+    @Override
+    public List<MentoresView> obtenerMentores() {
+        return rutaInnovacionDAO.obtenerMentores();
     }
 }

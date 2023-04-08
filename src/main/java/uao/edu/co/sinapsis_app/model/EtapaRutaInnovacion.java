@@ -13,7 +13,9 @@ import javax.persistence.Table;
 public class EtapaRutaInnovacion {
     @Id
     @Column(name = "ID")
-    private String id;
+    private Long id;
     @Column(name = "NOMBRE")
     private String nombre;
+    @Column(name = "ORDEN_ETAPA")
+    private Long ordenEtapa;
 }

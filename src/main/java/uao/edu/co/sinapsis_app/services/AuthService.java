@@ -2,18 +2,33 @@ package uao.edu.co.sinapsis_app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uao.edu.co.sinapsis_app.beans.*;
+import uao.edu.co.sinapsis_app.beans.AuthUser;
+import uao.edu.co.sinapsis_app.beans.AuthenthicatedUser;
+import uao.edu.co.sinapsis_app.beans.SignUpExterno;
+import uao.edu.co.sinapsis_app.beans.SignUpIntegration;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAuthDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorSignUpDTO;
+import uao.edu.co.sinapsis_app.dto.request.ActualizarContrasenaDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
-import uao.edu.co.sinapsis_app.model.*;
+import uao.edu.co.sinapsis_app.model.IntegrationTable;
+import uao.edu.co.sinapsis_app.model.Usuario;
+import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 import uao.edu.co.sinapsis_app.services.interfaces.IAuthService;
 
 import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.AppUtil.stringToDateFormatter;
-import static uao.edu.co.sinapsis_app.util.Constants.*;
+import static uao.edu.co.sinapsis_app.util.Constants.APP_DATE_OUT_FORMAT;
+import static uao.edu.co.sinapsis_app.util.Constants.APP_INTEGRATION_DATE_INPUT_FORMAT;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_COLABORADOR;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_EGRESADO;
+import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_ESTUDIANTE;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_EMPRENDEDORES_DEFAULT_PRIMERA_VEZ;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_EMPRENDEDORES_DEFAULT_TIPO_CONTACTO;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_USUARIOS_DEFAULT_ESTADO;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_USUARIOS_DEFAULT_ESTADO_CUENTA;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_USUARIOS_DEFAULT_TTO_DATOS_PERSONALES_INTEGRATION;
 
 @Service
 public class AuthService implements IAuthService {
@@ -235,6 +250,47 @@ public class AuthService implements IAuthService {
         boolean registrado = authDAO.registrarEmprendedor(emprendedor);
 
         if (registrado) {
+            response.setCode(200);
+            response.setMessage("OK");
+            return response;
+        } else {
+            response.setCode(500);
+            response.setMessage("Error desconocido");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDTO actualizarContrasena(ActualizarContrasenaDTO actualizarContrasenaDTO) {
+        ResponseDTO response = new ResponseDTO();
+
+        if (actualizarContrasenaDTO.getIdUsuario() == null
+                || actualizarContrasenaDTO.getNewPassword() == null
+                || actualizarContrasenaDTO.getOldPassword() == null) {
+            response.setCode(409);
+            response.setMessage("Todos los campos son obligatorios");
+            return response;
+        }
+
+        Usuario usuarioActualizado = authDAO.buscarUsuarioById( actualizarContrasenaDTO.getIdUsuario());
+
+        if (usuarioActualizado == null) {
+            response.setCode(409);
+            response.setMessage("El usuario NO se encuentra REGISTRADO");
+            return response;
+        }
+
+        if (!usuarioActualizado.getPassword().equals(actualizarContrasenaDTO.getOldPassword())) {
+            response.setCode(409);
+            response.setMessage("Fallo al verificar la(s) contraseña(s) ingresada(s)");
+            return response;
+        }
+
+        usuarioActualizado.setPassword(actualizarContrasenaDTO.getNewPassword());
+
+        boolean actualizado = authDAO.actualizarContrasena(usuarioActualizado);
+
+        if (actualizado) {
             response.setCode(200);
             response.setMessage("OK");
             return response;
