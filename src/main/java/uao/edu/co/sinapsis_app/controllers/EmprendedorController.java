@@ -59,14 +59,12 @@ public class EmprendedorController {
     }
 
     @CrossOrigin( origins = "http://localhost:3000")
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO> actualizarEmprendedor(@ModelAttribute EmprendedorUpdateDTO emprendedorUpdateDTO, @RequestBody(required = false) EmprendedorUpdateDTO empDTO ) {
+    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> actualizarEmprendedor(@ModelAttribute EmprendedorUpdateDTO emprendedorUpdateDTO) {
         ResponseDTO response = new ResponseDTO();
         try {
             boolean esActualizado;
-            if (empDTO.getIdEmprendedor() != null) {
-                esActualizado = emprendedorService.actualizarEmprendedor(empDTO);
-            } else if (emprendedorUpdateDTO.getIdEmprendedor() != null) {
+            if (emprendedorUpdateDTO.getIdEmprendedor() != null) {
                 esActualizado = emprendedorService.actualizarEmprendedor(emprendedorUpdateDTO);
             }else {
                 esActualizado = false;
@@ -75,6 +73,38 @@ public class EmprendedorController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
 
+            if (esActualizado) {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("EMPRENDEDOR NO ENCONTRADO");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> actualizarEmprendedorJson(@RequestBody(required = false) EmprendedorUpdateDTO empDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esActualizado;
+            if (empDTO.getIdEmprendedor() != null) {
+                esActualizado = emprendedorService.actualizarEmprendedor(empDTO);
+            } else {
+                esActualizado = false;
+                response.setCode(HttpStatus.NOT_ACCEPTABLE.value());
+                response.setMessage("Parametros no validos");
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+            }
 
             if (esActualizado) {
                 response.setCode(STATUS_OK);
@@ -102,7 +132,7 @@ public class EmprendedorController {
             boolean esRegistrado = emprendedorService.registrarPrimeraAtencion(primeraAtencion);
 
             if (esRegistrado) {
-                response.setCode(STATUS_OK);
+                response.setCode(0);
                 response.setMessage("OK");
                 return new ResponseEntity<>(response, HttpStatus.OK);
 

@@ -1,6 +1,12 @@
 package uao.edu.co.sinapsis_app.dao.interfaces;
 
+import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
@@ -16,10 +22,10 @@ import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 import java.util.List;
 
 public interface IRutaInnovacionDAO {
-    List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento();
+    List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento(SolicitudesPEFilterDTO solicitudesPEFilterDTO);
 
     List<PrimeraAtencionView> detallePrimeraAtencion(Integer idProyectoEmprendimiento);
-    List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes();
+    List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes(SolicitudesPAFilterDTO solicitudesPAFilterDTO);
 
     boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception;
 
@@ -39,7 +45,7 @@ public interface IRutaInnovacionDAO {
 
     List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento, String tipoBusqueda);
 
-    List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento);
+    List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento, boolean historico);
 
     List<ConsultoriasView> obtenerConsultoria(Long idTarea);
 
@@ -52,7 +58,13 @@ public interface IRutaInnovacionDAO {
     List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor);
     List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
 
-    List<EmprendedoresView> obtenerEmprendedores();
+    List<EmprendedoresView> obtenerEmprendedores(EmprendedoresAdmFilterDTO emprendedoresAdmFilterDTO);
 
     List<MentoresView> obtenerMentores();
+
+    boolean registrarTareaEmprendedor(CrearTareaDTO crearTareaDTO) throws Exception;
+
+    boolean registrarEntregaTareaEmprendedor(EntregaTareaDTO entregaTareaDTO) throws Exception;
+
+    boolean registrarCalificacionTareaEmprendedor(CalificarTareaDTO calificarTareaDTO) throws Exception;
 }

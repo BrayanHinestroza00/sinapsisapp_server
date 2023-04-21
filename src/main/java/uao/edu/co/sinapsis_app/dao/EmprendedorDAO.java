@@ -23,7 +23,6 @@ import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -244,6 +243,10 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             primeraAtencion.setDescubrioSinapsis(primeraAtencionDTO.getDescubrioSinapsis());
         }
 
+        if (primeraAtencionDTO.getCualOtroDescubrioSinapsis() != null) {
+            primeraAtencion.setCualOtroDescubrioSinapsis(primeraAtencionDTO.getCualOtroDescubrioSinapsis());
+        }
+
         if (primeraAtencionDTO.getFileAutodiagnosticoURL() != null) {
             primeraAtencion.setFileAutodiagnosticoURL(primeraAtencionDTO.getFileAutodiagnosticoURL());
         }
@@ -401,7 +404,6 @@ public class EmprendedorDAO implements IEmprendedorDAO {
 
     @Override
     public List<Emprendimiento> obtenerEmprendimientos(String idEmprendedor) {
-        List<Emprendimiento> datos = new ArrayList<>();
         String sql = "SELECT \n" +
                 "    TE.* \n" +
                 "FROM T_SINAPSIS_EMPRENDIMIENTOS TE \n" +
@@ -410,9 +412,7 @@ public class EmprendedorDAO implements IEmprendedorDAO {
 
         Query query = entityManager.createNativeQuery(sql, Emprendimiento.class);
 
-        datos = (List<Emprendimiento>) query.getResultList();
-
-        return datos;
+        return (List<Emprendimiento>) query.getResultList();
     }
 
     @Override

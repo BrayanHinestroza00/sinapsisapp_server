@@ -1,5 +1,6 @@
 package uao.edu.co.sinapsis_app.dao.interfaces;
 
+import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.model.Anuncio;
 import uao.edu.co.sinapsis_app.model.Asignatura;
 import uao.edu.co.sinapsis_app.model.Departamento;
@@ -8,10 +9,12 @@ import uao.edu.co.sinapsis_app.model.Facultad;
 import uao.edu.co.sinapsis_app.model.Municipio;
 import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
 import uao.edu.co.sinapsis_app.model.RedSocial;
+import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface IAppDAO {
@@ -52,4 +55,10 @@ public interface IAppDAO {
     List<EtapaRutaInnovacion> obtenerEtapasRutaInnovacionEmprendimiento();
 
     List<Anuncio> obtenerAnuncios();
+
+    List<TipoContacto> getAllTipoContacto();
+
+    List<TipoContacto> getTipoContactoById(long idTipoContacto);
+
+    boolean registrarAnuncio(PublicarAnuncioDTO anuncioDTO) throws ParseException;
 }

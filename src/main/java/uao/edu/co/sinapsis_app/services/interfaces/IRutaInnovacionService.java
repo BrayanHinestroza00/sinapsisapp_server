@@ -1,6 +1,12 @@
 package uao.edu.co.sinapsis_app.services.interfaces;
 
+import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
@@ -16,9 +22,9 @@ import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 import java.util.List;
 
 public interface IRutaInnovacionService {
-    List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento();
+    List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento(SolicitudesPEFilterDTO solicitudesPEFilterDTO);
     PrimeraAtencionView detallePrimeraAtencion(Integer idProyectoEmprendimiento);
-    List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes();
+    List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes(SolicitudesPAFilterDTO solicitudesPAFilterDTO);
 
     boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception;
 
@@ -49,7 +55,13 @@ public interface IRutaInnovacionService {
     List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor);
     List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
 
-    List<EmprendedoresView> obtenerEmprendedores();
+    List<EmprendedoresView> obtenerEmprendedores(EmprendedoresAdmFilterDTO emprendedoresAdmFilterDTO);
 
     List<MentoresView> obtenerMentores();
+
+    boolean registrarTareaEmprendedor(CrearTareaDTO crearTareaDTO) throws Exception;
+
+    boolean registrarEntregaTareaEmprendedor(EntregaTareaDTO entregaTareaDTO) throws Exception;
+
+    boolean registrarCalificacionTareaEmprendedor(CalificarTareaDTO calificarTareaDTO) throws Exception;
 }

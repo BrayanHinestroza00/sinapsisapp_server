@@ -19,6 +19,7 @@ public class Constants {
     public static final int T_SINAPSIS_EMPRENDEDORES_DEFAULT_PRIMERA_VEZ = 1;
     public static final int T_SINAPSIS_EMPRENDEDORES_PRIMERA_VEZ_FALSE = 0;
     public static final long T_SINAPSIS_ROLES_EMPRENDEDOR = 3L;
+    public static final long T_SINAPSIS_ROLES_MENTOR = 2L;
     public static final String T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO = "PENDIENTE";
     public static final String T_SINAPSIS_RUT_EMPRENDIMIENTO_ESTADO_COMPLETADO = "COMPLETADO";
     public static final String T_SINAPSIS_PROY_EMPRENDIMIENTO_DEFAULT_ESTADO = "PENDIENTE";
@@ -28,11 +29,18 @@ public class Constants {
     public static final String T_SINAPSIS_ASESORAMIENTO_ESTADO_SIN_MENTOR = "SIN_MENTOR";
     public static final String T_SINAPSIS_ASESORAMIENTO_ESTADO_FINALIZADA = "FINALIZADA";
 
+    public static final String T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE = "PENDIENTE";
+    public static final String T_SINAPSIS_TAREAS_ESTADO_ENTREGA_ENTREGADA = "ENTREGADA";
+    public static final String T_SINAPSIS_TAREAS_ESTADO_ENTREGA_CALIFICADA = "CALIFICADA";
+    public static final String T_SINAPSIS_TAREAS_ESTADO_ENTREGA_VENCIDA = "VENCIDA";
+
     /**
      * APP States
      */
+    public static final String CONTEXT_PATH_GEN_ANUNCIOS = "anuncios\\";
+    public static final String CONTEXT_PATH_GEN_ANUNCIOS_V2 = "D:\\Universidad\\TRABAJO DE GRADO\\sinapsis_app\\src\\main\\resources\\static\\anuncios\\";
+    public static final String CONTEXT_PATH_ANUNCIOS = "/anuncios/";
     public static final int MAX_ETAPA_RUTA_INNOVACION_EMPRENDIMIENTO = 4;
-
     public static final int TIPO_CONTACTO_ESTUDIANTE = 1;
     public static final int TIPO_CONTACTO_EGRESADO = 2;
     public static final int TIPO_CONTACTO_COLABORADOR = 3;

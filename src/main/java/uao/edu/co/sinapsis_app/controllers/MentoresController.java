@@ -13,10 +13,12 @@ import uao.edu.co.sinapsis_app.dto.HorarioMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.FinalizarAcompanamientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.HorarioMentorRequestDTO;
+import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresView;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
 
 import javax.validation.Valid;
@@ -35,32 +37,31 @@ public class MentoresController {
     @CrossOrigin( origins = "http://localhost:3000")
     @RequestMapping(value = "", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
     public ResponseEntity<ResponseDTO> obtenerMentores(
-            @RequestParam(required = false) Long idMentor,
-            @RequestParam(required = false) Long idEtapaRutaInnovacion){
+            @Valid MentoresAdmFilterDTO mentoresAdmFilterDTO){
 
         ResponseDTO response = new ResponseDTO();
         try {
-            List<Mentor> data = new ArrayList<>();
+            List<MentoresView> data = new ArrayList<>();
 
-            if ((idMentor != null && idEtapaRutaInnovacion != null) )  {
+            if ((mentoresAdmFilterDTO.getIdMentor() != null && mentoresAdmFilterDTO.getIdEtapaRutaInnovacion() != null) )  {
                 response.setCode(0);
                 response.setMessage("Datos no validos");
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             } else {
 
-                if (idMentor != null) {
-                    data =mentoresService.obtenerMentoresPorId(idMentor);
-                } else if (idEtapaRutaInnovacion != null) {
-                    data =mentoresService.obtenerMentoresPorEtapaRutaInnovacion(idEtapaRutaInnovacion);
+                if (mentoresAdmFilterDTO.getIdMentor() != null) {
+                    data =mentoresService.obtenerMentoresPorId(mentoresAdmFilterDTO.getIdMentor());
+                } else if (mentoresAdmFilterDTO.getIdEtapaRutaInnovacion() != null) {
+                    data =mentoresService.obtenerMentoresPorEtapaRutaInnovacion(mentoresAdmFilterDTO.getIdEtapaRutaInnovacion());
                 } else {
-                    data =mentoresService.obtenerMentores();
+                    data =mentoresService.obtenerMentores(mentoresAdmFilterDTO);
                 }
 
                 if (data != null && data.size() > 0) {
                     response.setCode(1);
                     response.setResponse(data);
                 }else {
-                    response.setCode(1);
+                    response.setCode(0);
                     response.setMessage("Sin datos");
                 }
                 return new ResponseEntity<>(response, HttpStatus.OK);

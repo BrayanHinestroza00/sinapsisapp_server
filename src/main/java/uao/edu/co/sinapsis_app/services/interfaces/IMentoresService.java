@@ -4,9 +4,11 @@ import uao.edu.co.sinapsis_app.dto.HorarioMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.FinalizarAcompanamientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.HorarioMentorRequestDTO;
+import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresView;
 
 import java.util.List;
 
@@ -23,11 +25,11 @@ public interface IMentoresService {
 
     HorarioMentorDTO obtenerHorarioMentor(Long idMentor);
 
-    List<Mentor> obtenerMentores();
+    List<MentoresView> obtenerMentores(MentoresAdmFilterDTO mentoresAdmFilterDTO);
 
-    List<Mentor> obtenerMentoresPorId(Long idMentor);
+    List<MentoresView> obtenerMentoresPorId(Long idMentor);
 
-    List<Mentor> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion);
+    List<MentoresView> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion);
 
     boolean actualizarHorarioMentor(HorarioMentorRequestDTO horarioMentorDTO) throws Exception;
 

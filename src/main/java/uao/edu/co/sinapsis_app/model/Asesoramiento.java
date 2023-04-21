@@ -4,7 +4,10 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -13,6 +16,8 @@ import java.util.Date;
 @Table(name = "T_SINAPSIS_ASESORAMIENTO")
 public class Asesoramiento {
     @Id
+    @SequenceGenerator(name = "SEC_T_SINAPSIS_ASESORAMIENTO", sequenceName = "SEC_T_SINAPSIS_ASESORAMIENTO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEC_T_SINAPSIS_ASESORAMIENTO")
     @Column(name = "ID_ASESORAMIENTO")
     private Long idAsesoramiento;
     @Column(name = "FECHA_INICIO")

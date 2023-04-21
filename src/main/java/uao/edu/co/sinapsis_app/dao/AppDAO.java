@@ -2,7 +2,10 @@ package uao.edu.co.sinapsis_app.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAppDAO;
+import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.model.Anuncio;
 import uao.edu.co.sinapsis_app.model.Asignatura;
 import uao.edu.co.sinapsis_app.model.Departamento;
@@ -11,6 +14,7 @@ import uao.edu.co.sinapsis_app.model.Facultad;
 import uao.edu.co.sinapsis_app.model.Municipio;
 import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
 import uao.edu.co.sinapsis_app.model.RedSocial;
+import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
@@ -18,6 +22,8 @@ import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -171,8 +177,44 @@ public class AppDAO implements IAppDAO {
                 "FROM T_SINAPSIS_ANUNCIOS \n" +
                 "WHERE ESTADO = 1\n" +
                 "        AND ( PERMANENTE = 1 OR FECHA_HASTA >= SYSDATE ) \n" +
-                "ORDER BY CREATED_AT ASC";
+                "ORDER BY CREATED_AT DESC";
         Query q = entityManager.createNativeQuery(sql, Anuncio.class);
         return (List<Anuncio>) q.getResultList();
+    }
+
+    @Override
+    public List<TipoContacto> getAllTipoContacto() {
+        String sql = "SELECT * FROM T_SINAPSIS_TIPOS_CONTACTO";
+        Query q = entityManager.createNativeQuery(sql, TipoContacto.class);
+        return (List<TipoContacto>) q.getResultList();
+    }
+
+    @Override
+    public List<TipoContacto> getTipoContactoById(long idTipoContacto) {
+        String sql = "SELECT * FROM T_SINAPSIS_TIPOS_CONTACTO WHERE id = " + idTipoContacto;
+        Query q = entityManager.createNativeQuery(sql, TipoContacto.class);
+        return (List<TipoContacto>) q.getResultList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean registrarAnuncio(PublicarAnuncioDTO anuncioDTO) throws ParseException {
+        Anuncio anuncio = new Anuncio();
+
+        anuncio.setDescripcion(anuncioDTO.getDescripcionAnuncio());
+        anuncio.setUrlAnuncio(anuncioDTO.getFlyerAnuncioURL());
+        anuncio.setEstado(1);
+        if (anuncioDTO.getFechaHasta() != null) {
+            anuncio.setFechaHasta(anuncioDTO.getFechaHasta());
+        }
+        anuncio.setAnuncioPermanente(anuncioDTO.getPermanente());
+        anuncio.setTitulo(anuncioDTO.getTituloAnuncio());
+        anuncio.setFechaCreacion(new Date());
+        anuncio.setFechaModificacion(new Date());
+
+        entityManager.persist(anuncio);
+        entityManager.flush();
+
+        return true;
     }
 }

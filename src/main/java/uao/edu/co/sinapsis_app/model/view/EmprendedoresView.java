@@ -27,6 +27,8 @@ public class EmprendedoresView {
     private String nombres;
     @Column(name = "APELLIDOS")
     private String apellidos;
+    @Column(name = "NOMBRE_COMPLETO")
+    private String nombreCompleto;
     @Column(name = "CORREO_INSTITUCIONAL")
     private String correoInstitucional;
     @Column(name = "CORREO_PERSONAL")

@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "V_SINAPSIS_SOLICITUDES_PA")
+@Table(name = "V_SINAPSIS_LISTADO_PE")
 @Data
 public class ListadoProyectoEmprendimientoView {
     @Id
@@ -18,6 +18,8 @@ public class ListadoProyectoEmprendimientoView {
     private Long emprendimientoId;
     @Column(name = "EMPRENDEDORES_ID")
     private Long emprendedorId;
+    @Column(name = "TIPOS_DOCUMENTO_ID")
+    private Long tipoDocumentoId;
     @Column(name = "CORREO_EMPRENDEDOR")
     private String correoEmprendedor;
     @Column(name = "DOCUMENTO_EMPRENDEDOR")
@@ -38,4 +40,6 @@ public class ListadoProyectoEmprendimientoView {
     private String etapaRuta;
     @Column(name = "ESTADO_RUTA")
     private String estadoRuta;
+    @Column(name = "ETAPAS_RUTA_ID")
+    private String idEstadoRuta;
 }

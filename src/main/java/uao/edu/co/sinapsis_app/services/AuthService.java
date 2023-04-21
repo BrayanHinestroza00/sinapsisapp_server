@@ -6,11 +6,14 @@ import uao.edu.co.sinapsis_app.beans.AuthUser;
 import uao.edu.co.sinapsis_app.beans.AuthenthicatedUser;
 import uao.edu.co.sinapsis_app.beans.SignUpExterno;
 import uao.edu.co.sinapsis_app.beans.SignUpIntegration;
+import uao.edu.co.sinapsis_app.beans.SignUpIntegrationMentor;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAuthDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorSignUpDTO;
+import uao.edu.co.sinapsis_app.dto.MentorSignUpDTO;
 import uao.edu.co.sinapsis_app.dto.request.ActualizarContrasenaDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.IntegrationTable;
+import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.Usuario;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
@@ -126,10 +129,6 @@ public class AuthService implements IAuthService {
 
         EmprendedorSignUpDTO emprendedor  = new EmprendedorSignUpDTO();
 
-        /**
-         * Pendiente de Agregar Roles de Usuario
-         */
-
         // Datos de usuario
         emprendedor.setNumeroDocumento(usuarioIntegration.getNumeroDocumento());
         emprendedor.setNombres(usuarioIntegration.getNombres());
@@ -189,6 +188,84 @@ public class AuthService implements IAuthService {
 
         boolean registrado = authDAO.registrarEmprendedor(emprendedor);
 
+        if (registrado) {
+            response.setCode(200);
+            response.setMessage("OK");
+            return response;
+        } else {
+            response.setCode(500);
+            response.setMessage("Error desconocido");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDTO signUpMentor(SignUpIntegrationMentor signUpMentor) throws Exception {
+        ResponseDTO response = new ResponseDTO();
+
+        // Busca si el usuario/documento hace parte de la Comunidad UAO
+        IntegrationTable usuarioIntegration = authDAO.findUsuarioByUserNameInITB(
+                signUpMentor.getUsuario()
+        );
+
+        if (usuarioIntegration == null) {
+            usuarioIntegration = authDAO.findUsuarioByDocumentoInITB(signUpMentor.getTipoDocumento(), signUpMentor.getNumeroDocumento());
+            if (usuarioIntegration == null){
+                response.setCode(400);
+                response.setMessage("El usuario y/o documento NO se encuentra registrado como parte de la COMUNIDAD UAO");
+                return response;
+            }
+        }
+
+        if ((usuarioIntegration.getTipoDocumento() != signUpMentor.getTipoDocumento()) ||
+                !(usuarioIntegration.getNumeroDocumento().equalsIgnoreCase(signUpMentor.getNumeroDocumento()))) {
+            response.setCode(400);
+            response.setMessage("El tipo de documento y/o numero documento ingresado no coincide con el usuario");
+            return response;
+        }
+
+        // Busca si el usuario se encuentra registrado dentro de Sinapsis APP
+        Usuario usuarioRegistrado = authDAO.buscarUsuario(
+                signUpMentor.getTipoDocumento(),
+                signUpMentor.getNumeroDocumento(),
+                signUpMentor.getUsuario()
+        );
+
+        if (usuarioRegistrado != null) {
+            if (!usuarioRegistrado.getUsername().equalsIgnoreCase(usuarioIntegration.getUsername())) {
+                response.setCode(409);
+                response.setMessage("El usuario y/o documento YA se encuentra asociado a un usuario DIFERENTE");
+            }else {
+                response.setCode(409);
+                response.setMessage("El usuario y/o documento YA se encuentra REGISTRADO");
+            }
+
+            return response;
+        }
+
+        MentorSignUpDTO mentorSignUpDTO = new MentorSignUpDTO();
+
+        // Datos de usuario
+        mentorSignUpDTO.setNumeroDocumento(usuarioIntegration.getNumeroDocumento());
+        mentorSignUpDTO.setNombres(usuarioIntegration.getNombres());
+        mentorSignUpDTO.setApellidos(usuarioIntegration.getApellidos());
+        mentorSignUpDTO.setCorreoInstitucional(usuarioIntegration.getCorreoInstitucional());
+        mentorSignUpDTO.setCorreoPersonal(usuarioIntegration.getCorreoPersonal());
+        mentorSignUpDTO.setPassword(usuarioIntegration.getApellidos().charAt(0) + usuarioIntegration.getNumeroDocumento());
+        mentorSignUpDTO.setUsername(usuarioIntegration.getUsername());
+        mentorSignUpDTO.setTelefonoContacto(usuarioIntegration.getTelefono_contacto());
+        mentorSignUpDTO.setEstado(T_SINAPSIS_USUARIOS_DEFAULT_ESTADO);
+        mentorSignUpDTO.setAceptoTratamientoDatos(T_SINAPSIS_USUARIOS_DEFAULT_TTO_DATOS_PERSONALES_INTEGRATION);
+        mentorSignUpDTO.setIdTipoDocumento(usuarioIntegration.getTipoDocumento());
+        mentorSignUpDTO.setEstadoCuenta(T_SINAPSIS_USUARIOS_DEFAULT_ESTADO_CUENTA);
+
+        // Datos de Mentor
+        mentorSignUpDTO.setCargoMentor(usuarioIntegration.getCargo());
+        mentorSignUpDTO.setDependenciaMentor(usuarioIntegration.getDependencia());
+        mentorSignUpDTO.setFacultadMentor(usuarioIntegration.getFacultad());
+        mentorSignUpDTO.setEtapaRuta(signUpMentor.getEtapaRuta());
+
+        boolean registrado = authDAO.registrarMentor(mentorSignUpDTO);
         if (registrado) {
             response.setCode(200);
             response.setMessage("OK");

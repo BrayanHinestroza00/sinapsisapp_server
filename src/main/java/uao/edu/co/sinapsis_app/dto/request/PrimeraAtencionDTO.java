@@ -82,6 +82,7 @@ public class PrimeraAtencionDTO implements Serializable {
     private Integer horasSemanales;
     private String motivacion;
     private String descubrioSinapsis;
+    private String cualOtroDescubrioSinapsis;
     @NotNull(message = "El campo 'Autodiagnostico' no puede estar vacio")
     private MultipartFile fileAutodiagnostico;
     private String fileAutodiagnosticoURL;

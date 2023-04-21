@@ -5,12 +5,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
@@ -25,12 +32,13 @@ import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static uao.edu.co.sinapsis_app.util.Constants.STATUS_EMPTY;
-import static uao.edu.co.sinapsis_app.util.Constants.STATUS_OK;
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_ERROR;
 
 @RestController()
 @RequestMapping("/ruta_innovacion")
@@ -41,11 +49,11 @@ public class RutaInnovacionController {
     @CrossOrigin( origins = "http://localhost:3000")
     @RequestMapping(value = "/proyectos_emprendimiento", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO> listarProyectosDeEmprendimiento(
-            @RequestParam(required = false) Integer tipoDocumento, @RequestParam(required = false) String numeroDocumento,
-            @RequestParam(required = false) String nombres, @RequestParam(required = false) String apellidos) {
+            @Valid SolicitudesPEFilterDTO solicitudesPEFilterDTO) {
         ResponseDTO response = new ResponseDTO();
         try {
-            List<ListadoProyectoEmprendimientoView> solicitudes = rutaInnovacionService.listarProyectosDeEmprendimiento();
+            List<ListadoProyectoEmprendimientoView> solicitudes
+                    = rutaInnovacionService.listarProyectosDeEmprendimiento(solicitudesPEFilterDTO);
 
             if (solicitudes == null) {
                 response.setCode(0);
@@ -94,11 +102,11 @@ public class RutaInnovacionController {
     @CrossOrigin( origins = "http://localhost:3000")
     @RequestMapping(value = "/primeraAtencion/pendientes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO> listarPrimerasAtencionesPendientes(
-            @RequestParam(required = false) Integer tipoDocumento, @RequestParam(required = false) String numeroDocumento,
-            @RequestParam(required = false) String nombres, @RequestParam(required = false) String apellidos) {
+            @Valid SolicitudesPAFilterDTO solicitudesPAFilterDTO) {
         ResponseDTO response = new ResponseDTO();
         try {
-            List<ListadoProyectoEmprendimientoView> solicitudes = rutaInnovacionService.listarPrimerasAtencionesPendientes();
+            List<ListadoProyectoEmprendimientoView> solicitudes
+                    = rutaInnovacionService.listarPrimerasAtencionesPendientes(solicitudesPAFilterDTO);
 
             if (solicitudes == null) {
                 response.setCode(0);
@@ -125,7 +133,7 @@ public class RutaInnovacionController {
         try {
             boolean esRegistrado = rutaInnovacionService.asignarRutaPrimeraAtencion(rutaPrimeraAtencionDTO);
             if (esRegistrado) {
-                response.setCode(STATUS_OK);
+                response.setCode(0);
                 response.setMessage("OK");
                 return new ResponseEntity<>(response, HttpStatus.OK);
 
@@ -301,7 +309,7 @@ public class RutaInnovacionController {
                 response.setCode(1);
                 response.setResponse(data);
             }else {
-                response.setCode(1);
+                response.setCode(0);
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -352,7 +360,7 @@ public class RutaInnovacionController {
                     response.setCode(1);
                     response.setResponse(data);
                 }else {
-                    response.setCode(1);
+                    response.setCode(0);
                     response.setMessage("Sin datos");
                 }
                 return new ResponseEntity<>(response, HttpStatus.OK);
@@ -398,7 +406,7 @@ public class RutaInnovacionController {
                     response.setCode(1);
                     response.setResponse(data);
                 }else {
-                    response.setCode(1);
+                    response.setCode(0);
                     response.setMessage("Sin datos");
                 }
                 return new ResponseEntity<>(response, HttpStatus.OK);
@@ -413,10 +421,11 @@ public class RutaInnovacionController {
 
     @CrossOrigin( origins = "http://localhost:3000")
     @RequestMapping(value = "/emprendedores", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public ResponseEntity<ResponseDTO> obtenerEmprendedores(){
+    public ResponseEntity<ResponseDTO> obtenerEmprendedores(
+            @Valid EmprendedoresAdmFilterDTO emprendedoresAdmFilterDTO){
         ResponseDTO response = new ResponseDTO();
         try {
-            List<EmprendedoresView> data = rutaInnovacionService.obtenerEmprendedores();
+            List<EmprendedoresView> data = rutaInnovacionService.obtenerEmprendedores(emprendedoresAdmFilterDTO);
 
             if (data.size() > 0) {
                 response.setCode(1);
@@ -452,6 +461,81 @@ public class RutaInnovacionController {
         }catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/tareas/crear", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> registrarTareaEmprendedor(@ModelAttribute @Valid CrearTareaDTO crearTareaDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = rutaInnovacionService.registrarTareaEmprendedor(crearTareaDTO);
+
+            if (esRegistrado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("FALLO AL REGISTRAR TAREA");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/tareas/entregar", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> registrarEntregaTareaEmprendedor(@ModelAttribute @Valid EntregaTareaDTO entregaTareaDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = rutaInnovacionService.registrarEntregaTareaEmprendedor(entregaTareaDTO);
+
+            if (esRegistrado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("FALLO AL ENTREGAR TAREA");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/tareas/calificar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> registrarCalificacionTareaEmprendedor(@RequestBody @Valid CalificarTareaDTO calificarTareaDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = rutaInnovacionService.registrarCalificacionTareaEmprendedor(calificarTareaDTO);
+
+            if (esRegistrado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("FALLO AL ENTREGAR TAREA");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

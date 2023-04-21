@@ -6,8 +6,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAuthDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorSignUpDTO;
+import uao.edu.co.sinapsis_app.dto.MentorSignUpDTO;
 import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.IntegrationTable;
+import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.Usuario;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.model.embeddable.UsuarioRolId;
@@ -21,6 +23,7 @@ import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_COLABORADOR;
 import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_EGRESADO;
 import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_ESTUDIANTE;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_ROLES_EMPRENDEDOR;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_ROLES_MENTOR;
 
 @Repository
 public class AuthDAO implements IAuthDAO {
@@ -211,6 +214,53 @@ public class AuthDAO implements IAuthDAO {
         entityManager.flush();
 
         entityManager.persist(emprendedor);
+        entityManager.flush();
+
+        entityManager.persist(usuarioRol);
+        entityManager.flush();
+
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean registrarMentor(MentorSignUpDTO mentorSignUpDTO) throws Exception {
+        String sqlNextVal = "SELECT SEC_T_SINAPSIS_USUARIOS.nextval FROM dual";
+
+        Query queryNextVal = entityManager.createNativeQuery(sqlNextVal);
+
+        long ID_NEW_USER = ((BigDecimal) queryNextVal.getSingleResult()).longValue();
+
+        Usuario usuario = new Usuario();
+        Mentor mentor = new Mentor();
+
+        usuario.setId(ID_NEW_USER);
+        usuario.setNumeroDocumento(mentorSignUpDTO.getNumeroDocumento());
+        usuario.setNombres(mentorSignUpDTO.getNombres());
+        usuario.setApellidos(mentorSignUpDTO.getApellidos());
+        usuario.setCorreoInstitucional(mentorSignUpDTO.getCorreoInstitucional());
+        usuario.setCorreoPersonal(mentorSignUpDTO.getCorreoPersonal());
+        usuario.setPassword(mentorSignUpDTO.getPassword());
+        usuario.setUsername(mentorSignUpDTO.getUsername());
+        usuario.setTelefonoContacto(mentorSignUpDTO.getTelefonoContacto());
+        usuario.setEstado(mentorSignUpDTO.getEstado());
+        usuario.setAceptoTratamientoDatos(mentorSignUpDTO.getAceptoTratamientoDatos());
+        usuario.setFotoUrl(mentorSignUpDTO.getFotoUrl());
+        usuario.setTipoDocumento(mentorSignUpDTO.getIdTipoDocumento());
+        usuario.setEstadoCuenta(mentorSignUpDTO.getEstadoCuenta());
+
+        mentor.setIdMentor(ID_NEW_USER);
+        mentor.setCargo(mentorSignUpDTO.getCargoMentor());
+        mentor.setDependencia(mentorSignUpDTO.getDependenciaMentor());
+        mentor.setFacultad(mentorSignUpDTO.getFacultadMentor());
+        mentor.setIdEtapaRuta(mentorSignUpDTO.getEtapaRuta());
+
+        UsuarioRol usuarioRol = new UsuarioRol(new UsuarioRolId(ID_NEW_USER, T_SINAPSIS_ROLES_MENTOR));
+
+        entityManager.persist(usuario);
+        entityManager.flush();
+
+        entityManager.persist(mentor);
         entityManager.flush();
 
         entityManager.persist(usuarioRol);

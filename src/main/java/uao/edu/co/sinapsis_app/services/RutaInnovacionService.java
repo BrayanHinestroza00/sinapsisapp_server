@@ -3,7 +3,13 @@ package uao.edu.co.sinapsis_app.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
+import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
@@ -16,6 +22,7 @@ import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
+import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +32,12 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     @Autowired
     IRutaInnovacionDAO rutaInnovacionDAO;
 
+    @Autowired
+    IStorageService storageService;
+
     @Override
-    public List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento() {
-        return rutaInnovacionDAO.listarProyectosDeEmprendimiento();
+    public List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento(SolicitudesPEFilterDTO solicitudesPEFilterDTO) {
+        return rutaInnovacionDAO.listarProyectosDeEmprendimiento(solicitudesPEFilterDTO);
     }
 
     @Override
@@ -42,8 +52,8 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     }
 
     @Override
-    public List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes() {
-        return rutaInnovacionDAO.listarPrimerasAtencionesPendientes();
+    public List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes(SolicitudesPAFilterDTO solicitudesPAFilterDTO) {
+        return rutaInnovacionDAO.listarPrimerasAtencionesPendientes(solicitudesPAFilterDTO);
     }
 
     @Override
@@ -98,8 +108,12 @@ public class RutaInnovacionService implements IRutaInnovacionService {
             resultados = rutaInnovacionDAO.obtenerTareasPendientes(idProyectoEmprendimiento, "ENTREGADA");
         }
 
+        if (tipoBusqueda.equalsIgnoreCase("historial")) {
+            resultados = rutaInnovacionDAO.obtenerTareasPendientes(idProyectoEmprendimiento, true);
+        }
+
         if (tipoBusqueda.equalsIgnoreCase("todas")) {
-            resultados = rutaInnovacionDAO.obtenerTareasPendientes(idProyectoEmprendimiento);
+            resultados = rutaInnovacionDAO.obtenerTareasPendientes(idProyectoEmprendimiento, false);
         }
 
         return resultados;
@@ -136,12 +150,37 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     }
 
     @Override
-    public List<EmprendedoresView> obtenerEmprendedores() {
-        return rutaInnovacionDAO.obtenerEmprendedores();
+    public List<EmprendedoresView> obtenerEmprendedores(EmprendedoresAdmFilterDTO emprendedoresAdmFilterDTO) {
+        return rutaInnovacionDAO.obtenerEmprendedores(emprendedoresAdmFilterDTO);
     }
 
     @Override
     public List<MentoresView> obtenerMentores() {
         return rutaInnovacionDAO.obtenerMentores();
+    }
+
+    @Override
+    public boolean registrarTareaEmprendedor(CrearTareaDTO crearTareaDTO) throws Exception {
+        if (crearTareaDTO.getFileTarea() != null) {
+            String filePathFileTarea = storageService.store(crearTareaDTO.getFileTarea());
+            crearTareaDTO.setFileTareaURL(filePathFileTarea);
+        }
+
+        return rutaInnovacionDAO.registrarTareaEmprendedor(crearTareaDTO);
+    }
+
+    @Override
+    public boolean registrarEntregaTareaEmprendedor(EntregaTareaDTO entregaTareaDTO) throws Exception {
+        if (entregaTareaDTO.getFileEntrega() != null) {
+            String filePathFileEntrega = storageService.store(entregaTareaDTO.getFileEntrega());
+            entregaTareaDTO.setFileEntregaURL(filePathFileEntrega);
+        }
+
+        return rutaInnovacionDAO.registrarEntregaTareaEmprendedor(entregaTareaDTO);
+    }
+
+    @Override
+    public boolean registrarCalificacionTareaEmprendedor(CalificarTareaDTO calificarTareaDTO) throws Exception {
+        return rutaInnovacionDAO.registrarCalificacionTareaEmprendedor(calificarTareaDTO);
     }
 }

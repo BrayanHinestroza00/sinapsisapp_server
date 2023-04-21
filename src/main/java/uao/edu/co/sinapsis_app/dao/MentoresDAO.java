@@ -5,13 +5,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IMentoresDAO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.model.Asesoramiento;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
-import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -37,12 +38,7 @@ public class MentoresDAO implements IMentoresDAO {
 
         Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
 
-        List<MentoresProyectoEmprendimientoView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<MentoresProyectoEmprendimientoView>) query.getResultList();
     }
 
     @Override
@@ -53,12 +49,7 @@ public class MentoresDAO implements IMentoresDAO {
 
         Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
 
-        List<MentoresProyectoEmprendimientoView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<MentoresProyectoEmprendimientoView>) query.getResultList();
     }
 
     @Override
@@ -69,12 +60,7 @@ public class MentoresDAO implements IMentoresDAO {
 
         Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
 
-        List<MentoresProyectoEmprendimientoView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<MentoresProyectoEmprendimientoView>) query.getResultList();
     }
 
     @Override
@@ -85,18 +71,13 @@ public class MentoresDAO implements IMentoresDAO {
 
         Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
 
-        List<MentoresProyectoEmprendimientoView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<MentoresProyectoEmprendimientoView>) query.getResultList();
     }
 
     @Override
     public List<AsesoramientosView> obtenerEmprendedoresPorMentor(EmprendedoresAsignadosFilterDTO emprendedoresAsignadosFilterDTO) {
         String sql = "SELECT * FROM (SELECT " +
-                "V.*, ROW_NUMBER() OVER (PARTITION BY ID_PROY_EMPRENDIMIENTO ORDER BY ID_ASESORAMIENTO DESC) SEQNUM " +
+                "V.*, ROW_NUMBER() OVER (PARTITION BY ID_PROY_EMPRENDIMIENTO ORDER BY ID_ASESORAMIENTO DESC) ID_VIEW " +
                 "FROM V_SINAPSIS_ASESORAMIENTOS V " +
                 "WHERE ID_MENTOR = " + emprendedoresAsignadosFilterDTO.getIdMentor();
 
@@ -124,16 +105,11 @@ public class MentoresDAO implements IMentoresDAO {
             sql += " AND NOMBRE_EMPRENDIMIENTO LIKE '%" + emprendedoresAsignadosFilterDTO.getNombreEmprendimiento() + "%'";
         }
 
-        sql += " ) WHERE SEQNUM = 1";
+        sql += " ) WHERE ID_VIEW = 1";
 
         Query query = entityManager.createNativeQuery(sql, AsesoramientosView.class);
 
-        List<AsesoramientosView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<AsesoramientosView>) query.getResultList();
     }
 
     @Override
@@ -143,56 +119,54 @@ public class MentoresDAO implements IMentoresDAO {
 
         Query query = entityManager.createNativeQuery(sql, HorarioMentor.class);
 
-        List<HorarioMentor> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<HorarioMentor>) query.getResultList();
     }
 
     @Override
-    public List<Mentor> obtenerMentores() {
-        String sql = "SELECT * FROM T_SINAPSIS_MENTORES";
+    public List<MentoresView> obtenerMentores(MentoresAdmFilterDTO mentoresAdmFilterDTO) {
+        String sql = "SELECT * FROM V_SINAPSIS_MENTORES WHERE ESTADO_CUENTA = " + mentoresAdmFilterDTO.getEstadoCuenta();
 
-        Query query = entityManager.createNativeQuery(sql, Mentor.class);
-
-        List<Mentor> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
+        if (mentoresAdmFilterDTO.getNumeroDocumento() != null &&
+                !(mentoresAdmFilterDTO.getNumeroDocumento().trim().isEmpty())) {
+            sql += " AND NUMERO_DOCUMENTO = " + mentoresAdmFilterDTO.getNumeroDocumento();
         }
-        return null;
+
+        if (mentoresAdmFilterDTO.getNombreMentor() != null &&
+                !(mentoresAdmFilterDTO.getNombreMentor().trim().isEmpty())) {
+            sql += " AND UPPER(NOMBRE_COMPLETO) " +
+                    "like UPPER('%" + mentoresAdmFilterDTO.getNombreMentor() + "%')";
+        }
+
+        if (mentoresAdmFilterDTO.getEtapasRuta() != null &&
+                mentoresAdmFilterDTO.getEtapasRuta() != -1) {
+            sql += " AND ETAPAS_RUTA_ID = " + mentoresAdmFilterDTO.getEtapasRuta();
+        }
+
+        sql += " ORDER BY NOMBRE_COMPLETO ASC";
+
+        Query query = entityManager.createNativeQuery(sql, MentoresView.class);
+
+        return (List<MentoresView>) query.getResultList();
     }
 
     @Override
-    public List<Mentor> obtenerMentoresPorId(Long idMentor) {
-        String sql = "SELECT * FROM T_SINAPSIS_MENTORES WHERE " +
+    public List<MentoresView> obtenerMentoresPorId(Long idMentor) {
+        String sql = "SELECT * FROM V_SINAPSIS_MENTORES WHERE " +
                 "ID = "+ idMentor + " ORDER BY CREATED_AT DESC";
 
-        Query query = entityManager.createNativeQuery(sql, Mentor.class);
+        Query query = entityManager.createNativeQuery(sql, MentoresView.class);
 
-        List<Mentor> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<MentoresView>) query.getResultList();
     }
 
     @Override
-    public List<Mentor> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
-        String sql = "SELECT * FROM T_SINAPSIS_MENTORES WHERE " +
-                "ETAPA_RUTA = "+ idEtapaRutaInnovacion + " ORDER BY ID";
+    public List<MentoresView> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
+        String sql = "SELECT * FROM V_SINAPSIS_MENTORES WHERE " +
+                "ETAPAS_RUTA_ID = "+ idEtapaRutaInnovacion + " ORDER BY ID";
 
-        Query query = entityManager.createNativeQuery(sql, Mentor.class);
+        Query query = entityManager.createNativeQuery(sql, MentoresView.class);
 
-        List<Mentor> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<MentoresView>) query.getResultList();
     }
 
     @Override

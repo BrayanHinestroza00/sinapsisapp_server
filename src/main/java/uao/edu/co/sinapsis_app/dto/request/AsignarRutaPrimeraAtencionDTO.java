@@ -13,4 +13,6 @@ public class AsignarRutaPrimeraAtencionDTO implements Serializable {
     private Long idEtapaRuta;
     @NotNull(message = "El campo 'Creado Por' no puede estar vacio")
     private Long creado_por;
+    @NotNull(message = "El campo 'Mentor principal' no puede estar vacio")
+    private Long idMentorPrincipal;
 }

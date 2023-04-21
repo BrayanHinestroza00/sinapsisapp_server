@@ -11,6 +11,8 @@ public interface IStorageService {
 
     String store(MultipartFile file);
 
+    String storeAnuncio(MultipartFile file);
+
     Stream<Path> loadAll();
 
     Path load(String filename);

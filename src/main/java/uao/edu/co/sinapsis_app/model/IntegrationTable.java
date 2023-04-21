@@ -76,6 +76,8 @@ public class IntegrationTable {
     private String cargo;
     @Column(name = "DEPENDENCIA_COLABORADOR")
     private String dependencia;
+    @Column(name = "FACULTAD_COLABORADOR")
+    private String facultad;
 
 
     public void setFechaNacimiento(String fechaNacimiento) {

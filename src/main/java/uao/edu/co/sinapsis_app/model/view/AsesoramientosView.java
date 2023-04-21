@@ -1,6 +1,8 @@
 package uao.edu.co.sinapsis_app.model.view;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,9 +12,14 @@ import java.util.Date;
 
 @Entity
 @Data
+@Immutable
 @Table(name = "V_SINAPSIS_ASESORAMIENTOS")
 public class AsesoramientosView {
     @Id
+    @Column(name = "ID_VIEW")
+    @JsonIgnore
+    private Long idView;
+
     @Column(name = "ID_ASESORAMIENTO")
     private Long idAsesoramiento;
     @Column(name = "NUMERO_DOCUMENTO")

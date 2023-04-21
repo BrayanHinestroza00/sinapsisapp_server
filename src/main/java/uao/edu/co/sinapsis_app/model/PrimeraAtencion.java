@@ -44,6 +44,8 @@ public class PrimeraAtencion {
     private String descubrioSinapsis;
     @Column(name = "AUTODIAGNOSTICO")
     private String fileAutodiagnosticoURL;
+    @Column(name = "CUAL_OTRO_DESCUBRIO_SINAPSIS")
+    private String cualOtroDescubrioSinapsis;
     @Column(name = "CREATED_AT")
     private Date createdAt;
     @Column(name = "UPDATED_AT")

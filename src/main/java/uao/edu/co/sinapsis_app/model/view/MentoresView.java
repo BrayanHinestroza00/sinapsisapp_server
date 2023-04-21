@@ -1,8 +1,15 @@
 package uao.edu.co.sinapsis_app.model.view;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
+import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "V_SINAPSIS_MENTORES")
+@Data
 public class MentoresView {
     @Id
     @Column(name = "ID")
@@ -13,6 +20,8 @@ public class MentoresView {
     private String nombres;
     @Column(name = "APELLIDOS")
     private String apellidos;
+    @Column(name = "NOMBRE_COMPLETO")
+    private String nombreCompleto;
     @Column(name = "CORREO_INSTITUCIONAL")
     private String correoInstitucional;
     @Column(name = "CORREO_PERSONAL")
@@ -37,5 +46,14 @@ public class MentoresView {
     private Integer estadoCuenta;
 
     // Datos del Mentor
-
+    @Column(name = "FACULTAD")
+    private String facultadMentor;
+    @Column(name = "CARGO")
+    private String cargoMentor;
+    @Column(name = "DEPENDENCIA")
+    private String dependenciaMentor;
+    @Column(name = "ETAPAS_RUTA_ID")
+    private String etapaRutaId;
+    @Column(name = "ETAPA_RUTA")
+    private String etapaRuta;
 }

@@ -21,6 +21,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 import static uao.edu.co.sinapsis_app.util.AppUtil.genFileName;
+import static uao.edu.co.sinapsis_app.util.Constants.CONTEXT_PATH_ANUNCIOS;
+import static uao.edu.co.sinapsis_app.util.Constants.CONTEXT_PATH_GEN_ANUNCIOS;
 
 @Service
 public class StorageService implements IStorageService {
@@ -61,6 +63,27 @@ public class StorageService implements IStorageService {
                         StandardCopyOption.REPLACE_EXISTING);
             }
             return fileURL;
+        }
+        catch (IOException e) {
+            throw new StorageException("Failed to store file.", e);
+        }
+    }
+
+    @Override
+    public String storeAnuncio(MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                throw new StorageException("Failed to store empty file.");
+            }
+            String fileURL = genFileName(file.getOriginalFilename());
+            Path destinationFile = this.rootLocation.resolve(
+                            Paths.get(CONTEXT_PATH_GEN_ANUNCIOS + fileURL))
+                    .normalize().toAbsolutePath();
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, destinationFile,
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+            return CONTEXT_PATH_ANUNCIOS + fileURL;
         }
         catch (IOException e) {
             throw new StorageException("Failed to store file.", e);

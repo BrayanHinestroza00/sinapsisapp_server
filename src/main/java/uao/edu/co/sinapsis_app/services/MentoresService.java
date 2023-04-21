@@ -7,10 +7,12 @@ import uao.edu.co.sinapsis_app.dto.HorarioMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.FinalizarAcompanamientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.HorarioMentorRequestDTO;
+import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
 import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresView;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
 
 import java.util.ArrayList;
@@ -80,17 +82,17 @@ public class MentoresService implements IMentoresService {
     }
 
     @Override
-    public List<Mentor> obtenerMentores() {
-        return mentoresDAO.obtenerMentores();
+    public List<MentoresView> obtenerMentores(MentoresAdmFilterDTO mentoresAdmFilterDTO) {
+        return mentoresDAO.obtenerMentores(mentoresAdmFilterDTO);
     }
 
     @Override
-    public List<Mentor> obtenerMentoresPorId(Long idMentor) {
+    public List<MentoresView> obtenerMentoresPorId(Long idMentor) {
         return mentoresDAO.obtenerMentoresPorId(idMentor);
     }
 
     @Override
-    public List<Mentor> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
+    public List<MentoresView> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
         return mentoresDAO.obtenerMentoresPorEtapaRutaInnovacion(idEtapaRutaInnovacion);
     }
 

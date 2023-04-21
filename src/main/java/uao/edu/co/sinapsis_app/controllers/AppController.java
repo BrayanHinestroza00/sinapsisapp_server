@@ -2,12 +2,15 @@ package uao.edu.co.sinapsis_app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.Anuncio;
 import uao.edu.co.sinapsis_app.model.Asignatura;
@@ -17,6 +20,7 @@ import uao.edu.co.sinapsis_app.model.Facultad;
 import uao.edu.co.sinapsis_app.model.Municipio;
 import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
 import uao.edu.co.sinapsis_app.model.RedSocial;
+import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
@@ -303,6 +307,60 @@ public class AppController {
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/tipoContacto", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> getTipoContacto(@RequestParam(required = false) Map<String,String> requestData){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<TipoContacto> data;
+            if (requestData.size() > 0) {
+                long idTipoContacto = Long.parseLong(requestData.get("idTipoContacto"));
+                data = appService.getTipoContactoById(idTipoContacto);
+            }else{
+                data = appService.getAllTipoContacto();
+            }
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(0);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/publicar_anuncio", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> registrarAnuncio(@ModelAttribute PublicarAnuncioDTO anuncioDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = appService.registrarAnuncio(anuncioDTO);
+
+            if (esRegistrado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(0);
+                response.setMessage("No se pudo publicar el anuncio");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);
             response.setMessage(e.getMessage());

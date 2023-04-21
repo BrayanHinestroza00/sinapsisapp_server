@@ -6,11 +6,19 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IProyectoEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
+import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
+import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
+import uao.edu.co.sinapsis_app.model.Asesoramiento;
 import uao.edu.co.sinapsis_app.model.EtapaRutaEmprendimiento;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
+import uao.edu.co.sinapsis_app.model.Tarea;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
@@ -27,8 +35,13 @@ import javax.persistence.Query;
 import java.util.Date;
 import java.util.List;
 
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_CALIFICADA;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_ENTREGADA;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_VENCIDA;
 
 @Repository
 public class RutaInnovacionDAO implements IRutaInnovacionDAO {
@@ -39,11 +52,35 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     private EntityManager entityManager;
 
     @Override
-    public List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento() {
-        String sql = "SELECT * FROM V_SINAPSIS_LISTADO_PE WHERE ESTADO_EMPRENDIMIENTO = 'APROBADO' ORDER BY FECHA_REGISTRO_PA DESC";
+    public List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento(SolicitudesPEFilterDTO solicitudesPEFilterDTO) {
+        String sql = "SELECT * FROM V_SINAPSIS_LISTADO_PE WHERE ESTADO_EMPRENDIMIENTO = 'APROBADO'";
+
+        if (solicitudesPEFilterDTO.getNumeroDocumento() != null &&
+                !(solicitudesPEFilterDTO.getNumeroDocumento().trim().isEmpty())) {
+            sql += " AND NUMERO_DOCUMENTO = " + solicitudesPEFilterDTO.getNumeroDocumento();
+        }
+
+        if (solicitudesPEFilterDTO.getNombreEmprendedor() != null &&
+                !(solicitudesPEFilterDTO.getNombreEmprendedor().trim().isEmpty())) {
+            sql += " AND UPPER(NOMBRE_COMPLETO)) " +
+                    "like UPPER('%" + solicitudesPEFilterDTO.getNombreEmprendedor() + "%')";
+        }
+
+        if (solicitudesPEFilterDTO.getEtapasRuta() != null &&
+                solicitudesPEFilterDTO.getEtapasRuta() != -1) {
+            sql += " AND ETAPAS_RUTA_ID = " + solicitudesPEFilterDTO.getEtapasRuta();
+        }
+
+        if (solicitudesPEFilterDTO.getEstadosRuta() != null &&
+                !solicitudesPEFilterDTO.getEstadosRuta().equalsIgnoreCase("-1")) {
+            sql += " AND ESTADO_RUTA = '" + solicitudesPEFilterDTO.getEstadosRuta() + "'";
+        }
+
+        sql += " ORDER BY FECHA_REGISTRO_PA DESC";
+
         Query query = entityManager.createNativeQuery(sql, ListadoProyectoEmprendimientoView.class);
 
-        return query.getResultList();
+        return (List<ListadoProyectoEmprendimientoView>) query.getResultList();
     }
 
     @Override
@@ -53,29 +90,54 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         query.setParameter(1, idProyectoEmprendimiento);
 
-        return query.getResultList();
+        return (List<PrimeraAtencionView>) query.getResultList();
     }
 
     @Override
-    public List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes() {
-        String sql = "SELECT * FROM V_SINAPSIS_LISTADO_PE WHERE ESTADO_EMPRENDIMIENTO = 'PENDIENTE' ORDER BY FECHA_REGISTRO_PA DESC";
+    public List<ListadoProyectoEmprendimientoView> listarPrimerasAtencionesPendientes(SolicitudesPAFilterDTO solicitudesPAFilterDTO) {
+        String sql = "SELECT * FROM V_SINAPSIS_LISTADO_PE WHERE ESTADO_EMPRENDIMIENTO = 'PENDIENTE' ";
+
+        if (solicitudesPAFilterDTO.getTiposDocumento() != null &&
+                solicitudesPAFilterDTO.getTiposDocumento() != -1) {
+            sql += " AND TIPOS_DOCUMENTO_ID = " + solicitudesPAFilterDTO.getTiposDocumento();
+        }
+
+        if (solicitudesPAFilterDTO.getNumeroDocumento() != null &&
+                !(solicitudesPAFilterDTO.getNumeroDocumento().trim().isEmpty())) {
+            sql += " AND NUMERO_DOCUMENTO = " + solicitudesPAFilterDTO.getNumeroDocumento();
+        }
+
+        if (solicitudesPAFilterDTO.getNombreEmprendedor() != null &&
+                !(solicitudesPAFilterDTO.getNombreEmprendedor().trim().isEmpty())) {
+            sql += " AND UPPER(NOMBRE_COMPLETO) " +
+                    "like UPPER('%" + solicitudesPAFilterDTO.getNombreEmprendedor() + "%')";
+        }
+
+        if (solicitudesPAFilterDTO.getNombreEmprendimiento() != null &&
+                !(solicitudesPAFilterDTO.getNombreEmprendimiento().trim().isEmpty())) {
+            sql += " AND NOMBRE_EMPRENDIMIENTO LIKE '%" + solicitudesPAFilterDTO.getNombreEmprendimiento() + "%'";
+        }
+
+        sql += " ORDER BY FECHA_REGISTRO_PA DESC";
+
         Query query = entityManager.createNativeQuery(sql, ListadoProyectoEmprendimientoView.class);
 
-        return query.getResultList();
+        return (List<ListadoProyectoEmprendimientoView>) query.getResultList();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception {
         ProyectoEmprendimiento proyectoEmprendimiento = proyectoEmprendimientoDAO.find(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
+        Date fechaActual = new Date();
 
         if (proyectoEmprendimiento != null) {
             EtapaRutaEmprendimiento etapaRutaEmprendimiento = new EtapaRutaEmprendimiento();
             etapaRutaEmprendimiento.setProyectoEmprendimiento(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
             etapaRutaEmprendimiento.setEtapaEmprendimiento(rutaPrimeraAtencionDTO.getIdEtapaRuta());
             etapaRutaEmprendimiento.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
-            etapaRutaEmprendimiento.setFechaCreacion(new Date());
-            etapaRutaEmprendimiento.setFechaModificacion(new Date());
+            etapaRutaEmprendimiento.setFechaCreacion(fechaActual);
+            etapaRutaEmprendimiento.setFechaModificacion(fechaActual);
             etapaRutaEmprendimiento.setCreadoPor(rutaPrimeraAtencionDTO.getCreado_por());
 
             EtapaRutaEmprendimiento isRegistered = entityManager.merge(etapaRutaEmprendimiento);
@@ -86,7 +148,24 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
                 boolean isUpdated = proyectoEmprendimientoDAO.updateProyecto(proyectoEmprendimiento);
 
                 if (isUpdated) {
-                    return true;
+                    if (rutaPrimeraAtencionDTO.getIdMentorPrincipal() != null) {
+                        Asesoramiento asesoramiento = new Asesoramiento();
+                        asesoramiento.setFechaInicio(fechaActual);
+                        asesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO);
+                        asesoramiento.setIdRutaEmprendimiento(isRegistered.getId());
+                        asesoramiento.setIdMentor(rutaPrimeraAtencionDTO.getIdMentorPrincipal());
+                        asesoramiento.setFechaCreacion(fechaActual);
+                        asesoramiento.setFechaModificacion(fechaActual);
+
+                        Asesoramiento asesoramientoNew = entityManager.merge(asesoramiento);
+                        entityManager.flush();
+
+                        if (asesoramientoNew != null) {
+                            return true;
+                        } else {
+                            throw new Exception("Problema al almacenar el asesoramiento");
+                        }
+                    }
                 } else {
                     throw new Exception("Problema al actualizar proyecto de emprendimiento");
                 }
@@ -97,12 +176,13 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         } else  {
             throw new Exception("No se encontro el proyecto de emprendimiento");
         }
+        return false;
     }
 
     @Override
     public AsesoramientosView obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
-        String sql = "SELECT * FROM V_SINAPSIS_ASESORAMIENTOS " +
-                "WHERE (ESTADO_RUTA_EMPRENDI = 'PENDIENTE' or ESTADO_RUTA_EMPRENDI= 'PENDIENTE_APROBAR') AND ID_PROY_EMPRENDIMIENTO = " + idProyectoEmprendimiento;
+        String sql = "SELECT ROW_NUMBER() OVER (ORDER BY ID_PROY_EMPRENDIMIENTO) AS ID_VIEW, v.* FROM V_SINAPSIS_ASESORAMIENTOS v " +
+                "WHERE (v.ESTADO_RUTA_EMPRENDI = 'PENDIENTE' or v.ESTADO_RUTA_EMPRENDI= 'PENDIENTE_APROBAR') AND v.ID_PROY_EMPRENDIMIENTO = " + idProyectoEmprendimiento;
         Query query = entityManager.createNativeQuery(sql, AsesoramientosView.class);
 
         List<AsesoramientosView> resultados = query.getResultList();
@@ -127,12 +207,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
                 "WHERE ESTADO = 'A' AND ETAPAS_RUTAS_ID = " + idEtapa;
         Query query = entityManager.createNativeQuery(sql, ActividadRuta.class);
 
-        List<ActividadRuta> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<ActividadRuta>) query.getResultList();
     }
 
     @Override
@@ -140,7 +215,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         String sql = "SELECT * FROM T_SINAPSIS_HERRAMIENTAS";
         Query query = entityManager.createNativeQuery(sql, HerramientaRuta.class);
 
-        return query.getResultList();
+        return (List<HerramientaRuta>) query.getResultList();
     }
 
     @Override
@@ -151,12 +226,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
                 "    WHERE ETAPAS_RUTAS_ID = " + idEtapa;
         Query query = entityManager.createNativeQuery(sql, HerramientaRuta.class);
 
-        List<HerramientaRuta> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<HerramientaRuta>) query.getResultList();
     }
 
     @Override
@@ -166,12 +236,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
                 "    AND RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
         Query query = entityManager.createNativeQuery(sql, SubActividadesEmprendedorView.class);
 
-        List<SubActividadesEmprendedorView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<SubActividadesEmprendedorView>) query.getResultList();
     }
 
     @Override
@@ -181,12 +246,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         Query query = entityManager.createNativeQuery(sql, ActividadesEmprendedorView.class);
 
-        List<ActividadesEmprendedorView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<ActividadesEmprendedorView>) query.getResultList();
     }
 
     @Override
@@ -197,31 +257,26 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
 
-        List<TareasProyectoEmprendimientoView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<TareasProyectoEmprendimientoView>) query.getResultList();
     }
 
     @Override
-    public List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento) {
-        String sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
-                "WHERE ESTADO_ENTREGA NOT IN ('PENDIENTE', 'ENTREGADA') " +
-                "AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+    public List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento, boolean historico) {
+        String sql = "";
+
+        if (historico) {
+            sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
+                    "WHERE ESTADO_ENTREGA NOT IN ('PENDIENTE', 'ENTREGADA') " +
+                    "AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+        } else {
+            sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
+                    "WHERE PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+        }
 
         Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
 
-        List<TareasProyectoEmprendimientoView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<TareasProyectoEmprendimientoView>) query.getResultList();
     }
-
-
 
     @Override
     public List<ConsultoriasView> obtenerConsultoria(Long idConsultoria) {
@@ -231,12 +286,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
-        List<ConsultoriasView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<ConsultoriasView>) query.getResultList();
     }
 
     @Override
@@ -248,12 +298,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
-        List<ConsultoriasView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<ConsultoriasView>) query.getResultList();
     }
 
     @Override
@@ -265,12 +310,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
-        List<ConsultoriasView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<ConsultoriasView>) query.getResultList();
     }
 
     @Override
@@ -281,12 +321,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
-        List<ConsultoriasView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<ConsultoriasView>) query.getResultList();
     }
 
     @Override
@@ -297,12 +332,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
-        List<ConsultoriasView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<ConsultoriasView>) query.getResultList();
     }
 
     @Override
@@ -314,41 +344,140 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
-        List<ConsultoriasView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<ConsultoriasView>) query.getResultList();
     }
 
     @Override
-    public List<EmprendedoresView> obtenerEmprendedores() {
-        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDEDORES " +
-                "ORDER BY NOMBRES DESC, APELLIDOS DESC";
+    public List<EmprendedoresView> obtenerEmprendedores(EmprendedoresAdmFilterDTO emprendedoresAdmFilterDTO) {
+        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDEDORES WHERE ESTADO_CUENTA = 1 ";
+
+
+        if (emprendedoresAdmFilterDTO.getNumeroDocumento() != null &&
+                !(emprendedoresAdmFilterDTO.getNumeroDocumento().trim().isEmpty())) {
+            sql += " AND NUMERO_DOCUMENTO = " + emprendedoresAdmFilterDTO.getNumeroDocumento();
+        }
+
+        if (emprendedoresAdmFilterDTO.getNombreEmprendedor() != null &&
+                !(emprendedoresAdmFilterDTO.getNombreEmprendedor().trim().isEmpty())) {
+            sql += " AND UPPER(NOMBRE_COMPLETO) " +
+                    "like UPPER('%" + emprendedoresAdmFilterDTO.getNombreEmprendedor() + "%')";
+        }
+
+        if (emprendedoresAdmFilterDTO.getTiposContacto() != null &&
+                emprendedoresAdmFilterDTO.getTiposContacto() != -1) {
+            sql += " AND TIPO_CONTACTO_ID = " + emprendedoresAdmFilterDTO.getTiposContacto();
+        }
+
+        if (emprendedoresAdmFilterDTO.getEstadoEnRuta() != null &&
+                !(emprendedoresAdmFilterDTO.getEstadoEnRuta().trim().isEmpty())) {
+            sql += " AND ESTADO = " + emprendedoresAdmFilterDTO.getEstadoEnRuta();
+        }
+
+        sql += "ORDER BY NOMBRES DESC, APELLIDOS DESC";
 
         Query query = entityManager.createNativeQuery(sql, EmprendedoresView.class);
 
-        List<EmprendedoresView> resultados = query.getResultList();
-
-        if (resultados.size() > 0) {
-            return resultados;
-        }
-        return null;
+        return (List<EmprendedoresView>) query.getResultList();
     }
 
     @Override
     public List<MentoresView> obtenerMentores() {
-        String sql = "SELECT * FROM v_sinapsis_mentores " +
+        String sql = "SELECT * FROM V_SINAPSIS_MENTORES " +
                 "ORDER BY NOMBRES DESC, APELLIDOS DESC";
 
         Query query = entityManager.createNativeQuery(sql, MentoresView.class);
 
-        List<MentoresView> resultados = query.getResultList();
+        return (List<MentoresView>) query.getResultList();
+    }
 
-        if (resultados.size() > 0) {
-            return resultados;
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean registrarTareaEmprendedor(CrearTareaDTO crearTareaDTO) throws Exception {
+        Tarea tareaNueva = new Tarea();
+        tareaNueva.setEstadoEntrega(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE);
+        tareaNueva.setTitulo(crearTareaDTO.getNombreTarea());
+        tareaNueva.setUsuarioCrea(crearTareaDTO.getUsuarioCrea());
+        tareaNueva.setFechaLimiteEntrega(crearTareaDTO.getFechaEntrega());
+        tareaNueva.setFechaCreacion(new Date());
+        tareaNueva.setFechaModificacion(new Date());
+        tareaNueva.setIdProyectoEmprendimiento(crearTareaDTO.getIdProyectoEmprendimiento());
+        tareaNueva.setUrlMaterialApoyo(crearTareaDTO.getFileTareaURL() == null ? null : crearTareaDTO.getFileTareaURL() );
+        tareaNueva.setDescripcion(crearTareaDTO.getDescripcionTarea());
+
+        Tarea isRegistered = entityManager.merge(tareaNueva);
+        entityManager.flush();
+
+        if (isRegistered == null) {
+            throw new Exception("Problema al registrar la tarea");
         }
-        return null;
+
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean registrarEntregaTareaEmprendedor(EntregaTareaDTO entregaTareaDTO) throws Exception {
+        Tarea tarea = entityManager.find(Tarea.class, entregaTareaDTO.getIdTarea());
+
+        if (tarea == null) {
+            throw new Exception("Problema al encontrar la tarea");
+        }
+
+        if (!(tarea.getEstadoEntrega().equalsIgnoreCase(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE))) {
+            throw new Exception("La tarea se encuentra en estado: "
+                    + tarea.getEstadoEntrega()
+                    + ". Por lo que no se pudo realizar la entrega.");
+        }
+
+        if (tarea.getFechaLimiteEntrega().compareTo(new Date()) < 0) {
+            throw new Exception("La tarea se encuentra vencida");
+        }
+
+        tarea.setEstadoEntrega(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_ENTREGADA);
+        tarea.setFechaEntrega(new Date());
+        tarea.setFechaModificacion(new Date());
+
+        if (entregaTareaDTO.getComentariosEntrega() != null) {
+            tarea.setComentariosEntregaEmprendedor(entregaTareaDTO.getComentariosEntrega());
+        }
+
+        if (entregaTareaDTO.getFileEntregaURL() != null) {
+            tarea.setUrlArchivosEntregados(entregaTareaDTO.getFileEntregaURL());
+        }
+
+        Tarea isUpdated = entityManager.merge(tarea);
+        entityManager.flush();
+
+        if (isUpdated == null) {
+            throw new Exception("Problema al entregar la tarea");
+        }
+
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean registrarCalificacionTareaEmprendedor(CalificarTareaDTO calificarTareaDTO) throws Exception {
+        Tarea tarea = entityManager.find(Tarea.class, calificarTareaDTO.getIdTarea());
+
+        if (tarea == null) {
+            throw new Exception("Problema al encontrar la tarea");
+        }
+
+        tarea.setEstadoEntrega(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_CALIFICADA);
+        tarea.setFechaModificacion(new Date());
+        tarea.setCalificacion(calificarTareaDTO.getCalificacionEntrega());
+        if (calificarTareaDTO.getComentariosEntrega() != null) {
+            tarea.setComentariosEntregaUsuario(calificarTareaDTO.getComentariosEntrega());
+        }
+
+        Tarea isUpdated = entityManager.merge(tarea);
+        entityManager.flush();
+
+        if (isUpdated == null) {
+            throw new Exception("Problema al Calificar la tarea");
+        }
+
+        return true;
     }
 }

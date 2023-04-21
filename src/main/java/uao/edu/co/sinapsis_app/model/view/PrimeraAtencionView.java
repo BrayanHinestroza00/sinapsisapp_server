@@ -142,6 +142,8 @@ public class PrimeraAtencionView {
     private String motivacion;
     @Column(name = "DESCUBRIO_SINAPSIS")
     private String descubrioSinapsis;
+    @Column(name = "CUAL_OTRO_DESCUBRIO_SINAPSIS")
+    private String cualOtroDescubrioSinapsis;
     @Column(name = "AUTODIAGNOSTICO")
     private String fileAutodiagnosticoURL;
     @Column(name = "FECHA_REGISTRO_PA")

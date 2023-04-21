@@ -3,6 +3,7 @@ package uao.edu.co.sinapsis_app.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAppDAO;
+import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.model.Anuncio;
 import uao.edu.co.sinapsis_app.model.Asignatura;
 import uao.edu.co.sinapsis_app.model.Departamento;
@@ -11,17 +12,23 @@ import uao.edu.co.sinapsis_app.model.Facultad;
 import uao.edu.co.sinapsis_app.model.Municipio;
 import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
 import uao.edu.co.sinapsis_app.model.RedSocial;
+import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
+import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
 
+import java.text.ParseException;
 import java.util.List;
 
 @Service
 public class AppService implements IAppService {
     @Autowired
     IAppDAO appDAO;
+
+    @Autowired
+    IStorageService storageService;
 
     @Override
     public List<TipoDocumento> getAllTipoDocumento() {
@@ -121,5 +128,25 @@ public class AppService implements IAppService {
     @Override
     public List<Anuncio> obtenerAnuncios() {
         return appDAO.obtenerAnuncios();
+    }
+
+    @Override
+    public List<TipoContacto> getAllTipoContacto() {
+        return appDAO.getAllTipoContacto();
+    }
+
+    @Override
+    public List<TipoContacto> getTipoContactoById(long idTipoContacto) {
+        return appDAO.getTipoContactoById(idTipoContacto);
+    }
+
+    @Override
+    public boolean registrarAnuncio(PublicarAnuncioDTO anuncioDTO) throws ParseException {
+        if (anuncioDTO.getFlyerAnuncio() != null) {
+            String filePathFlyerAnuncio = storageService.storeAnuncio(anuncioDTO.getFlyerAnuncio());
+            anuncioDTO.setFlyerAnuncioURL(filePathFlyerAnuncio);
+        }
+
+        return appDAO.registrarAnuncio(anuncioDTO);
     }
 }
