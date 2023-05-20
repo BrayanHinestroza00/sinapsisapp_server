@@ -12,6 +12,7 @@ import uao.edu.co.sinapsis_app.model.RedSocial;
 import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
+import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 
 import java.text.ParseException;
@@ -61,4 +62,6 @@ public interface IAppService {
     List<TipoContacto> getTipoContactoById(long idTipoContacto);
 
     boolean registrarAnuncio(PublicarAnuncioDTO anuncioDTO) throws ParseException;
+
+    List<ActividadesEtapaView> obtenerTematicasEtapasRutaInnovacionEmprendimiento(Long idEtapa);
 }

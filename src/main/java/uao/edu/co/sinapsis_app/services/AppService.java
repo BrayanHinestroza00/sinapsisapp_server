@@ -15,6 +15,7 @@ import uao.edu.co.sinapsis_app.model.RedSocial;
 import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
+import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
@@ -148,5 +149,10 @@ public class AppService implements IAppService {
         }
 
         return appDAO.registrarAnuncio(anuncioDTO);
+    }
+
+    @Override
+    public List<ActividadesEtapaView> obtenerTematicasEtapasRutaInnovacionEmprendimiento(Long idEtapa) {
+        return appDAO.obtenerTematicasEtapasRutaInnovacionEmprendimiento(idEtapa);
     }
 }

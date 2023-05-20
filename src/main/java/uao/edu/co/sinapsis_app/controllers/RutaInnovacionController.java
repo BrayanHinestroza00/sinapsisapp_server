@@ -16,6 +16,7 @@ import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
@@ -414,6 +415,31 @@ public class RutaInnovacionController {
         }catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/consultorias/programar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> programarConsultoriaEmprendedor(@RequestBody @Valid ProgramarConsultoriaDTO programarConsultoriaDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = rutaInnovacionService.programarConsultoriaEmprendedor(programarConsultoriaDTO);
+
+            if (esRegistrado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("FALLO AL PROGRAMAR LA CONSULTORIA");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

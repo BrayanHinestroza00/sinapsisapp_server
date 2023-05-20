@@ -22,6 +22,7 @@ import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
 import uao.edu.co.sinapsis_app.model.RedSocial;
 import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
+import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 
@@ -274,6 +275,29 @@ public class AppController {
         ResponseDTO response = new ResponseDTO();
         try {
             List<EtapaRutaInnovacion> data = appService.obtenerEtapasRutaInnovacionEmprendimiento();
+
+            if (data.size() > 0) {
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(1);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/tematicas_etapa", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerTematicasEtapasRutaInnovacionEmprendimiento(@RequestParam(required = true) Long idEtapa ){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<ActividadesEtapaView> data = appService.obtenerTematicasEtapasRutaInnovacionEmprendimiento(idEtapa);
 
             if (data.size() > 0) {
                 response.setCode(1);

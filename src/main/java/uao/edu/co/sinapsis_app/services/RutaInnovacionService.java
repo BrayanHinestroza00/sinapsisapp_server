@@ -8,6 +8,7 @@ import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
@@ -147,6 +148,11 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     @Override
     public List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor) {
         return rutaInnovacionDAO.obtenerConsultoriaProgramadaMentor(idMentor);
+    }
+
+    @Override
+    public boolean programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception{
+        return rutaInnovacionDAO.programarConsultoriaEmprendedor(programarConsultoriaDTO) ;
     }
 
     @Override

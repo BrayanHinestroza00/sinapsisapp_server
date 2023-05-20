@@ -34,6 +34,11 @@ public class Constants {
     public static final String T_SINAPSIS_TAREAS_ESTADO_ENTREGA_CALIFICADA = "CALIFICADA";
     public static final String T_SINAPSIS_TAREAS_ESTADO_ENTREGA_VENCIDA = "VENCIDA";
 
+    public static final String T_SINAPSIS_CONSULTORIAS_ESTADO_PROGRAMADA = "PROGRAMADA";
+    public static final String T_SINAPSIS_CONSULTORIAS_ESTADO_EN_CURSO = "EN CURSO";
+    public static final String T_SINAPSIS_CONSULTORIAS_ESTADO_NO_ASISTIDA = "NO ASISTIDA";
+    public static final String T_SINAPSIS_CONSULTORIAS_ESTADO_TERMINADA = "TERMINADA";
+
     /**
      * APP States
      */

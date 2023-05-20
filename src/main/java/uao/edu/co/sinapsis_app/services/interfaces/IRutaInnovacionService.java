@@ -5,6 +5,7 @@ import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
@@ -54,6 +55,8 @@ public interface IRutaInnovacionService {
 
     List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor);
     List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
+
+    boolean programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception;
 
     List<EmprendedoresView> obtenerEmprendedores(EmprendedoresAdmFilterDTO emprendedoresAdmFilterDTO);
 

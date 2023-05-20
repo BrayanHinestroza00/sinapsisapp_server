@@ -11,10 +11,12 @@ import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.Asesoramiento;
+import uao.edu.co.sinapsis_app.model.Consultoria;
 import uao.edu.co.sinapsis_app.model.EtapaRutaEmprendimiento;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
@@ -36,12 +38,12 @@ import java.util.Date;
 import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_CONSULTORIAS_ESTADO_PROGRAMADA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_CALIFICADA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_ENTREGADA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE;
-import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_VENCIDA;
 
 @Repository
 public class RutaInnovacionDAO implements IRutaInnovacionDAO {
@@ -221,9 +223,8 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<HerramientaRuta> obtenerHerramientasEtapaById(Long idEtapa) {
         String sql = "SELECT TH.* FROM T_SINAPSIS_HERRAMIENTAS TH \n" +
-                "    JOIN T_SINAPSIS_SUB_ACT_RUTA TSAR ON TH.SUB_ACTIVIDADES_RUTAS_ID = TSAR.ID\n" +
-                "    JOIN T_SINAPSIS_ACTIVIDADES_RUTA TAR ON TSAR.ACTIVIDADES_RUTAS_ID = TAR.ID \n" +
-                "    WHERE ETAPAS_RUTAS_ID = " + idEtapa;
+                "    JOIN T_SINAPSIS_ACTIVIDADES_RUTA TAR ON TH.ACTIVIDADES_RUTAS_ID = TAR.ID\n" +
+                "    WHERE TAR.ETAPAS_RUTAS_ID = " + idEtapa;
         Query query = entityManager.createNativeQuery(sql, HerramientaRuta.class);
 
         return (List<HerramientaRuta>) query.getResultList();
@@ -345,6 +346,36 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
         return (List<ConsultoriasView>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception {
+        Consultoria nuevaConsultoria = new Consultoria();
+        nuevaConsultoria.setTitulo(programarConsultoriaDTO.getTitulo());
+        nuevaConsultoria.setTipoConsultoria(programarConsultoriaDTO.getTipoConsultoria());
+        nuevaConsultoria.setFechaConsultoria(programarConsultoriaDTO.getFechaConsultoria());
+        nuevaConsultoria.setHoraInicio(programarConsultoriaDTO.getHoraInicio());
+        nuevaConsultoria.setHoraFinalizacion(programarConsultoriaDTO.getHoraFinalizacion());
+        nuevaConsultoria.setAsuntoConsultoria(programarConsultoriaDTO.getAsuntoConsultoria());
+        nuevaConsultoria.setEstadoConsultoria(T_SINAPSIS_CONSULTORIAS_ESTADO_PROGRAMADA);
+        nuevaConsultoria.setIdProyectoEmprendimiento(programarConsultoriaDTO.getProyectoEmprendimiento());
+        nuevaConsultoria.setIdMentor(programarConsultoriaDTO.getMentor());
+        if (programarConsultoriaDTO.getSubActividadRuta() != null) {
+            nuevaConsultoria.setIdSubActividadRuta(programarConsultoriaDTO.getSubActividadRuta());
+        }
+        nuevaConsultoria.setFechaCreacion(new Date());
+        nuevaConsultoria.setFechaModificacion(new Date());
+        nuevaConsultoria.setIdUsuarioCrea(programarConsultoriaDTO.getUsuarioCrea());
+
+        Consultoria isRegistered = entityManager.merge(nuevaConsultoria);
+        entityManager.flush();
+
+        if (isRegistered == null) {
+            throw new Exception("Problema al programar la consultoria");
+        }
+
+        return true;
     }
 
     @Override

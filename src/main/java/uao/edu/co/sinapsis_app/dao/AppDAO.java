@@ -17,6 +17,7 @@ import uao.edu.co.sinapsis_app.model.RedSocial;
 import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
+import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 
@@ -216,5 +217,13 @@ public class AppDAO implements IAppDAO {
         entityManager.flush();
 
         return true;
+    }
+
+    @Override
+    public List<ActividadesEtapaView> obtenerTematicasEtapasRutaInnovacionEmprendimiento(Long idEtapa) {
+        String sql = "SELECT * FROM V_SINAPSIS_ACTIVIDADES_ETAPA " +
+                "WHERE ID_ETAPA_RUTA =" + idEtapa;
+        Query q = entityManager.createNativeQuery(sql, ActividadesEtapaView.class);
+        return (List<ActividadesEtapaView>) q.getResultList();
     }
 }
