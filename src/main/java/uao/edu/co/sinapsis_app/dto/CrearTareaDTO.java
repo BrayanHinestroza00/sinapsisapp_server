@@ -13,7 +13,7 @@ public class CrearTareaDTO {
     @NotNull(message = "El campo 'Descripcion' no puede estar vacio")
     private String descripcionTarea;
     @NotNull(message = "El campo 'Fecha Limite Entrega' no puede estar vacio")
-    private Date fechaEntrega;
+    private String fechaEntrega;
     @NotNull(message = "El campo 'ID Proyecto' no puede estar vacio")
     private Long idProyectoEmprendimiento;
     @NotNull(message = "El campo 'Usuario Crea' no puede estar vacio")

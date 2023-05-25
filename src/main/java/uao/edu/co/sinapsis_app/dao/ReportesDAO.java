@@ -20,11 +20,8 @@ public class ReportesDAO implements IReportesDAO {
         String sql = "SELECT * \n" +
                 "FROM V_SINAPSIS_CONSULTORIAS \n" +
                 "WHERE ID_MENTOR =:id \n" +
-                "    AND TRUNC(FECHA_CONSULTORIA) \n" +
-//                "    BETWEEN TO_DATE('"+reportesFilters.getFechaInicio()+"', 'DD/MM/YYYY') \n" +
-//                "        AND TO_DATE('"+reportesFilters.getFechaFin()+"', 'DD/MM/YYYY')";
-                "    BETWEEN TRUNC(TO_DATE('"+reportesFilters.getFechaInicio()+"', 'YYYY-MM-DD')) \n" +
-                "        AND TRUNC(TO_DATE('"+reportesFilters.getFechaFin()+"', 'YYYY-MM-DD'))";
+                "    AND FECHA_CONSULTORIA >= TO_DATE('"+reportesFilters.getFechaInicio()+"', 'YYYY-MM-DD') \n" +
+                "    AND FECHA_CONSULTORIA <= TO_DATE('"+reportesFilters.getFechaFin()+"', 'YYYY-MM-DD')";
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
         query.setParameter("id", reportesFilters.getIdMentor());

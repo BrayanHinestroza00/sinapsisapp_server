@@ -37,6 +37,7 @@ import javax.persistence.Query;
 import java.util.Date;
 import java.util.List;
 
+import static uao.edu.co.sinapsis_app.util.AppUtil.getFormatoFecha;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_CONSULTORIAS_ESTADO_PROGRAMADA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO;
@@ -64,7 +65,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         if (solicitudesPEFilterDTO.getNombreEmprendedor() != null &&
                 !(solicitudesPEFilterDTO.getNombreEmprendedor().trim().isEmpty())) {
-            sql += " AND UPPER(NOMBRE_COMPLETO)) " +
+            sql += " AND UPPER(NOMBRE_COMPLETO) " +
                     "like UPPER('%" + solicitudesPEFilterDTO.getNombreEmprendedor() + "%')";
         }
 
@@ -354,7 +355,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         Consultoria nuevaConsultoria = new Consultoria();
         nuevaConsultoria.setTitulo(programarConsultoriaDTO.getTitulo());
         nuevaConsultoria.setTipoConsultoria(programarConsultoriaDTO.getTipoConsultoria());
-        nuevaConsultoria.setFechaConsultoria(programarConsultoriaDTO.getFechaConsultoria());
+        nuevaConsultoria.setFechaConsultoria(getFormatoFecha(programarConsultoriaDTO.getFechaConsultoria(), "dd/MM/yyyy hh:mm:ss"));
         nuevaConsultoria.setHoraInicio(programarConsultoriaDTO.getHoraInicio());
         nuevaConsultoria.setHoraFinalizacion(programarConsultoriaDTO.getHoraFinalizacion());
         nuevaConsultoria.setAsuntoConsultoria(programarConsultoriaDTO.getAsuntoConsultoria());
@@ -428,7 +429,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         tareaNueva.setEstadoEntrega(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE);
         tareaNueva.setTitulo(crearTareaDTO.getNombreTarea());
         tareaNueva.setUsuarioCrea(crearTareaDTO.getUsuarioCrea());
-        tareaNueva.setFechaLimiteEntrega(crearTareaDTO.getFechaEntrega());
+        tareaNueva.setFechaLimiteEntrega(getFormatoFecha(crearTareaDTO.getFechaEntrega(), "dd/MM/yyyy hh:mm:ss"));
         tareaNueva.setFechaCreacion(new Date());
         tareaNueva.setFechaModificacion(new Date());
         tareaNueva.setIdProyectoEmprendimiento(crearTareaDTO.getIdProyectoEmprendimiento());

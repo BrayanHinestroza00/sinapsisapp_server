@@ -9,6 +9,7 @@ import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -138,5 +139,17 @@ public class ReporteConsultoriasMentorExportExcel {
         workbook.close();
 
         outputStream.close();
+    }
+
+    public byte[] generateExcel() throws IOException {
+        writeDataLines();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            workbook.write(bos);
+        } finally {
+            bos.close();
+        }
+        return bos.toByteArray();
     }
 }

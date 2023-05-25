@@ -8,7 +8,7 @@ import java.util.Date;
 public class ProgramarConsultoriaDTO {
     private String titulo;
     private String tipoConsultoria;
-    private Date fechaConsultoria;
+    private String fechaConsultoria;
     private String horaInicio;
     private String horaFinalizacion;
     private String asuntoConsultoria;

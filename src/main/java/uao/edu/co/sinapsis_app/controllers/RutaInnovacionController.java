@@ -20,6 +20,7 @@ import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
+import uao.edu.co.sinapsis_app.exceptions.StorageException;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
