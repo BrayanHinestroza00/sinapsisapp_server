@@ -3,9 +3,11 @@ package uao.edu.co.sinapsis_app.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAppDAO;
+import uao.edu.co.sinapsis_app.dto.UsuarioUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.model.Anuncio;
 import uao.edu.co.sinapsis_app.model.Asignatura;
+import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Departamento;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.Facultad;
@@ -16,7 +18,9 @@ import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
+import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.UsuariosView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
 
@@ -154,5 +158,20 @@ public class AppService implements IAppService {
     @Override
     public List<ActividadesEtapaView> obtenerTematicasEtapasRutaInnovacionEmprendimiento(Long idEtapa) {
         return appDAO.obtenerTematicasEtapasRutaInnovacionEmprendimiento(idEtapa);
+    }
+
+    @Override
+    public UsuariosView getInformacionUsuario(Long idUsuario) {
+
+        return appDAO.getInformacionUsuario(idUsuario);
+    }
+
+    @Override
+    public boolean actualizarPerfilUsuario(UsuarioUpdateDTO usuarioUpdateDTO) throws Exception {
+        if (usuarioUpdateDTO.getFotoPerfil() != null) {
+            String filePathFotoPerfil = storageService.store(usuarioUpdateDTO.getFotoPerfil());
+            usuarioUpdateDTO.setFotoPerfilURL(filePathFotoPerfil);
+        }
+        return appDAO.actualizarPerfilUsuario(usuarioUpdateDTO);
     }
 }

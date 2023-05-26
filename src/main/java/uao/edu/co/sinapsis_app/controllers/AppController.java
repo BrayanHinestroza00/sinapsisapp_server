@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.UsuarioUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.Anuncio;
@@ -24,11 +26,15 @@ import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.UsuariosView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_EMPTY;
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_ERROR;
 
 @RestController
 @RequestMapping("/app/")
@@ -387,6 +393,62 @@ public class AppController {
         } catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/info_usuario", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> getInformacionUsuario(@RequestParam Long idUsuario) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            UsuariosView usuario = appService.getInformacionUsuario(idUsuario);
+
+            if (usuario == null) {
+                response.setCode(0);
+                response.setMessage("USUARIO NO ENCONTRADO");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            } else {
+                response.setCode(1);
+                response.setMessage("OK");
+                response.setResponse(usuario);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/actualizar_perfil", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> actualizarPerfilUsuario(@ModelAttribute UsuarioUpdateDTO usuarioUpdateDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esActualizado;
+            if (usuarioUpdateDTO.getIdUsuario() != null) {
+                esActualizado = appService.actualizarPerfilUsuario(usuarioUpdateDTO);
+            }else {
+                response.setCode(HttpStatus.NOT_ACCEPTABLE.value());
+                response.setMessage("Parámetros no validos");
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+            }
+
+            if (esActualizado) {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("USUARIO NO ENCONTRADO");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

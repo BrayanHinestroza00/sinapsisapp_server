@@ -5,27 +5,36 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAppDAO;
+import uao.edu.co.sinapsis_app.dto.UsuarioUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
+import uao.edu.co.sinapsis_app.model.Administrador;
 import uao.edu.co.sinapsis_app.model.Anuncio;
 import uao.edu.co.sinapsis_app.model.Asignatura;
 import uao.edu.co.sinapsis_app.model.Departamento;
+import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.Facultad;
+import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.Municipio;
 import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
 import uao.edu.co.sinapsis_app.model.RedSocial;
 import uao.edu.co.sinapsis_app.model.TipoContacto;
 import uao.edu.co.sinapsis_app.model.TipoDocumento;
+import uao.edu.co.sinapsis_app.model.Usuario;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.UsuariosView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_PERFIL_ADMINISTRADOR;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_PERFIL_MENTOR;
 
 @Repository
 public class AppDAO implements IAppDAO {
@@ -225,5 +234,88 @@ public class AppDAO implements IAppDAO {
                 "WHERE ID_ETAPA_RUTA =" + idEtapa;
         Query q = entityManager.createNativeQuery(sql, ActividadesEtapaView.class);
         return (List<ActividadesEtapaView>) q.getResultList();
+    }
+
+    @Override
+    public UsuariosView getInformacionUsuario(Long idUsuario) {
+        String sql = "SELECT vsu.* FROM V_SINAPSIS_USUARIOS vsu WHERE vsu.ID = " + idUsuario;
+        Query q = entityManager.createNativeQuery(sql, UsuariosView.class);
+        return (UsuariosView) q.getSingleResult();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean actualizarPerfilUsuario(UsuarioUpdateDTO usuarioUpdateDTO) throws Exception {
+        Usuario usuario = entityManager.find(Usuario.class, usuarioUpdateDTO.getIdUsuario());
+
+        if (usuario != null) {
+            if (usuarioUpdateDTO.getCorreoPersonal() != null) {
+                usuario.setCorreoPersonal(usuarioUpdateDTO.getCorreoPersonal());
+            }
+
+            if (usuarioUpdateDTO.getTelefonoContacto() != null) {
+                usuario.setTelefonoContacto(usuarioUpdateDTO.getTelefonoContacto());
+            }
+
+            if (usuarioUpdateDTO.getFotoPerfil() != null) {
+                usuario.setFotoUrl(usuarioUpdateDTO.getFotoPerfilURL());
+            }
+
+            Usuario updatedUser = entityManager.merge(usuario);
+
+            if (updatedUser == null) {
+                throw new Exception("Problema al almacenar el usuario");
+            }
+
+        } else {
+            throw new Exception("Problema al encontrar el usuario");
+        }
+
+        if (usuarioUpdateDTO.getTipoUsuario() != null
+                && usuarioUpdateDTO.getTipoUsuario() == T_SINAPSIS_PERFIL_ADMINISTRADOR) {
+            Administrador administrador = entityManager.find(Administrador.class, usuarioUpdateDTO.getIdUsuario());
+
+            if (usuarioUpdateDTO.getDependencia() != null) {
+                administrador.setDependencia(usuarioUpdateDTO.getDependencia());
+            }
+
+            if (usuarioUpdateDTO.getFacultad() != null) {
+                administrador.setFacultad(usuarioUpdateDTO.getFacultad());
+            }
+
+            if (usuarioUpdateDTO.getCargo() != null) {
+                administrador.setCargo(usuarioUpdateDTO.getCargo());
+            }
+
+            Administrador updatedAdministrador = entityManager.merge(administrador);
+
+            if (updatedAdministrador == null) {
+                throw new Exception("Problema al almacenar el Administrador");
+            }
+        }
+
+        if (usuarioUpdateDTO.getTipoUsuario() != null
+                && usuarioUpdateDTO.getTipoUsuario() == T_SINAPSIS_PERFIL_MENTOR) {
+            Mentor mentor = entityManager.find(Mentor.class, usuarioUpdateDTO.getIdUsuario());
+            if (usuarioUpdateDTO.getDependencia() != null) {
+                mentor.setDependencia(usuarioUpdateDTO.getDependencia());
+            }
+
+            if (usuarioUpdateDTO.getFacultad() != null) {
+                mentor.setFacultad(usuarioUpdateDTO.getFacultad());
+            }
+
+            if (usuarioUpdateDTO.getCargo() != null) {
+                mentor.setCargo(usuarioUpdateDTO.getCargo());
+            }
+
+            Mentor updatedMentor = entityManager.merge(mentor);
+
+            if (updatedMentor == null) {
+                throw new Exception("Problema al almacenar el Mentor");
+            }
+        }
+
+        return true;
     }
 }

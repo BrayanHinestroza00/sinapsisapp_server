@@ -1,5 +1,6 @@
 package uao.edu.co.sinapsis_app.dao.interfaces;
 
+import uao.edu.co.sinapsis_app.dto.UsuarioUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.model.Anuncio;
 import uao.edu.co.sinapsis_app.model.Asignatura;
@@ -14,6 +15,7 @@ import uao.edu.co.sinapsis_app.model.TipoDocumento;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
+import uao.edu.co.sinapsis_app.model.view.UsuariosView;
 
 import java.text.ParseException;
 import java.util.List;
@@ -64,4 +66,8 @@ public interface IAppDAO {
     boolean registrarAnuncio(PublicarAnuncioDTO anuncioDTO) throws ParseException;
 
     List<ActividadesEtapaView> obtenerTematicasEtapasRutaInnovacionEmprendimiento(Long idEtapa);
+
+    UsuariosView getInformacionUsuario(Long idUsuario);
+
+    boolean actualizarPerfilUsuario(UsuarioUpdateDTO usuarioUpdateDTO) throws Exception;
 }

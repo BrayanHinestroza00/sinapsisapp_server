@@ -39,6 +39,9 @@ public class Constants {
     public static final String T_SINAPSIS_CONSULTORIAS_ESTADO_NO_ASISTIDA = "NO ASISTIDA";
     public static final String T_SINAPSIS_CONSULTORIAS_ESTADO_TERMINADA = "TERMINADA";
 
+    public static final int T_SINAPSIS_PERFIL_ADMINISTRADOR = 1;
+    public static final int T_SINAPSIS_PERFIL_MENTOR = 2;
+
     /**
      * APP States
      */

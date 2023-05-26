@@ -69,7 +69,7 @@ public class EmprendedorController {
             }else {
                 esActualizado = false;
                 response.setCode(HttpStatus.NOT_ACCEPTABLE.value());
-                response.setMessage("Parametros no validos");
+                response.setMessage("Parámetros no validos");
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
 
