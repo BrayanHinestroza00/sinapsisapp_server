@@ -277,4 +277,32 @@ public class AuthDAO implements IAuthDAO {
 
         return true;
     }
+
+    @Override
+    @Transactional
+    public boolean restablecerContraseña(Long idUsuario) {
+        String sql = "UPDATE T_SINAPSIS_USUARIOS " +
+                "SET PASSWORD = CONCAT(UPPER(SUBSTR(APELLIDOS, 1 ,1)), NUMERO_DOCUMENTO) " +
+                "WHERE ID = " + idUsuario;
+
+        Query query = entityManager.createNativeQuery(sql);
+
+        int result = query.executeUpdate();
+
+        return result > 0;
+    }
+
+    @Override
+    @Transactional
+    public boolean desactivarUsuario(Long idUsuario) {
+        String sql = "UPDATE T_SINAPSIS_USUARIOS " +
+                "SET ESTADO_CUENTA = 0 " +
+                "WHERE ID = " + idUsuario;
+
+        Query query = entityManager.createNativeQuery(sql);
+
+        int result = query.executeUpdate();
+
+        return result > 0;
+    }
 }

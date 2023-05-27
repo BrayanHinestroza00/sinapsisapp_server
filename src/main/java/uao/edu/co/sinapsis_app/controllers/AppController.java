@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.UsuarioUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;

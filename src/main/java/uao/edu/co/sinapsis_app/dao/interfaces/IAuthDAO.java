@@ -19,4 +19,8 @@ public interface IAuthDAO {
 
     boolean actualizarContrasena(Usuario usuarioActualizado);
 
+    boolean restablecerContraseña(Long idUsuario);
+
+    boolean desactivarUsuario(Long idUsuario);
+
 }

@@ -2,6 +2,7 @@ package uao.edu.co.sinapsis_app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import uao.edu.co.sinapsis_app.beans.SignUpExterno;
 import uao.edu.co.sinapsis_app.beans.SignUpIntegration;
 import uao.edu.co.sinapsis_app.beans.SignUpIntegrationMentor;
 import uao.edu.co.sinapsis_app.dto.request.ActualizarContrasenaDTO;
+import uao.edu.co.sinapsis_app.dto.request.UpdateUsuarioDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.services.interfaces.IAuthService;
 
@@ -129,6 +131,55 @@ public class AuthController {
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/restablecer_password", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> restablecerContraseña(@RequestBody UpdateUsuarioDTO updateUsuarioDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esActualizado = authService.restablecerContraseña(updateUsuarioDTO.getIdUsuario());
+
+            if (esActualizado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(0);
+                response.setMessage("No se pudo restablecer la contraseña");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/desactivar_usuario", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> desactivarUsuario(@RequestBody UpdateUsuarioDTO updateUsuarioDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esActualizado = authService.desactivarUsuario(updateUsuarioDTO.getIdUsuario());
+
+            if (esActualizado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(0);
+                response.setMessage("No se pudo desactivar la cuenta");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);
             response.setMessage(e.getMessage());

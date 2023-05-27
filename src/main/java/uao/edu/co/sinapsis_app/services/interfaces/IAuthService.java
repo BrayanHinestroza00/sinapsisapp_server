@@ -17,4 +17,7 @@ public interface IAuthService {
     ResponseDTO signUpExterno(SignUpExterno signUpUser) throws Exception;
 
     ResponseDTO actualizarContrasena(ActualizarContrasenaDTO actualizarContrasenaDTO);
+    boolean restablecerContraseña(Long idUsuario);
+
+    boolean desactivarUsuario(Long idUsuario);
 }

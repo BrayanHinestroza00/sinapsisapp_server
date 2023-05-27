@@ -377,4 +377,14 @@ public class AuthService implements IAuthService {
             return response;
         }
     }
+
+    @Override
+    public boolean restablecerContraseña(Long idUsuario) {
+        return authDAO.restablecerContraseña(idUsuario);
+    }
+
+    @Override
+    public boolean desactivarUsuario(Long idUsuario) {
+        return authDAO.desactivarUsuario(idUsuario);
+    }
 }
