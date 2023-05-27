@@ -15,10 +15,12 @@ import uao.edu.co.sinapsis_app.dto.request.FinalizarAcompanamientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.HorarioMentorRequestDTO;
 import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
+import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.MentoresView;
+import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
 
 import javax.validation.Valid;
@@ -235,6 +237,37 @@ public class MentoresController {
                 response.setMessage("No se pudo finalizar el acompañamiento");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/emprendimientos", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerEmprendimientos(@RequestParam(required = true) String idMentor){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            List<Emprendimiento> emprendimientos = mentoresService.obtenerEmprendimientos(idMentor);
+            List<Emprendimiento> data = new ArrayList<>();
+
+            if (emprendimientos.size() > 0) {
+                for (Emprendimiento emprendimiento: emprendimientos ) {
+                    List<RedSocialEmprendimientoView> redesSociales =
+                            mentoresService.obtenerRedesSocialesEmprendimiento(String.valueOf(emprendimiento.getId()));
+
+                    emprendimiento.setRedesSociales(redesSociales);
+                    data.add(emprendimiento);
+                }
+                response.setCode(1);
+                response.setResponse(data);
+            }else {
+                response.setCode(0);
+                response.setMessage("Sin datos");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);

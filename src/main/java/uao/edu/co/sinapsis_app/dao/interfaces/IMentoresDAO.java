@@ -2,11 +2,13 @@ package uao.edu.co.sinapsis_app.dao.interfaces;
 
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
+import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
 import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.MentoresView;
+import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 
 import java.util.List;
 
@@ -32,4 +34,8 @@ public interface IMentoresDAO {
     boolean actualizarHorarioMentor(Long idMentor, List<HorarioMentor> horarios) throws Exception;
 
     boolean finalizarAcompanamiento(Long idRutaProyectoEmprendimiento, Long idMentorCrea, String observaciones) throws Exception;
+
+    List<Emprendimiento> obtenerEmprendimientos(String idMentor);
+
+    List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento);
 }

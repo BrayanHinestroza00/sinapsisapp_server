@@ -7,12 +7,14 @@ import uao.edu.co.sinapsis_app.dao.interfaces.IMentoresDAO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.model.Asesoramiento;
+import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.MentoresView;
+import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -261,5 +263,28 @@ public class MentoresDAO implements IMentoresDAO {
         entityManager.flush();
 
         return true;
+    }
+
+    @Override
+    public List<Emprendimiento> obtenerEmprendimientos(String idMentor) {
+        String sql = "SELECT \n" +
+                "    TE.* \n" +
+                "FROM T_SINAPSIS_EMPRENDIMIENTOS TE \n" +
+                "JOIN T_SINAPSIS_PROY_EMPRENDIMIENTO TPE ON TPE.EMPRENDIMIENTOS_ID = TE.ID \n" +
+                "JOIN T_SINAPSIS_RUT_EMPRENDIMIENTO TRE ON TRE.PROYECTOS_EMPRENDIMIENTOS_ID = TPE.ID\n" +
+                "JOIN T_SINAPSIS_ASESORAMIENTO TA ON TA.RUTA_EMPRENDIMIENTO_EMP_ID = TRE.ID\n" +
+                "WHERE TRE.ESTADO_RUTA != 'COMPLETADO' AND TA.ESTADO = 'EN CURSO' AND TA.MENTOR_ID =" + idMentor;
+
+        Query query = entityManager.createNativeQuery(sql, Emprendimiento.class);
+
+        return (List<Emprendimiento>) query.getResultList();
+    }
+
+    @Override
+    public List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDI_RED_SOCIAL WHERE ID_EMPRENDIMIENTO = " + idEmprendimiento;
+        Query query = entityManager.createNativeQuery(sql, RedSocialEmprendimientoView.class);
+
+        return (List<RedSocialEmprendimientoView>) query.getResultList();
     }
 }

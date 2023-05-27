@@ -8,11 +8,13 @@ import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.FinalizarAcompanamientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.HorarioMentorRequestDTO;
 import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
+import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
 import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.MentoresView;
+import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
 
 import java.util.ArrayList;
@@ -128,5 +130,15 @@ public class MentoresService implements IMentoresService {
                 finalizarAcompanamientoDTO.getIdRutaProyectoEmprendimiento(),
                 finalizarAcompanamientoDTO.getIdMentorCrea(),
                 finalizarAcompanamientoDTO.getObservaciones());
+    }
+
+    @Override
+    public List<Emprendimiento> obtenerEmprendimientos(String idMentor) {
+        return mentoresDAO.obtenerEmprendimientos(idMentor);
+    }
+
+    @Override
+    public List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento) {
+        return mentoresDAO.obtenerRedesSocialesEmprendimiento(idEmprendimiento);
     }
 }
