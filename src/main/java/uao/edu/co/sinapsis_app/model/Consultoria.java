@@ -30,6 +30,10 @@ public class Consultoria {
     private String horaInicio;
     @Column(name = "HORA_FIN")
     private String horaFinalizacion;
+    @Column(name = "FECHA_INICIO_REAL")
+    private Date fechaInicioReal;
+    @Column(name = "FECHA_FIN_REAL")
+    private Date fechaFinalizacionReal;
     @Column(name = "ASUNTO_CONSULTORIA")
     private String asuntoConsultoria;
     @Column(name = "ESTADO_CONSULTORIA")

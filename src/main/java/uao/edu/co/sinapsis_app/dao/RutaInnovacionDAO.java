@@ -9,6 +9,7 @@ import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.ConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
@@ -39,7 +40,10 @@ import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.AppUtil.getFormatoFecha;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_CONSULTORIAS_ESTADO_EN_CURSO;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_CONSULTORIAS_ESTADO_NO_ASISTIDA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_CONSULTORIAS_ESTADO_PROGRAMADA;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_CONSULTORIAS_ESTADO_TERMINADA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_CALIFICADA;
@@ -330,7 +334,9 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     public List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
                 "WHERE EMPRENDEDORES_ID = " + idEmprendedor + " " +
-                "AND FECHA_CONSULTORIA >= SYSDATE ORDER BY FECHA_CONSULTORIA DESC";
+                "AND FECHA_CONSULTORIA >= TRUNC(SYSDATE) " +
+                "AND (ESTADO_CONSULTORIA = 'PROGRAMADA' OR ESTADO_CONSULTORIA = 'EN CURSO') " +
+                "ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
@@ -376,6 +382,70 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             throw new Exception("Problema al programar la consultoria");
         }
 
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean iniciarConsultoriaEmprendedor(Long idConsultoria) throws Exception {
+        Consultoria consultoria = entityManager.find(Consultoria.class, idConsultoria);
+
+        if (consultoria != null) {
+            consultoria.setEstadoConsultoria(T_SINAPSIS_CONSULTORIAS_ESTADO_EN_CURSO);
+            consultoria.setFechaInicioReal(new Date());
+
+            Consultoria isRegistered = entityManager.merge(consultoria);
+            entityManager.flush();
+
+            if (isRegistered == null) {
+                throw new Exception("Problema al iniciar la consultoria");
+            }
+        } else {
+            throw new Exception("Problema al buscar la consultoria");
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean inasistenciaConsultoriaEmprendedor(ConsultoriaDTO consultoriaDTO) throws Exception {
+        Consultoria consultoria = entityManager.find(Consultoria.class, consultoriaDTO.getIdConsultoria());
+
+        if (consultoria != null) {
+            consultoria.setEstadoConsultoria(T_SINAPSIS_CONSULTORIAS_ESTADO_NO_ASISTIDA);
+            consultoria.setComentariosConsultoria(consultoriaDTO.getComentariosConsultoria());
+
+            Consultoria isRegistered = entityManager.merge(consultoria);
+            entityManager.flush();
+
+            if (isRegistered == null) {
+                throw new Exception("Problema al marcar inasistencia de la consultoria");
+            }
+        } else {
+            throw new Exception("Problema al buscar la consultoria");
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean terminarConsultoriaEmprendedor(ConsultoriaDTO consultoriaDTO) throws Exception {
+        Consultoria consultoria = entityManager.find(Consultoria.class, consultoriaDTO.getIdConsultoria());
+
+        if (consultoria != null) {
+            consultoria.setEstadoConsultoria(T_SINAPSIS_CONSULTORIAS_ESTADO_TERMINADA);
+            consultoria.setComentariosConsultoria(consultoriaDTO.getComentariosConsultoria());
+            consultoria.setFechaFinalizacionReal(new Date());
+
+            Consultoria isRegistered = entityManager.merge(consultoria);
+            entityManager.flush();
+
+            if (isRegistered == null) {
+                throw new Exception("Problema al marcar terminar la consultoria");
+            }
+        } else {
+            throw new Exception("Problema al buscar la consultoria");
+        }
         return true;
     }
 

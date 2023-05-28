@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.ConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
@@ -436,6 +437,81 @@ public class RutaInnovacionController {
             } else {
                 response.setCode(STATUS_EMPTY);
                 response.setMessage("FALLO AL PROGRAMAR LA CONSULTORIA");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/consultorias/iniciar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> iniciarConsultoriaEmprendedor(@RequestBody ConsultoriaDTO consultoriaDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = rutaInnovacionService.iniciarConsultoriaEmprendedor(consultoriaDTO.getIdConsultoria());
+
+            if (esRegistrado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("FALLO AL INICIAR LA CONSULTORIA");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/consultorias/inasistencia", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> inasistenciaConsultoriaEmprendedor(@RequestBody ConsultoriaDTO consultoriaDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = rutaInnovacionService.inasistenciaConsultoriaEmprendedor(consultoriaDTO);
+
+            if (esRegistrado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("FALLO AL MARCAR INASISTENCIA A LA CONSULTORIA");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/consultorias/terminar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> terminarConsultoriaEmprendedor(@RequestBody ConsultoriaDTO consultoriaDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esRegistrado = rutaInnovacionService.terminarConsultoriaEmprendedor(consultoriaDTO);
+
+            if (esRegistrado) {
+                response.setCode(0);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("FALLO AL TERMINAR A LA CONSULTORIA");
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         } catch (Exception e) {

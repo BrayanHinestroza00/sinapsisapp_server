@@ -6,10 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "V_SINAPSIS_EMPRENDEDORES")
+@Table(name = "V_SINAPSIS_CONSULTORIAS")
 public class ConsultoriasView {
     @Id
     @Column(name = "ID_CONSULTORIA")
@@ -24,6 +25,10 @@ public class ConsultoriasView {
     private String horaInicioConsultoria;
     @Column(name = "HORA_FIN")
     private String horaFinConsultoria;
+    @Column(name = "FECHA_INICIO_REAL")
+    private String fechaInicioReal;
+    @Column(name = "FECHA_FIN_REAL")
+    private String fechaFinalizacionReal;
     @Column(name = "ASUNTO_CONSULTORIA")
     private String asuntoConsultoria;
     @Column(name = "ESTADO_CONSULTORIA")

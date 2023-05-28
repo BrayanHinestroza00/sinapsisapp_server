@@ -3,6 +3,7 @@ package uao.edu.co.sinapsis_app.services.interfaces;
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.ConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.EntregaTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
@@ -57,6 +58,12 @@ public interface IRutaInnovacionService {
     List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
 
     boolean programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception;
+
+    boolean iniciarConsultoriaEmprendedor(Long idConsultoria) throws Exception;
+
+    boolean inasistenciaConsultoriaEmprendedor(ConsultoriaDTO consultoriaDTO) throws Exception;
+
+    boolean terminarConsultoriaEmprendedor(ConsultoriaDTO consultoriaDTO) throws Exception;
 
     List<EmprendedoresView> obtenerEmprendedores(EmprendedoresAdmFilterDTO emprendedoresAdmFilterDTO);
 
