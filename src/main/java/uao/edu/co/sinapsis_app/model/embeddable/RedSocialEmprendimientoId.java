@@ -9,14 +9,12 @@ import java.io.Serializable;
 @Data
 @Embeddable
 public class RedSocialEmprendimientoId implements Serializable {
-    @Column(name = "ID_RED_SOCIAL")
-    private String idRedSocial;
-    @Column(name = "ID_EMPRENDIMIENTO")
-    private String idEmprendimiento;
+    @Column(name = "REDES_SOCIALES_ID")
+    private Long idRedSocial;
+    @Column(name = "EMPRENDIMIENTOS_ID")
+    private Long idEmprendimiento;
 
-    public RedSocialEmprendimientoId() {
-    }
-    public RedSocialEmprendimientoId(String idRedSocial, String idEmprendimiento) {
+    public RedSocialEmprendimientoId(Long idRedSocial, Long idEmprendimiento) {
         this.idRedSocial = idRedSocial;
         this.idEmprendimiento = idEmprendimiento;
     }

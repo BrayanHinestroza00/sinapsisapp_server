@@ -1,32 +1,27 @@
-package uao.edu.co.sinapsis_app.model.view;
+package uao.edu.co.sinapsis_app.model;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
-import uao.edu.co.sinapsis_app.model.embeddable.RedSocialEmprendimientoViewId;
+import uao.edu.co.sinapsis_app.model.embeddable.RedSocialEmprendimientoId;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "V_SINAPSIS_EMPRENDI_RED_SOCIAL")
 @Data
-public class RedSocialEmprendimientoView {
+@Entity
+@Table(name = "T_SINAPSIS_EMPREN_RED_SOCIAL")
+public class RedSocialEmprendimiento {
     @Id
     @JsonUnwrapped
-    private RedSocialEmprendimientoViewId id;
-    @Column(name = "RED_SOCIAL")
-    private String redSocial;
+    private RedSocialEmprendimientoId id;
     @Column(name = "ENLACE")
     private String enlace;
 
-    public RedSocialEmprendimientoView() {
-    }
 
-    public RedSocialEmprendimientoView(RedSocialEmprendimientoViewId id, String redSocial, String enlace) {
-        this.id = id;
-        this.redSocial = redSocial;
+    public RedSocialEmprendimiento(Long idEmprendimiento, Long idRedSocial, String enlace) {
+        this.id = new RedSocialEmprendimientoId(idRedSocial, idEmprendimiento);
         this.enlace = enlace;
     }
 
@@ -35,7 +30,6 @@ public class RedSocialEmprendimientoView {
         return "RedSocialEmprendimientoView{" +
                 "idRedSocial=" + id.getIdRedSocial() +
                 ", idEmprendimiento='" + id.getIdEmprendimiento() + '\'' +
-                ", redSocial='" + redSocial + '\'' +
                 ", enlace='" + enlace + '\'' +
                 '}';
     }

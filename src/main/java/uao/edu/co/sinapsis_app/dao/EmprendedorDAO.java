@@ -9,6 +9,8 @@ import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IPrimeraAtencionDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IProyectoEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.EmprendimientoDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendimientoUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendedor;
@@ -134,7 +136,7 @@ public class EmprendedorDAO implements IEmprendedorDAO {
 
         // Se actualiza informacion del emprendimiento
 
-        Emprendimiento emprendimiento = new Emprendimiento();
+        EmprendimientoDTO emprendimiento = new EmprendimientoDTO();
 
         if (primeraAtencionDTO.getNombreEmprendimiento() != null) {
             emprendimiento.setNombreEmprendimiento(primeraAtencionDTO.getNombreEmprendimiento());
@@ -149,7 +151,7 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         }
 
         if (primeraAtencionDTO.getSitioWebEmpresa() != null) {
-            emprendimiento.setSitioWeb(primeraAtencionDTO.getSitioWebEmpresa());
+            emprendimiento.setSitioWebEmpresa(primeraAtencionDTO.getSitioWebEmpresa());
         }
 
         if (primeraAtencionDTO.getEstaConstituida() != null) {
@@ -159,15 +161,15 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             emprendimiento.setFechaConstitucion(getFormatoFecha(primeraAtencionDTO.getFechaConstitucion(), APP_DATE_OUT_FORMAT));
         }
         if (primeraAtencionDTO.getNitEmpresa() != null) {
-            emprendimiento.setNit(primeraAtencionDTO.getNitEmpresa());
+            emprendimiento.setNitEmpresa(primeraAtencionDTO.getNitEmpresa());
         }
 
         if (primeraAtencionDTO.getRazonSocialEmpresa() != null) {
-            emprendimiento.setRazonSocial(primeraAtencionDTO.getRazonSocialEmpresa());
+            emprendimiento.setRazonSocialEmpresa(primeraAtencionDTO.getRazonSocialEmpresa());
         }
 
         if (primeraAtencionDTO.getLogoEmpresa() != null) {
-            emprendimiento.setNombreEmprendimiento(primeraAtencionDTO.getLogoEmpresaURL());
+            emprendimiento.setLogoEmpresaURL(primeraAtencionDTO.getLogoEmpresaURL());
         }
 
         if (primeraAtencionDTO.getDescripcionProducto() != null) {
@@ -187,7 +189,11 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         }
 
         if (primeraAtencionDTO.getNecesidadIdentificada() != null) {
-            emprendimiento.setNecesidadesIdentificadas(primeraAtencionDTO.getNecesidadIdentificada());
+            emprendimiento.setNecesidadIdentificada(primeraAtencionDTO.getNecesidadIdentificada());
+        }
+
+        if (primeraAtencionDTO.getRedesSociales() != null && primeraAtencionDTO.getRedesSociales().length > 0 ) {
+            emprendimiento.setRedesSociales(primeraAtencionDTO.getRedesSociales());
         }
 
         Emprendimiento updatedEmprendimiento = emprendimientoDAO.registrarEmprendimiento(emprendimiento);
@@ -429,5 +435,18 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         Query query = entityManager.createNativeQuery(sql, RedSocialEmprendimientoView.class);
 
         return (List<RedSocialEmprendimientoView>) query.getResultList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean actualizarEmprendimiento(EmprendimientoUpdateDTO emprendimientoUpdateDTO) throws Exception {
+        // Se actualiza informacion del emprendimiento
+        return emprendimientoDAO.actualizarEmprendimiento(emprendimientoUpdateDTO);
+
+//        if (updatedEmprendimiento == null) {
+//            throw new Exception("Problema al almacenar el emprendimiento");
+//        }
+//
+//        return true;
     }
 }

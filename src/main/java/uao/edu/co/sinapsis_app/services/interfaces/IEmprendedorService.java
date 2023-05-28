@@ -1,6 +1,7 @@
 package uao.edu.co.sinapsis_app.services.interfaces;
 
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendimientoUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
@@ -18,4 +19,5 @@ public interface IEmprendedorService {
     List<Emprendimiento> obtenerEmprendimientos(String idEmprendedor);
     List<Emprendimiento> obtenerEmprendimiento(String idEmprendimiento);
     List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento);
+    boolean actualizarEmprendimiento(EmprendimientoUpdateDTO emprendimientoUpdateDTO) throws Exception;
 }

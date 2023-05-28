@@ -1,8 +1,10 @@
 package uao.edu.co.sinapsis_app.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.google.gson.Gson;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+import uao.edu.co.sinapsis_app.dto.RedSocialDTO;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -60,12 +62,13 @@ public class PrimeraAtencionDTO implements Serializable {
     private String logoEmpresaURL;
     @NotNull(message = "El campo 'Descripcion Producto' no puede estar vacio")
     private String descripcionProducto;
-    @NotNull(message = "El campo 'Naterias Primas' no puede estar vacio")
+    @NotNull(message = "El campo 'Materias Primas' no puede estar vacio")
     private String materiasPrimas;
     @NotNull(message = "El campo 'Descripcion Clientes' no puede estar vacio")
     private String descripcionClientes;
     private String enfoqueSocial;
     private String necesidadIdentificada;
+    private RedSocialDTO[] redesSociales;
 
     // Datos de Primera atencion
     @NotNull(message = "El campo 'Nombre Producto' no puede estar vacio")
@@ -86,4 +89,12 @@ public class PrimeraAtencionDTO implements Serializable {
     @NotNull(message = "El campo 'Autodiagnostico' no puede estar vacio")
     private MultipartFile fileAutodiagnostico;
     private String fileAutodiagnosticoURL;
+
+    public void setRedesSociales(String redesSociales) {
+        Gson gson = new Gson();
+
+        RedSocialDTO[] redes = gson.fromJson(redesSociales, RedSocialDTO[].class);
+
+        this.redesSociales = redes;
+    }
 }

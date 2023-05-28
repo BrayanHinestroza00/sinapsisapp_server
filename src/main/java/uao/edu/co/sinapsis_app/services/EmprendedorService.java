@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmprendedorDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendimientoUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
@@ -48,7 +49,7 @@ public class EmprendedorService implements IEmprendedorService {
 
         if (primeraAtencion.getLogoEmpresa() != null) {
             String filePathLogoEmpresa = storageService.store(primeraAtencion.getLogoEmpresa());
-            primeraAtencion.setFotoPerfilURL(filePathLogoEmpresa);
+            primeraAtencion.setLogoEmpresaURL(filePathLogoEmpresa);
         }
 
         if (primeraAtencion.getFileAutodiagnostico() != null) {
@@ -81,5 +82,15 @@ public class EmprendedorService implements IEmprendedorService {
     @Override
     public List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento) {
         return emprendedorDAO.obtenerRedesSocialesEmprendimiento(idEmprendimiento);
+    }
+
+    @Override
+    public boolean actualizarEmprendimiento(EmprendimientoUpdateDTO emprendimientoUpdateDTO) throws Exception {
+        if (emprendimientoUpdateDTO.getLogoEmpresa() != null) {
+            String filePathLogoEmpresa = storageService.store(emprendimientoUpdateDTO.getLogoEmpresa());
+            emprendimientoUpdateDTO.setLogoEmpresaURL(filePathLogoEmpresa);
+        }
+
+        return emprendedorDAO.actualizarEmprendimiento(emprendimientoUpdateDTO);
     }
 }

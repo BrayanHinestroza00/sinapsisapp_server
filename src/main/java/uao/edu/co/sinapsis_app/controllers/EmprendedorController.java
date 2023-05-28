@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.EmprendimientoUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
@@ -202,6 +203,38 @@ public class EmprendedorController {
         }catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/emprendimiento", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> actualizarEmprendimiento(@ModelAttribute EmprendimientoUpdateDTO emprendimientoUpdateDTO) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            boolean esActualizado;
+            if (emprendimientoUpdateDTO.getIdEmprendimiento() != null) {
+                esActualizado = emprendedorService.actualizarEmprendimiento(emprendimientoUpdateDTO);
+            }else {
+                response.setCode(HttpStatus.NOT_ACCEPTABLE.value());
+                response.setMessage("Parámetros no validos");
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+            }
+
+            if (esActualizado) {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("OK");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                response.setCode(STATUS_EMPTY);
+                response.setMessage("EMPRENDEDOR NO ENCONTRADO");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(STATUS_ERROR);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

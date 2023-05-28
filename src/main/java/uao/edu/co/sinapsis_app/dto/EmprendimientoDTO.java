@@ -1,6 +1,9 @@
 package uao.edu.co.sinapsis_app.dto;
 
+import com.google.gson.Gson;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class EmprendimientoDTO {
@@ -11,7 +14,7 @@ public class EmprendimientoDTO {
     private String fechaCreacionEmpresa;
     private String sitioWebEmpresa;
     private String estaConstituida;
-    private String fechaConstitucion;
+    private Date fechaConstitucion;
     private String nitEmpresa;
     private String razonSocialEmpresa;
     private String descripcionProducto;
@@ -21,4 +24,5 @@ public class EmprendimientoDTO {
     private String necesidadIdentificada;
     private String logoEmpresaURL;
     private String fileAutodiagnosticoURL;
+    private RedSocialDTO[] redesSociales;
 }
