@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.AsignarMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.ConsultoriaDTO;
@@ -62,6 +63,11 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     public boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception {
 
         return rutaInnovacionDAO.asignarRutaPrimeraAtencion(rutaPrimeraAtencionDTO);
+    }
+
+    @Override
+    public boolean asignarMentor(AsignarMentorDTO asignarMentorDTO) throws Exception {
+        return rutaInnovacionDAO.asignarMentor(asignarMentorDTO);
     }
 
     @Override

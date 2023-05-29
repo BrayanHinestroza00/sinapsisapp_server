@@ -8,4 +8,5 @@ public class SolicitudesPEFilterDTO {
     private String nombreEmprendedor;
     private String estadosRuta;
     private Long etapasRuta;
+    private Long mentorAsociado;
 }

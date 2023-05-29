@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IProyectoEmprendimientoDAO;
 import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
+import uao.edu.co.sinapsis_app.dto.request.AsignarMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
 import uao.edu.co.sinapsis_app.dto.request.ConsultoriaDTO;
@@ -81,6 +82,15 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         if (solicitudesPEFilterDTO.getEstadosRuta() != null &&
                 !solicitudesPEFilterDTO.getEstadosRuta().equalsIgnoreCase("-1")) {
             sql += " AND ESTADO_RUTA = '" + solicitudesPEFilterDTO.getEstadosRuta() + "'";
+        }
+
+        if (solicitudesPEFilterDTO.getMentorAsociado() != null &&
+                solicitudesPEFilterDTO.getMentorAsociado() != -1) {
+            if (solicitudesPEFilterDTO.getMentorAsociado() == 1) {
+                sql += " AND ASESORAMIENTOS_ID IS NOT NULL";
+            } else {
+                sql += " AND ASESORAMIENTOS_ID IS NULL";
+            }
         }
 
         sql += " ORDER BY FECHA_REGISTRO_PA DESC";
@@ -184,6 +194,43 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             throw new Exception("No se encontro el proyecto de emprendimiento");
         }
         return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean asignarMentor(AsignarMentorDTO asignarMentorDTO) throws Exception {
+        ProyectoEmprendimiento proyectoEmprendimiento =
+                proyectoEmprendimientoDAO.find(asignarMentorDTO.getIdProyectoEmprendimiento());
+
+        if (proyectoEmprendimiento != null) {
+            EtapaRutaEmprendimiento isRegistered =
+                    entityManager.find(EtapaRutaEmprendimiento.class, asignarMentorDTO.getIdRutaProyectoEmprendimiento());
+
+            if (isRegistered != null) {
+                Date fechaActual = new Date();
+
+                Asesoramiento asesoramiento = new Asesoramiento();
+                asesoramiento.setFechaInicio(fechaActual);
+                asesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO);
+                asesoramiento.setIdRutaEmprendimiento(isRegistered.getId());
+                asesoramiento.setIdMentor(asignarMentorDTO.getIdMentorPrincipal());
+                asesoramiento.setFechaCreacion(fechaActual);
+                asesoramiento.setFechaModificacion(fechaActual);
+
+                Asesoramiento asesoramientoNew = entityManager.merge(asesoramiento);
+                entityManager.flush();
+
+                if (asesoramientoNew != null) {
+                    return true;
+                } else {
+                    throw new Exception("Problema al almacenar el asesoramiento");
+                }
+            } else {
+                throw new Exception("No se encontro el la etapa en la ruta del proyecto de emprendimiento");
+            }
+        } else  {
+            throw new Exception("No se encontro el proyecto de emprendimiento");
+        }
     }
 
     @Override

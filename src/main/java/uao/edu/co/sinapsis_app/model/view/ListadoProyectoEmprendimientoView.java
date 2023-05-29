@@ -42,4 +42,8 @@ public class ListadoProyectoEmprendimientoView {
     private String estadoRuta;
     @Column(name = "ETAPAS_RUTA_ID")
     private String idEstadoRuta;
+    @Column(name = "ASESORAMIENTOS_ID")
+    private Long asesoramientoId;
+    @Column(name = "MENTOR_ASESORAMIENTOS_ID")
+    private Long mentorAsesoramientoId;
 }
