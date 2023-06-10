@@ -49,7 +49,9 @@ public interface IRutaInnovacionService {
 
     List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento, String tipoBusqueda);
 
-    List<ConsultoriasView> obtenerConsultoria(Long idTarea);
+    TareasProyectoEmprendimientoView obtenerTareasPorId(Long idTarea);
+
+    List<ConsultoriasView> obtenerConsultoria(Long idConsultoria);
 
     List<ConsultoriasView> obtenerConsultoriaNormal(Long idProyectoEmprendimiento);
 

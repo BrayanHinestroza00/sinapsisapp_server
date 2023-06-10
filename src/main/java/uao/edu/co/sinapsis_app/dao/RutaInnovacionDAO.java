@@ -20,6 +20,7 @@ import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.Asesoramiento;
 import uao.edu.co.sinapsis_app.model.Consultoria;
 import uao.edu.co.sinapsis_app.model.EtapaRutaEmprendimiento;
+import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.Tarea;
@@ -28,6 +29,7 @@ import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.MentoresView;
 import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
@@ -332,6 +334,16 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     }
 
     @Override
+    public TareasProyectoEmprendimientoView obtenerTareasPorId(Long idTarea) {
+        String  sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
+                "WHERE ID_TAREA = " + idTarea;
+
+        Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
+
+        return (TareasProyectoEmprendimientoView) query.getSingleResult();
+    }
+
+    @Override
     public List<ConsultoriasView> obtenerConsultoria(Long idConsultoria) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
                 "WHERE ID_CONSULTORIA = " + idConsultoria + " " +
@@ -404,7 +416,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public boolean programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception {
+    public Consultoria programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception {
         Consultoria nuevaConsultoria = new Consultoria();
         nuevaConsultoria.setTitulo(programarConsultoriaDTO.getTitulo());
         nuevaConsultoria.setTipoConsultoria(programarConsultoriaDTO.getTipoConsultoria());
@@ -429,7 +441,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             throw new Exception("Problema al programar la consultoria");
         }
 
-        return true;
+        return isRegistered;
     }
 
     @Override
@@ -541,7 +553,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public boolean registrarTareaEmprendedor(CrearTareaDTO crearTareaDTO) throws Exception {
+    public Tarea registrarTareaEmprendedor(CrearTareaDTO crearTareaDTO) throws Exception {
         Tarea tareaNueva = new Tarea();
         tareaNueva.setEstadoEntrega(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE);
         tareaNueva.setTitulo(crearTareaDTO.getNombreTarea());
@@ -560,7 +572,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             throw new Exception("Problema al registrar la tarea");
         }
 
-        return true;
+        return isRegistered;
     }
 
     @Override
@@ -628,5 +640,45 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         }
 
         return true;
+    }
+
+    @Override
+    public AsesoramientosView buscarAsesoramientoPorIdProyectoEmprendimiento(Long idProyectoEmprendimiento) {
+        String sql = "SELECT ROW_NUMBER() OVER (ORDER BY ID_PROY_EMPRENDIMIENTO) AS ID_VIEW, V.* FROM V_SINAPSIS_ASESORAMIENTOS V WHERE ID_PROY_EMPRENDIMIENTO = ?1";
+
+        Query query = entityManager.createNativeQuery(sql, AsesoramientosView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
+
+        return (AsesoramientosView) query.getSingleResult();
+    }
+
+    @Override
+    public AsesoramientosView buscarAsesoramientoPorIdRutaProyectoEmprendimiento(Long idRutaProyectoEmprendimiento) {
+        String sql = "SELECT ROW_NUMBER() OVER (ORDER BY ID_PROY_EMPRENDIMIENTO) AS ID_VIEW, V.* FROM V_SINAPSIS_ASESORAMIENTOS V WHERE ID_RUTA_EMPRENDI = ?1";
+
+        Query query = entityManager.createNativeQuery(sql, AsesoramientosView.class);
+        query.setParameter(1, idRutaProyectoEmprendimiento);
+
+        return (AsesoramientosView) query.getSingleResult();
+    }
+
+    @Override
+    public MentoresProyectoEmprendimientoView buscarAsesoramientoMentorPorIdRutaProyectoEmprendimiento(Long idRutaProyectoEmprendimiento) {
+        String sql = "SELECT V.* FROM V_SINAPSIS_MENTORES_PROYECTO V WHERE ID_RUTA_EMPRENDIMIENTO = ?1";
+
+        Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
+        query.setParameter(1, idRutaProyectoEmprendimiento);
+
+        return (MentoresProyectoEmprendimientoView) query.getSingleResult();
+    }
+
+    @Override
+    public EtapaRutaInnovacion buscarEtapaRutaInnovacion(Long idEtapaRuta) {
+        String sql = "SELECT * FROM T_SINAPSIS_ETAPAS_RUTA WHERE ID = ?1";
+
+        Query query = entityManager.createNativeQuery(sql, EtapaRutaInnovacion.class);
+        query.setParameter(1, idEtapaRuta);
+
+        return (EtapaRutaInnovacion) query.getSingleResult();
     }
 }

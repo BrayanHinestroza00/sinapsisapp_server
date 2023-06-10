@@ -70,4 +70,6 @@ public interface IAppService {
     UsuariosView getInformacionUsuario(Long idUsuario);
 
     boolean actualizarPerfilUsuario(UsuarioUpdateDTO usuarioUpdateDTO) throws Exception;
+
+    String[] consultarCorreosAdministradores();
 }

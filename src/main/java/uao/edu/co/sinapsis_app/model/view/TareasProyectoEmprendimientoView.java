@@ -56,4 +56,12 @@ public class TareasProyectoEmprendimientoView {
     private String tipoDocumentoCrea;
     @Column(name = "CORREO_PERSONAL")
     private String correoPersonalCrea;
+    @Column(name = "NOMBRE_EMPRENDIMIENTO")
+    private String nombreEmprendimiento;
+    @Column(name = "NOMBRE_COMPLETO_EMP")
+    private String nombreCompletoEmprendedor;
+    @Column(name = "CORREO_INSTITUCIONAL_EMP")
+    private String correoInstitucionalEmprendedor;
+    @Column(name = "CORREO_PERSONAL_EMP")
+    private String correoPersonalEmprendedor;
 }

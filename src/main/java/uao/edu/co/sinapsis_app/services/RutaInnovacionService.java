@@ -14,16 +14,21 @@ import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
+import uao.edu.co.sinapsis_app.model.Consultoria;
+import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
+import uao.edu.co.sinapsis_app.model.Tarea;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.MentoresView;
 import uao.edu.co.sinapsis_app.model.view.PrimeraAtencionView;
 import uao.edu.co.sinapsis_app.model.view.SubActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.TareasProyectoEmprendimientoView;
+import uao.edu.co.sinapsis_app.services.interfaces.IEmailService;
 import uao.edu.co.sinapsis_app.services.interfaces.IRutaInnovacionService;
 import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
 
@@ -37,6 +42,9 @@ public class RutaInnovacionService implements IRutaInnovacionService {
 
     @Autowired
     IStorageService storageService;
+
+    @Autowired
+    IEmailService emailService;
 
     @Override
     public List<ListadoProyectoEmprendimientoView> listarProyectosDeEmprendimiento(SolicitudesPEFilterDTO solicitudesPEFilterDTO) {
@@ -61,13 +69,61 @@ public class RutaInnovacionService implements IRutaInnovacionService {
 
     @Override
     public boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception {
+        boolean  rutaAsignada = rutaInnovacionDAO.asignarRutaPrimeraAtencion(rutaPrimeraAtencionDTO);
 
-        return rutaInnovacionDAO.asignarRutaPrimeraAtencion(rutaPrimeraAtencionDTO);
+        if (rutaAsignada) {
+            AsesoramientosView asesoramientosView =
+                    rutaInnovacionDAO.buscarAsesoramientoPorIdProyectoEmprendimiento(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
+
+            String correoDestino = asesoramientosView.getCorreoInstitucional() != null
+                                        ? asesoramientosView.getCorreoInstitucional() : asesoramientosView.getCorreoPersonal();
+
+            EtapaRutaInnovacion etapaRutaInnovacion = rutaInnovacionDAO.buscarEtapaRutaInnovacion(rutaPrimeraAtencionDTO.getIdEtapaRuta());
+
+            emailService.notificarAsignacionEtapaInicialRuta(correoDestino, etapaRutaInnovacion.getNombre());
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean asignarMentor(AsignarMentorDTO asignarMentorDTO) throws Exception {
-        return rutaInnovacionDAO.asignarMentor(asignarMentorDTO);
+        boolean mentorAsignado = rutaInnovacionDAO.asignarMentor(asignarMentorDTO);
+
+        if (mentorAsignado) {
+            // Notificacion nuevo emprendedor asignado
+            AsesoramientosView asesoramientosView =
+                    rutaInnovacionDAO.buscarAsesoramientoPorIdRutaProyectoEmprendimiento(asignarMentorDTO.getIdRutaProyectoEmprendimiento());
+
+            String nombreEmprendedor = asesoramientosView.getNombres() + " " + asesoramientosView.getApellidos();
+
+            String correoEmprendedor = asesoramientosView.getCorreoInstitucional() != null
+                    ? asesoramientosView.getCorreoInstitucional() : asesoramientosView.getCorreoPersonal();
+
+            String nombreProyecto = asesoramientosView.getNombreEmprendimiento();
+
+            EtapaRutaInnovacion etapaRutaInnovacion = rutaInnovacionDAO.buscarEtapaRutaInnovacion(asesoramientosView.getIdEtapa());
+
+            // Notificacion nuevo mentor asignado
+            MentoresProyectoEmprendimientoView asesoramientosMentorView =
+                    rutaInnovacionDAO.buscarAsesoramientoMentorPorIdRutaProyectoEmprendimiento(asignarMentorDTO.getIdRutaProyectoEmprendimiento());
+
+            String nombreMentor = asesoramientosMentorView.getNombresMentor() + " " + asesoramientosMentorView.getApellidosMentor();
+
+            String correoMentor = asesoramientosMentorView.getCorreoInstitucionalMentor();
+
+            String cargoMentor = asesoramientosMentorView.getCargoMentor();
+
+            emailService.notificarAsignacionNuevoEmprendedor(correoMentor, nombreEmprendedor, correoEmprendedor, nombreProyecto, etapaRutaInnovacion.getNombre());
+
+            emailService.notificarAsignacionNuevoMentor(correoEmprendedor, nombreMentor, correoMentor, cargoMentor, nombreProyecto, etapaRutaInnovacion.getNombre());
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -128,8 +184,13 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     }
 
     @Override
-    public List<ConsultoriasView> obtenerConsultoria(Long idTarea) {
-        return rutaInnovacionDAO.obtenerConsultoria(idTarea);
+    public TareasProyectoEmprendimientoView obtenerTareasPorId(Long idTarea) {
+        return rutaInnovacionDAO.obtenerTareasPorId(idTarea);
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoria(Long idConsultoria) {
+        return rutaInnovacionDAO.obtenerConsultoria(idConsultoria);
     }
 
     @Override
@@ -159,7 +220,27 @@ public class RutaInnovacionService implements IRutaInnovacionService {
 
     @Override
     public boolean programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception{
-        return rutaInnovacionDAO.programarConsultoriaEmprendedor(programarConsultoriaDTO) ;
+        Consultoria consultoria = rutaInnovacionDAO.programarConsultoriaEmprendedor(programarConsultoriaDTO) ;
+
+        if (consultoria != null) {
+            ConsultoriasView consultoriasView = rutaInnovacionDAO.obtenerConsultoria(consultoria.getIdConsultoria()).get(0);
+
+            PrimeraAtencionView informacionEmprendimiento = rutaInnovacionDAO.detallePrimeraAtencion(Integer.parseInt(consultoriasView.getIdProyectoEmprendimiento())).get(0);
+
+            String correoEmprendedor = consultoriasView.getCorreoInstitucionalEmprendedor() != null ?
+                    consultoriasView.getCorreoInstitucionalEmprendedor() : consultoriasView.getCorreoPersonalEmprendedor();
+            String correoMentor = consultoriasView.getCorreoInstitucionalMentor();
+
+            String[] destinatarios = new String[] {correoEmprendedor, correoMentor};
+
+            emailService.notificarProgramacionConsultoria(destinatarios, consultoriasView.getAsuntoConsultoria(),
+                    consultoriasView.getFechaConsultoria(), consultoriasView.getHoraInicioConsultoria(), consultoriasView.getHoraFinConsultoria(),
+                    consultoriasView.getNombreEmprendedor(), consultoriasView.getNombreMentor(), informacionEmprendimiento.getNombreEmprendimiento());
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -194,7 +275,24 @@ public class RutaInnovacionService implements IRutaInnovacionService {
             crearTareaDTO.setFileTareaURL(filePathFileTarea);
         }
 
-        return rutaInnovacionDAO.registrarTareaEmprendedor(crearTareaDTO);
+        Tarea tareaRegistrada = rutaInnovacionDAO.registrarTareaEmprendedor(crearTareaDTO);
+
+        if (tareaRegistrada != null) {
+            TareasProyectoEmprendimientoView tarea = rutaInnovacionDAO.obtenerTareasPorId(tareaRegistrada.getIdTarea());
+
+            String correoEmprendedor = tarea.getCorreoInstitucionalEmprendedor() != null
+                    ? tarea.getCorreoInstitucionalEmprendedor() : tarea.getCorreoPersonalEmprendedor();
+
+            String nombreCompletoRegistra = tarea.getNombresCrea() + " " + tarea.getApellidosCrea();
+
+            emailService.notificarAsignacionTarea(correoEmprendedor, tarea.getTitulo(), tarea.getFechaLimiteEntrega(),
+                    nombreCompletoRegistra, tarea.getNombreEmprendimiento());
+
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     @Override
@@ -204,11 +302,49 @@ public class RutaInnovacionService implements IRutaInnovacionService {
             entregaTareaDTO.setFileEntregaURL(filePathFileEntrega);
         }
 
-        return rutaInnovacionDAO.registrarEntregaTareaEmprendedor(entregaTareaDTO);
+        boolean tareaEntregada = rutaInnovacionDAO.registrarEntregaTareaEmprendedor(entregaTareaDTO);
+        if (tareaEntregada) {
+            TareasProyectoEmprendimientoView tarea = rutaInnovacionDAO.obtenerTareasPorId(entregaTareaDTO.getIdTarea());
+
+            String correoEmprendedor = tarea.getCorreoInstitucionalEmprendedor() != null
+                    ? tarea.getCorreoInstitucionalEmprendedor() : tarea.getCorreoPersonalEmprendedor();
+
+            String correoCrea = tarea.getCorreoInstitucionalCrea() != null
+                    ? tarea.getCorreoInstitucionalCrea() : tarea.getCorreoPersonalCrea();
+
+            String[] destinatarios = new String[] {correoCrea, correoEmprendedor};
+
+            emailService.notificarEntregaTarea(destinatarios, tarea.getTitulo(), tarea.getFechaLimiteEntrega(), tarea.getFechaEntrega(),
+                    tarea.getNombreCompletoEmprendedor(), tarea.getNombreEmprendimiento());
+
+            return true;
+
+        } else {
+            return false;
+        }
+
     }
 
     @Override
     public boolean registrarCalificacionTareaEmprendedor(CalificarTareaDTO calificarTareaDTO) throws Exception {
-        return rutaInnovacionDAO.registrarCalificacionTareaEmprendedor(calificarTareaDTO);
+        boolean tareaCalificada = rutaInnovacionDAO.registrarCalificacionTareaEmprendedor(calificarTareaDTO);
+
+        if (tareaCalificada) {
+            TareasProyectoEmprendimientoView tarea = rutaInnovacionDAO.obtenerTareasPorId(calificarTareaDTO.getIdTarea());
+
+            String correoEmprendedor = tarea.getCorreoInstitucionalEmprendedor() != null
+                    ? tarea.getCorreoInstitucionalEmprendedor() : tarea.getCorreoPersonalEmprendedor();
+
+            String nombreCompletoCalifica = tarea.getNombresCrea() + " " + tarea.getApellidosCrea();
+
+            emailService.notificarCalificacionTarea(correoEmprendedor, tarea.getTitulo(), tarea.getFechaEntrega(),
+                    nombreCompletoCalifica, tarea.getCalificacion(), tarea.getNombreEmprendimiento());
+
+            return true;
+
+        } else {
+            return false;
+        }
+
     }
 }

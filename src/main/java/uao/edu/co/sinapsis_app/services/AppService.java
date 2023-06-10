@@ -174,4 +174,9 @@ public class AppService implements IAppService {
         }
         return appDAO.actualizarPerfilUsuario(usuarioUpdateDTO);
     }
+
+    @Override
+    public String[] consultarCorreosAdministradores() {
+        return appDAO.consultarCorreosAdministradores();
+    }
 }

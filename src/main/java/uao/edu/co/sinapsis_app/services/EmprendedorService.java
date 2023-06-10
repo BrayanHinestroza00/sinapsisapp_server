@@ -10,6 +10,8 @@ import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
+import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
+import uao.edu.co.sinapsis_app.services.interfaces.IEmailService;
 import uao.edu.co.sinapsis_app.services.interfaces.IEmprendedorService;
 import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
 
@@ -22,6 +24,12 @@ public class EmprendedorService implements IEmprendedorService {
 
     @Autowired
     IStorageService storageService;
+
+    @Autowired
+    IAppService appService;
+
+    @Autowired
+    IEmailService emailService;
 
     @Override
     public EmprendedoresView getInformacionEmprendedor(long idUsuario) {
@@ -57,7 +65,28 @@ public class EmprendedorService implements IEmprendedorService {
             primeraAtencion.setFileAutodiagnosticoURL(filePathFileAutodiagnostico);
         }
 
-        return emprendedorDAO.registrarPrimeraAtencion(primeraAtencion);
+        boolean primeraAtencionRegistrada = emprendedorDAO.registrarPrimeraAtencion(primeraAtencion);
+
+        if (primeraAtencionRegistrada) {
+            String[] destinatarios  = appService.consultarCorreosAdministradores();
+
+            EmprendedoresView emprendedor = emprendedorDAO.getInformacionEmprendedor(primeraAtencion.getIdEmprendedor()).get(0);
+
+            String documento = emprendedor.getAcronimoTipoDocumento() + " " + emprendedor.getNumeroDocumento();
+            String correoInstitucional = emprendedor.getCorreoInstitucional() != null ? emprendedor.getCorreoInstitucional() : "N/A";
+            String correoPersonal = emprendedor.getCorreoPersonal() != null ? emprendedor.getCorreoPersonal() : "N/A";
+
+            emailService.notificarSolicitudPrimeraAtencion(
+                    destinatarios,
+                    emprendedor.getNombreCompleto(), documento, emprendedor.getTipoContacto(), correoInstitucional, correoPersonal,
+                    primeraAtencion.getNombreEmprendimiento());
+
+            return true;
+
+        } else {
+            return false;
+
+        }
     }
 
     @Override

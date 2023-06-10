@@ -318,4 +318,15 @@ public class AppDAO implements IAppDAO {
 
         return true;
     }
+
+    @Override
+    public String[] consultarCorreosAdministradores() {
+        String sql = "SELECT CORREO_INSTITUCIONAL FROM T_SINAPSIS_USUARIOS TU JOIN T_SINAPSIS_ADMINISTRADORES TA ON TU.ID = TA.ID";
+
+        Query q = entityManager.createNativeQuery(sql);
+
+        List<String> result = q.getResultList();
+
+        return (String[]) result.toArray(new String[0]);
+    }
 }

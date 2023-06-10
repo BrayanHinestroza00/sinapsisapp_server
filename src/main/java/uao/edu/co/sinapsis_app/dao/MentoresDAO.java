@@ -20,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.Constants.MAX_ETAPA_RUTA_INNOVACION_EMPRENDIMIENTO;
@@ -193,7 +194,7 @@ public class MentoresDAO implements IMentoresDAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public boolean finalizarAcompanamiento(Long idRutaProyectoEmprendimiento, Long idMentorCrea, String observaciones) throws Exception {
+    public HashMap<String, Object> finalizarAcompanamiento(Long idRutaProyectoEmprendimiento, Long idMentorCrea, String observaciones) throws Exception {
         String sql = "SELECT * FROM T_SINAPSIS_RUT_EMPRENDIMIENTO WHERE ID = ?";
         Query query = entityManager.createNativeQuery(sql, RutaProyectoEmprendimiento.class);
 
@@ -214,22 +215,8 @@ public class MentoresDAO implements IMentoresDAO {
             throw new Exception("No se encontro la etapa de la ruta de innovacion. Contacte con el administrador");
         }
 
-        if (etapaRutaActual.getOrdenEtapa() < MAX_ETAPA_RUTA_INNOVACION_EMPRENDIMIENTO) {
-            String sqlNewEtapa = "SELECT * FROM T_SINAPSIS_ETAPAS_RUTA WHERE ESTADO = 'A' AND ORDEN_ETAPA = ?";
-            Query queryNewEtapa = entityManager.createNativeQuery(sqlNewEtapa, EtapaRutaInnovacion.class);
 
-            queryNewEtapa.setParameter(1, (etapaRutaActual.getOrdenEtapa() + 1) );
-            EtapaRutaInnovacion etapaRutaNueva = (EtapaRutaInnovacion) queryEtapa.getSingleResult();
-
-            RutaProyectoEmprendimiento newRuta = new RutaProyectoEmprendimiento();
-            newRuta.setIdEtapa(etapaRutaNueva.getId());
-            newRuta.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
-            newRuta.setCreadoPor(idMentorCrea);
-            newRuta.setIdProyectoEmprendimiento(rutaProyecto.getIdProyectoEmprendimiento());
-            newRuta.setFechaEstadoRuta(new Date());
-
-            entityManager.persist(newRuta);
-        }
+        // Se finaliza la etapa en la ruta de innovacion y emprendimiento
         rutaProyecto.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_ESTADO_COMPLETADO);
 
         entityManager.merge(rutaProyecto);
@@ -243,7 +230,7 @@ public class MentoresDAO implements IMentoresDAO {
         Asesoramiento asesoramiento = (Asesoramiento) queryAsesoramiento.getSingleResult();
 
         if (asesoramiento == null) {
-            throw new Exception("No se encontro asesoria del mentor con el proyecto de emprendimiento. Contacte con el administrador");
+            throw new Exception("No se encontró asesoría del mentor con el proyecto de emprendimiento. Contacte con el administrador");
         }
 
         Date nuevaFecha = new Date();
@@ -255,14 +242,49 @@ public class MentoresDAO implements IMentoresDAO {
         entityManager.merge(asesoramiento);
         entityManager.flush();
 
-        Asesoramiento newAsesoramiento = new Asesoramiento();
-        newAsesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_SIN_MENTOR);
-        newAsesoramiento.setIdRutaEmprendimiento(rutaProyecto.getId());
+        HashMap<String, Object> resultado = new HashMap<>();
 
-        entityManager.persist(newAsesoramiento);
-        entityManager.flush();
+        if (etapaRutaActual.getOrdenEtapa() < MAX_ETAPA_RUTA_INNOVACION_EMPRENDIMIENTO) {
+            String sqlNewEtapa = "SELECT * FROM T_SINAPSIS_ETAPAS_RUTA WHERE ESTADO = 'A' AND ORDEN_ETAPA = ?";
+            Query queryNewEtapa = entityManager.createNativeQuery(sqlNewEtapa, EtapaRutaInnovacion.class);
 
-        return true;
+            long idEtapaRutaNueva = etapaRutaActual.getOrdenEtapa() + 1L;
+
+            queryNewEtapa.setParameter(1, idEtapaRutaNueva );
+            EtapaRutaInnovacion etapaRutaNueva = (EtapaRutaInnovacion) queryNewEtapa.getSingleResult();
+
+            // Se genera la etapa en la ruta de innovacion
+            RutaProyectoEmprendimiento newRuta = new RutaProyectoEmprendimiento();
+            newRuta.setIdEtapa(etapaRutaNueva.getId());
+            newRuta.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
+            newRuta.setCreadoPor(idMentorCrea);
+            newRuta.setIdProyectoEmprendimiento(rutaProyecto.getIdProyectoEmprendimiento());
+            newRuta.setFechaEstadoRuta(new Date());
+
+            entityManager.persist(newRuta);
+
+            // Se genera el asesoramiento
+            Asesoramiento newAsesoramiento = new Asesoramiento();
+            newAsesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_SIN_MENTOR);
+            newAsesoramiento.setIdRutaEmprendimiento(newRuta.getId());
+            newAsesoramiento.setFechaModificacion(new Date());
+            newAsesoramiento.setFechaCreacion(new Date());
+            newAsesoramiento.setFechaInicio(new Date());
+
+            entityManager.persist(newAsesoramiento);
+//            entityManager.flush();
+
+            resultado.put("result", 1);
+            resultado.put("asesoramiento", newAsesoramiento);
+            resultado.put("etapaRuta", etapaRutaNueva);
+
+        } else if (etapaRutaActual.getOrdenEtapa() == MAX_ETAPA_RUTA_INNOVACION_EMPRENDIMIENTO) {
+            resultado.put("result", 0);
+            resultado.put("asesoramiento", asesoramiento);
+            resultado.put("proyectoEmprendimiento", rutaProyecto.getIdProyectoEmprendimiento());
+        }
+
+        return resultado;
     }
 
     @Override

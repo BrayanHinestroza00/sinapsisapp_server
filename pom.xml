@@ -63,6 +63,13 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.3</version>
 		</dependency>
+
+		<!-- ENVIO DE CORREOS ELECTRONICO -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -97,6 +104,11 @@
 				<connection.url>jdbc:oracle:thin:@//localhost:49161/xe</connection.url>
 				<connection.username>sinapsis_app</connection.username>
 				<connection.password>DEV_MOVILIDAD_ACTIVOS</connection.password>
+
+				<email.host>smtp.gmail.com</email.host>
+				<email.port>465</email.port>
+				<email.username>dev.sinapsis@gmail.com</email.username>
+				<email.password>nplqlqahxpshndjc</email.password>
 			</properties>
 			<dependencies>
 				<dependency>
