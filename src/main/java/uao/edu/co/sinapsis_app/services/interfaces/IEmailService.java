@@ -21,7 +21,8 @@ public interface IEmailService {
 
     boolean notificarAsignacionNuevoMentor(String destinatario, String nombreMentor, String correoMentor, String cargoMentor, String nombreProyecto, String etapaRuta);
 
-    boolean notificarCulminacionActividadesEmprendedor(EmailDetails emailDetails);
+    // Notifica al emprendedor que se ha completado todas las actividades
+    boolean notificarCulminacionActividadesMentor(EmailDetails emailDetails);
 
     boolean notificarCulminacionRutaEmprendedor(String[] destinatario, String nombreEmprendedor, String correoEmprendedor, String nombreProyecto);
 

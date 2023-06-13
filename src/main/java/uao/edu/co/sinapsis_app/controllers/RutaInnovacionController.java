@@ -188,7 +188,7 @@ public class RutaInnovacionController {
 
             if (solicitud == null) {
                 response.setCode(0);
-                response.setMessage("SIN SOLICITUDES");
+                response.setMessage("Sin etapa asociada");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 response.setCode(1);

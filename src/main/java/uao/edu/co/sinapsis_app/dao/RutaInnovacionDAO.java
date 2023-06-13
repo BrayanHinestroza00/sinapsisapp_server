@@ -277,8 +277,9 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<HerramientaRuta> obtenerHerramientasEtapaById(Long idEtapa) {
         String sql = "SELECT TH.* FROM T_SINAPSIS_HERRAMIENTAS TH \n" +
-                "    JOIN T_SINAPSIS_ACTIVIDADES_RUTA TAR ON TH.ACTIVIDADES_RUTAS_ID = TAR.ID\n" +
-                "    WHERE TAR.ETAPAS_RUTAS_ID = " + idEtapa;
+                "    JOIN T_SINAPSIS_SUB_ACT_RUTA TSAR ON TH.SUB_ACTIVIDADES_RUTAS_ID = TSAR.ID\n" +
+                "    JOIN T_SINAPSIS_ACTIVIDADES_RUTA TAR ON TSAR.ACTIVIDADES_RUTAS_ID = TAR.ID\n" +
+                "    WHERE TAR.ETAPAS_RUTAS_ID = " + idEtapa + " AND TSAR.TIPO = 2";
         Query query = entityManager.createNativeQuery(sql, HerramientaRuta.class);
 
         return (List<HerramientaRuta>) query.getResultList();
@@ -287,7 +288,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<SubActividadesEmprendedorView> obtenerSubActividadesEmprendedor(Long idProyectoEmprendimiento, Long idRutaEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_ACT_EMPRENDEDOR \n" +
-                "    WHERE ESTADO_ACTIVIDAD = 'COMPLETADA' AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento + "\n" +
+                "    WHERE ESTADO_ACTIVIDAD = 'COMPLETADA' \n " +
                 "    AND RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
         Query query = entityManager.createNativeQuery(sql, SubActividadesEmprendedorView.class);
 

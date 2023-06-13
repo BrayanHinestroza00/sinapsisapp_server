@@ -904,7 +904,7 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public boolean notificarCulminacionActividadesEmprendedor(EmailDetails emailDetails) {
+    public boolean notificarCulminacionActividadesMentor(EmailDetails emailDetails) {
         String contenidoMensaje = "<div\n" +
                 "      style=\"\n" +
                 "        text-align: center;\n" +

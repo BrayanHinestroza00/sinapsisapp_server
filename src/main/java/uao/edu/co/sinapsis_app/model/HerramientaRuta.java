@@ -20,7 +20,7 @@ public class HerramientaRuta {
     private String descripcion;
     @Column(name = "URL_MATERIAL_APOYO")
     private String urlMaterialApoyo;
-    @Column(name = "ACTIVIDADES_RUTAS_ID")
+    @Column(name = "SUB_ACTIVIDADES_RUTAS_ID")
     private String idSubActividadRuta;
     @Column(name = "ESTADO")
     private String estado;

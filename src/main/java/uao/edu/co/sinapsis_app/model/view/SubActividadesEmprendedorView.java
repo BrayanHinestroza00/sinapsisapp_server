@@ -12,22 +12,36 @@ import javax.persistence.Table;
 @Table(name = "V_SINAPSIS_ACT_EMPRENDEDOR")
 public class SubActividadesEmprendedorView {
     @Id
-    @Column(name = "ID_SUB_ACT_EMPRENDEDOR")
+    @Column(name = "ID_SUB_ACT_RUTA_EMP")
     private Long id;
-    @Column(name = "ID_ACTIVIDAD_RUTA")
-    private String idActividad;
-    @Column(name = "NOMBRE_ACTIVIDAD_RUTA")
-    private String nombreActividad;
+
     @Column(name = "ID_SUB_ACT_RUTA")
-    private String idSubActividad;
+    private Long idSubActividad;
+
     @Column(name = "NOMBRE_SUB_ACT_RUTA")
     private String nombreSubActividad;
+
+    @Column(name = "ACTIVIDADES_RUTAS_ID")
+    private Long idActividad;
+
+    @Column(name = "REQUIERE_EVIDENCIA")
+    private String requiereEvidencia;
+
+    @Column(name = "TIPO_SUB_ACTIVIDAD")
+    private Long tipoSubActividad;
+
     @Column(name = "ESTADO_ACTIVIDAD")
     private String estadoActividad;
-    @Column(name = "ID_HERRAMIENTA")
-    private String idHerramienta;
-    @Column(name = "NOMBRE_HERRAMIENTA")
-    private String nombreHerramienta;
-    @Column(name = "ESTADO_HERRAMIENTA")
-    private String estadoHerramienta;
+
+    @Column(name = "FECHA_ESTADO_ACTIVIDAD")
+    private String fechaEstadoActividad;
+
+    @Column(name = "URL_EVIDENCIA_ACTIVIDAD")
+    private String urlEstadoActividad;
+
+    @Column(name = "FECHA_EVIDENCIA")
+    private String fechaEvidencia;
+
+    @Column(name = "RUTAS_EMPRENDIMIENTOS_ID")
+    private Long idRutaEmprendimiento;
 }
