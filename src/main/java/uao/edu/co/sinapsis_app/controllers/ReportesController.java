@@ -77,4 +77,22 @@ public class ReportesController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/indicadores_gestion", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> consultarIndicadoresGestion(){
+        ResponseDTO responseDTO = new ResponseDTO();
+            responseDTO = reportesService.consultarIndicadoresGestion();
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/indicadores_formacion", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> consultarIndicadoresFormacion(){
+        ResponseDTO responseDTO = new ResponseDTO();
+            responseDTO = reportesService.consultarIndicadoresFormacion();
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }
