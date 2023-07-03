@@ -3,6 +3,7 @@ package uao.edu.co.sinapsis_app.dao.interfaces;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendimientoUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.model.ActividadRutaEmp;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
@@ -42,4 +43,7 @@ public interface IEmprendedorDAO {
 
     List<SubActividadRuta> buscarSubActividadRutas(Long idRutaProyecto);
 
+    ActividadRutaEmp buscarActividadRutaEmp(Long subActividadRutaId, Long rutaEmprendimientoId);
+
+    void almacenarActividadRuta(ActividadRutaEmp actividadRutaEmp);
 }

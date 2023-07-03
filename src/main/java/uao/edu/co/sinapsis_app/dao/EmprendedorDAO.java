@@ -12,6 +12,7 @@ import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.EmprendimientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendimientoUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.model.ActividadRutaEmp;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
@@ -563,5 +564,32 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         query.setParameter(1, idRutaProyecto);
 
         return query.getResultList();
+    }
+
+    @Override
+    public ActividadRutaEmp buscarActividadRutaEmp(Long subActividadRutaId, Long rutaEmprendimientoId) {
+        String sql = "SELECT TARE.* FROM T_SINAPSIS_SUB_ACT_RUTAS_EMP TSARE \n" +
+                "JOIN T_SINAPSIS_SUB_ACT_RUTA TSAR ON TSARE.SUB_ACTIVIDADES_RUTAS_ID = TSAR.ID\n" +
+                "JOIN T_SINAPSIS_ACT_RUTA_EMP TARE ON TSAR.ACTIVIDADES_RUTAS_ID = TARE.ACTIVIDADES_RUTAS_ID\n" +
+                "WHERE TSARE.RUTAS_EMPRENDIMIENTOS_ID = ?1 AND TSARE.SUB_ACTIVIDADES_RUTAS_ID = ?2 AND TARE.ESTADO = 'PENDIENTE'";
+
+        Query query = entityManager.createNativeQuery(sql, ActividadRutaEmp.class);
+
+        query.setParameter(1, rutaEmprendimientoId);
+        query.setParameter(2, subActividadRutaId);
+
+        List<ActividadRutaEmp> result = query.getResultList();
+
+        if (result.size() > 0 ) {
+            return result.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void almacenarActividadRuta(ActividadRutaEmp actividadRutaEmp) {
+        entityManager.persist(actividadRutaEmp);
     }
 }

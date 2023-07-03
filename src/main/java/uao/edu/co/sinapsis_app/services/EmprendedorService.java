@@ -11,6 +11,7 @@ import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.RegistrarAvanceRutaDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
+import uao.edu.co.sinapsis_app.model.ActividadRutaEmp;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
@@ -238,6 +239,7 @@ public class EmprendedorService implements IEmprendedorService {
     }
 
     private boolean generarNuevoRegistroAvance(SubActividadRutaEmp subActividadRutaEmp) {
+        boolean result = false;
         List<SubActividadRuta> actividadRutas = emprendedorDAO.buscarSubActividadRutas(subActividadRutaEmp.getRutaEmprendimientoId());
 
         if (actividadRutas != null && !actividadRutas.isEmpty()) {
@@ -250,7 +252,7 @@ public class EmprendedorService implements IEmprendedorService {
                 newSubActividadRutaEmp.setFechaCreacion(new Date());
                 newSubActividadRutaEmp.setFechaModificacion(new Date());
 
-                return emprendedorDAO.almacenarAvanceEnRuta(newSubActividadRutaEmp);
+                result = emprendedorDAO.almacenarAvanceEnRuta(newSubActividadRutaEmp);
             } else if (actividadRutas.get(0).getId() == subActividadRutaEmp.getSubActividadRutaId()) {
                 RutaProyectoEmprendimiento rutaProyectoEmprendimiento =
                         emprendedorDAO.obtenerRutaProyectoEmprendimientoById(subActividadRutaEmp.getRutaEmprendimientoId());
@@ -258,10 +260,42 @@ public class EmprendedorService implements IEmprendedorService {
                 rutaProyectoEmprendimiento.setEstadoRuta("PENDIENTE_APROBAR");
                 rutaProyectoEmprendimiento.setFechaEstadoRuta(new Date());
 
-                return emprendedorDAO.almacenarRutaProyectoEmprendimiento(rutaProyectoEmprendimiento);
+                result = emprendedorDAO.almacenarRutaProyectoEmprendimiento(rutaProyectoEmprendimiento);
+            }
+
+            if (subActividadRutaEmp.getSubActividadRutaId() == 3L || subActividadRutaEmp.getSubActividadRutaId() == 5L
+                || subActividadRutaEmp.getSubActividadRutaId() == 8L || subActividadRutaEmp.getSubActividadRutaId() == 10L
+                    || subActividadRutaEmp.getSubActividadRutaId() == 12L || subActividadRutaEmp.getSubActividadRutaId() == 14L
+                    || subActividadRutaEmp.getSubActividadRutaId() == 16L || subActividadRutaEmp.getSubActividadRutaId() == 18L) {
+                ActividadRutaEmp actividadRutaEmp =
+                        emprendedorDAO.buscarActividadRutaEmp(
+                                subActividadRutaEmp.getSubActividadRutaId(),
+                                subActividadRutaEmp.getRutaEmprendimientoId());
+
+                if (actividadRutaEmp != null) {
+                 actividadRutaEmp.setEstado("COMPLETADO");
+                 actividadRutaEmp.setFechaModificacion(new Date());
+
+                 emprendedorDAO.almacenarActividadRuta(actividadRutaEmp);
+
+                 if (subActividadRutaEmp.getSubActividadRutaId() != 5L &&
+                         subActividadRutaEmp.getSubActividadRutaId() != 8L &&
+                         subActividadRutaEmp.getSubActividadRutaId() != 14L &&
+                         subActividadRutaEmp.getSubActividadRutaId() != 18L) {
+                     ActividadRutaEmp newActividadRutaEmp =
+                             new ActividadRutaEmp(
+                                     actividadRutaEmp.getActividadRutaEmpId().getIdRutaEmprendimiento(),
+                                     actividadRutaEmp.getActividadRutaEmpId().getIdActividad() + 1,
+                                     "PENDIENTE",
+                                     new Date(),
+                                     new Date());
+                     emprendedorDAO.almacenarActividadRuta(newActividadRutaEmp);
+                 }
+
+                }
             }
         }
-        return true;
+        return result;
     }
 
 }
