@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendimientoUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.IniciarAvanceRutaDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.request.RegistrarAvanceRutaDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
@@ -235,6 +237,54 @@ public class EmprendedorController {
         } catch (Exception e) {
             e.printStackTrace();
             response.setCode(STATUS_ERROR);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/avance_ruta", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> obtenerAvanceEnRuta(@RequestParam(required = true) Long idProyectoEmprendimiento){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            response = emprendedorService.obtenerAvanceEnRuta(idProyectoEmprendimiento);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/avance_ruta/iniciar", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> iniciarAvanceEnRuta(@RequestBody IniciarAvanceRutaDTO iniciarAvanceRutaDTO){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            response = emprendedorService.iniciarAvanceEnRuta(iniciarAvanceRutaDTO);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/avance_ruta/continuar", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ResponseDTO> continuarAvanceEnRuta(@RequestBody RegistrarAvanceRutaDTO registrarAvanceRutaDTO){
+        ResponseDTO response = new ResponseDTO();
+        try {
+            response = emprendedorService.continuarAvanceEnRuta(registrarAvanceRutaDTO);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            e.printStackTrace();
+            response.setCode(-1);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

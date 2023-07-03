@@ -2,7 +2,10 @@ package uao.edu.co.sinapsis_app.services.interfaces;
 
 import uao.edu.co.sinapsis_app.dto.EmprendedorUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendimientoUpdateDTO;
+import uao.edu.co.sinapsis_app.dto.request.IniciarAvanceRutaDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
+import uao.edu.co.sinapsis_app.dto.request.RegistrarAvanceRutaDTO;
+import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.RedSocialEmprendimientoView;
@@ -20,4 +23,10 @@ public interface IEmprendedorService {
     List<Emprendimiento> obtenerEmprendimiento(String idEmprendimiento);
     List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento);
     boolean actualizarEmprendimiento(EmprendimientoUpdateDTO emprendimientoUpdateDTO) throws Exception;
+
+    ResponseDTO obtenerAvanceEnRuta(Long idProyectoEmprendimiento);
+
+    ResponseDTO iniciarAvanceEnRuta(IniciarAvanceRutaDTO iniciarAvanceRutaDTO);
+
+    ResponseDTO continuarAvanceEnRuta(RegistrarAvanceRutaDTO registrarAvanceRutaDTO);
 }

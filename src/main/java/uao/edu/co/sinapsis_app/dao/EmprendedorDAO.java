@@ -17,6 +17,9 @@ import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.PrimeraAtencion;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
+import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
+import uao.edu.co.sinapsis_app.model.SubActividadRuta;
+import uao.edu.co.sinapsis_app.model.SubActividadRutaEmp;
 import uao.edu.co.sinapsis_app.model.Usuario;
 import uao.edu.co.sinapsis_app.model.embeddable.AsignaturaEmprendedorId;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
@@ -448,5 +451,117 @@ public class EmprendedorDAO implements IEmprendedorDAO {
 //        }
 //
 //        return true;
+    }
+
+    @Override
+    public List<SubActividadRutaEmp> obtenerAvanceEnRuta(Long idRutaEmprendimiento) {
+        String sql = "SELECT * FROM T_SINAPSIS_SUB_ACT_RUTAS_EMP " +
+                "WHERE RUTAS_EMPRENDIMIENTOS_ID = ?1 ORDER BY SUB_ACTIVIDADES_RUTAS_ID DESC";
+        Query query = entityManager.createNativeQuery(sql, SubActividadRutaEmp.class);
+
+        query.setParameter(1, idRutaEmprendimiento);
+
+        return (List<SubActividadRutaEmp>) query.getResultList();
+    }
+
+    @Override
+    public RutaProyectoEmprendimiento obtenerRutaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM (\n" +
+                "    SELECT TSRE.*,\n" +
+                "            ROW_NUMBER() OVER (PARTITION BY PROYECTOS_EMPRENDIMIENTOS_ID ORDER BY ETAPAS_ID DESC) SEQNUM\n" +
+                "    FROM T_SINAPSIS_RUT_EMPRENDIMIENTO TSRE\n" +
+                ") WHERE SEQNUM = 1 AND PROYECTOS_EMPRENDIMIENTOS_ID = ?1";
+
+        Query query = entityManager.createNativeQuery(sql, RutaProyectoEmprendimiento.class);
+
+        query.setParameter(1, idProyectoEmprendimiento);
+
+        List<RutaProyectoEmprendimiento> result = query.getResultList();
+
+        if (result.size() > 0 ) {
+            return result.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public RutaProyectoEmprendimiento obtenerRutaProyectoEmprendimientoById(Long idRutaProyecto) {
+        String sql = "SELECT * FROM T_SINAPSIS_RUT_EMPRENDIMIENTO WHERE ID = ?1";
+
+        Query query = entityManager.createNativeQuery(sql, RutaProyectoEmprendimiento.class);
+
+        query.setParameter(1, idRutaProyecto);
+
+        List<RutaProyectoEmprendimiento> result = query.getResultList();
+
+        if (result.size() > 0 ) {
+            return result.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean almacenarAvanceEnRuta(SubActividadRutaEmp subActividadRutaEmp) {
+        try {
+            entityManager.persist(subActividadRutaEmp);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public boolean almacenarRutaProyectoEmprendimiento(RutaProyectoEmprendimiento rutaProyectoEmprendimiento) {
+        try {
+            entityManager.persist(rutaProyectoEmprendimiento);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public SubActividadRutaEmp buscarSubActividadRutaEmp(Long idRutaProyecto, Long idSubActividadRuta) {
+        String sql = "SELECT \n" +
+                "    * \n" +
+                "FROM T_SINAPSIS_SUB_ACT_RUTAS_EMP \n" +
+                "WHERE RUTAS_EMPRENDIMIENTOS_ID = ?1 AND SUB_ACTIVIDADES_RUTAS_ID = ?2";
+
+        Query query = entityManager.createNativeQuery(sql, SubActividadRutaEmp.class);
+
+        query.setParameter(1, idRutaProyecto);
+        query.setParameter(2, idSubActividadRuta);
+
+        List<SubActividadRutaEmp> result = query.getResultList();
+
+        if (result.size() > 0 ) {
+            return result.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<SubActividadRuta> buscarSubActividadRutas(Long idRutaProyecto) {
+        String sql = "SELECT \n" +
+                "    TSAR.* \n" +
+                "FROM T_SINAPSIS_SUB_ACT_RUTA TSAR \n" +
+                "JOIN T_SINAPSIS_ACTIVIDADES_RUTA TAR ON TSAR.ACTIVIDADES_RUTAS_ID = TAR.ID\n" +
+                "WHERE TAR.ETAPAS_RUTAS_ID = (SELECT ETAPAS_ID FROM T_SINAPSIS_RUT_EMPRENDIMIENTO WHERE ID = ?1)\n" +
+                "ORDER BY TSAR.ID DESC";
+
+        Query query = entityManager.createNativeQuery(sql, SubActividadRuta.class);
+
+        query.setParameter(1, idRutaProyecto);
+
+        return query.getResultList();
     }
 }

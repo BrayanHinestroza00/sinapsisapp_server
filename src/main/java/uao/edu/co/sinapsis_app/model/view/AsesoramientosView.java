@@ -16,10 +16,6 @@ import java.util.Date;
 @Table(name = "V_SINAPSIS_ASESORAMIENTOS")
 public class AsesoramientosView {
     @Id
-    @Column(name = "ID_VIEW")
-    @JsonIgnore
-    private Long idView;
-
     @Column(name = "ID_ASESORAMIENTO")
     private Long idAsesoramiento;
     @Column(name = "NUMERO_DOCUMENTO")
