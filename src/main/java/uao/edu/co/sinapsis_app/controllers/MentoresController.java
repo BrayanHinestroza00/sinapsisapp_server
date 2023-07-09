@@ -16,7 +16,6 @@ import uao.edu.co.sinapsis_app.dto.request.HorarioMentorRequestDTO;
 import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
-import uao.edu.co.sinapsis_app.model.Mentor;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.MentoresView;

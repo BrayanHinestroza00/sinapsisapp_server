@@ -590,6 +590,6 @@ public class EmprendedorDAO implements IEmprendedorDAO {
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void almacenarActividadRuta(ActividadRutaEmp actividadRutaEmp) {
-        entityManager.persist(actividadRutaEmp);
+        entityManager.merge(actividadRutaEmp);
     }
 }

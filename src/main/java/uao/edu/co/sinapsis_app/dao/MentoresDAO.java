@@ -10,6 +10,7 @@ import uao.edu.co.sinapsis_app.model.Asesoramiento;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
+import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
@@ -202,7 +203,7 @@ public class MentoresDAO implements IMentoresDAO {
         RutaProyectoEmprendimiento rutaProyecto = (RutaProyectoEmprendimiento) query.getSingleResult();
 
         if (rutaProyecto == null) {
-            throw new Exception("No se encontro un proyecto de emprendimiento en la ruta ingresada. Contacte con el administrador");
+            throw new Exception("No se encontró un proyecto de emprendimiento en la ruta ingresada. Contacte con el administrador");
         }
 
         String sqlEtapa = "SELECT * FROM T_SINAPSIS_ETAPAS_RUTA WHERE ESTADO = 'A' AND ORDEN_ETAPA = ?";
@@ -212,12 +213,13 @@ public class MentoresDAO implements IMentoresDAO {
         EtapaRutaInnovacion etapaRutaActual = (EtapaRutaInnovacion) queryEtapa.getSingleResult();
 
         if (etapaRutaActual == null) {
-            throw new Exception("No se encontro la etapa de la ruta de innovacion. Contacte con el administrador");
+            throw new Exception("No se encontró la etapa de la ruta de innovación. Contacte con el administrador");
         }
 
 
         // Se finaliza la etapa en la ruta de innovacion y emprendimiento
         rutaProyecto.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_ESTADO_COMPLETADO);
+        rutaProyecto.setFechaEstadoRuta(new Date());
 
         entityManager.merge(rutaProyecto);
         entityManager.flush();
@@ -260,6 +262,8 @@ public class MentoresDAO implements IMentoresDAO {
             newRuta.setCreadoPor(idMentorCrea);
             newRuta.setIdProyectoEmprendimiento(rutaProyecto.getIdProyectoEmprendimiento());
             newRuta.setFechaEstadoRuta(new Date());
+            newRuta.setFechaCreacion(new Date());
+            newRuta.setFechaModificacion(new Date());
 
             entityManager.persist(newRuta);
 
@@ -308,5 +312,28 @@ public class MentoresDAO implements IMentoresDAO {
         Query query = entityManager.createNativeQuery(sql, RedSocialEmprendimientoView.class);
 
         return (List<RedSocialEmprendimientoView>) query.getResultList();
+    }
+
+    @Override
+    public ProyectoEmprendimiento obtenerProyectoEmprendimiento(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM T_SINAPSIS_PROY_EMPRENDIMIENTO " +
+                "WHERE ID = ?1";
+
+        Query query = entityManager.createNativeQuery(sql, ProyectoEmprendimiento.class);
+        query.setParameter(1, idProyectoEmprendimiento);
+
+        List<ProyectoEmprendimiento> resultados = query.getResultList();
+
+        if (resultados.size() > 0) {
+            return resultados.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void almacenarProyectoEmprendimiento(ProyectoEmprendimiento proyectoEmprendimiento) {
+        entityManager.merge(proyectoEmprendimiento);
     }
 }

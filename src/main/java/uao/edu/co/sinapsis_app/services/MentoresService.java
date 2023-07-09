@@ -14,6 +14,7 @@ import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HorarioMentor;
 import uao.edu.co.sinapsis_app.model.Mentor;
+import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
 import uao.edu.co.sinapsis_app.model.view.MentoresView;
@@ -23,6 +24,7 @@ import uao.edu.co.sinapsis_app.services.interfaces.IEmailService;
 import uao.edu.co.sinapsis_app.services.interfaces.IMentoresService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -163,8 +165,15 @@ public class MentoresService implements IMentoresService {
 
                 emailService.notificarAsignacionEtapaRuta(correoEmprendedor, etapaRutaInnovacion.getNombre());
             } else {
-                String[] destinatarios  = appService.consultarCorreosAdministradores();
+                // Se culmina el proyecto de emprendimiento
+                ProyectoEmprendimiento proyectoEmprendimiento = mentoresDAO.obtenerProyectoEmprendimiento(asesoramientosView.getIdProyectoEmprendimiento());
 
+                proyectoEmprendimiento.setEstadoEmprendimiento("TERMINADO");
+                proyectoEmprendimiento.setFechaFin(new Date());
+
+                mentoresDAO.almacenarProyectoEmprendimiento(proyectoEmprendimiento);
+
+                String[] destinatarios  = appService.consultarCorreosAdministradores();
                 emailService.notificarCulminacionRutaEmprendedor(destinatarios, nombreEmprendedor, correoEmprendedor, nombreProyecto);
             }
 

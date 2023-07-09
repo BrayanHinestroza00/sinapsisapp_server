@@ -2,6 +2,7 @@ package uao.edu.co.sinapsis_app.model;
 
 import lombok.Data;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,8 +17,8 @@ import java.util.Date;
 @Table(name = "T_SINAPSIS_RUT_EMPRENDIMIENTO")
 public class RutaProyectoEmprendimiento {
     @Id
-    @SequenceGenerator(name = "SEC_T_SINAPSIS_RUT_EMPREND", sequenceName = "SEC_T_SINAPSIS_RUT_EMPREND", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEC_T_SINAPSIS_RUT_EMPREND")
+    @SequenceGenerator(name = "SEC_T_SINAPSIS_RUT_EMPRENDI", sequenceName = "SEC_T_SINAPSIS_RUT_EMPRENDI", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEC_T_SINAPSIS_RUT_EMPRENDI")
     @Column(name = "ID")
     private Long id;
 
@@ -35,4 +36,10 @@ public class RutaProyectoEmprendimiento {
 
     @Column(name = "CREATED_BY")
     private Long creadoPor;
+
+    @Column(name = "CREATED_AT")
+    private Date fechaCreacion;
+
+    @Column(name = "UPDATED_AT")
+    private Date fechaModificacion;
 }

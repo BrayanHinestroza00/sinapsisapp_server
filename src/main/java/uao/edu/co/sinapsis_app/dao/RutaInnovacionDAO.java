@@ -19,10 +19,10 @@ import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.Asesoramiento;
 import uao.edu.co.sinapsis_app.model.Consultoria;
-import uao.edu.co.sinapsis_app.model.EtapaRutaEmprendimiento;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
+import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.Tarea;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
@@ -89,9 +89,9 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         if (solicitudesPEFilterDTO.getMentorAsociado() != null &&
                 solicitudesPEFilterDTO.getMentorAsociado() != -1) {
             if (solicitudesPEFilterDTO.getMentorAsociado() == 1) {
-                sql += " AND ASESORAMIENTOS_ID IS NOT NULL";
+                sql += " AND MENTOR_ASESORAMIENTOS_ID IS NOT NULL";
             } else {
-                sql += " AND ASESORAMIENTOS_ID IS NULL";
+                sql += " AND MENTOR_ASESORAMIENTOS_ID IS NULL";
             }
         }
 
@@ -104,7 +104,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
     @Override
     public List<PrimeraAtencionView> detallePrimeraAtencion(Integer idProyectoEmprendimiento) {
-        String sql = "SELECT * FROM V_SINAPSIS_PRIMERA_ATENCION WHERE PROYECTO_EMPRENDIMIENTO_ID = ?";
+        String sql = "SELECT * FROM V_SINAPSIS_PRIMERA_ATENCION WHERE PROYECTO_EMPRENDIMIENTO_ID = ?1";
         Query query = entityManager.createNativeQuery(sql, PrimeraAtencionView.class);
 
         query.setParameter(1, idProyectoEmprendimiento);
@@ -151,15 +151,15 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         Date fechaActual = new Date();
 
         if (proyectoEmprendimiento != null) {
-            EtapaRutaEmprendimiento etapaRutaEmprendimiento = new EtapaRutaEmprendimiento();
-            etapaRutaEmprendimiento.setProyectoEmprendimiento(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
-            etapaRutaEmprendimiento.setEtapaEmprendimiento(rutaPrimeraAtencionDTO.getIdEtapaRuta());
+            RutaProyectoEmprendimiento etapaRutaEmprendimiento = new RutaProyectoEmprendimiento();
+            etapaRutaEmprendimiento.setIdProyectoEmprendimiento(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
+            etapaRutaEmprendimiento.setIdEtapa(rutaPrimeraAtencionDTO.getIdEtapaRuta());
             etapaRutaEmprendimiento.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
             etapaRutaEmprendimiento.setFechaCreacion(fechaActual);
             etapaRutaEmprendimiento.setFechaModificacion(fechaActual);
             etapaRutaEmprendimiento.setCreadoPor(rutaPrimeraAtencionDTO.getCreado_por());
 
-            EtapaRutaEmprendimiento isRegistered = entityManager.merge(etapaRutaEmprendimiento);
+            RutaProyectoEmprendimiento isRegistered = entityManager.merge(etapaRutaEmprendimiento);
 
             if (isRegistered != null) {
                 proyectoEmprendimiento.setEstadoEmprendimiento(T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO);
@@ -205,19 +205,28 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
                 proyectoEmprendimientoDAO.find(asignarMentorDTO.getIdProyectoEmprendimiento());
 
         if (proyectoEmprendimiento != null) {
-            EtapaRutaEmprendimiento isRegistered =
-                    entityManager.find(EtapaRutaEmprendimiento.class, asignarMentorDTO.getIdRutaProyectoEmprendimiento());
+            RutaProyectoEmprendimiento isRegistered =
+                    entityManager.find(RutaProyectoEmprendimiento.class, asignarMentorDTO.getIdRutaProyectoEmprendimiento());
 
             if (isRegistered != null) {
                 Date fechaActual = new Date();
 
-                Asesoramiento asesoramiento = new Asesoramiento();
-                asesoramiento.setFechaInicio(fechaActual);
-                asesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO);
-                asesoramiento.setIdRutaEmprendimiento(isRegistered.getId());
-                asesoramiento.setIdMentor(asignarMentorDTO.getIdMentorPrincipal());
-                asesoramiento.setFechaCreacion(fechaActual);
-                asesoramiento.setFechaModificacion(fechaActual);
+                Asesoramiento asesoramiento = proyectoEmprendimientoDAO.buscarAsesoramiento(isRegistered.getId(), asignarMentorDTO.getIdMentorPrincipal());
+
+                if (asesoramiento != null) {
+                    asesoramiento.setFechaInicio(fechaActual);
+                    asesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO);
+                    asesoramiento.setFechaModificacion(fechaActual);
+                    asesoramiento.setIdMentor(asignarMentorDTO.getIdMentorPrincipal());
+                } else {
+                    asesoramiento = new Asesoramiento();
+                    asesoramiento.setFechaInicio(fechaActual);
+                    asesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO);
+                    asesoramiento.setIdRutaEmprendimiento(isRegistered.getId());
+                    asesoramiento.setIdMentor(asignarMentorDTO.getIdMentorPrincipal());
+                    asesoramiento.setFechaCreacion(fechaActual);
+                    asesoramiento.setFechaModificacion(fechaActual);
+                }
 
                 Asesoramiento asesoramientoNew = entityManager.merge(asesoramiento);
                 entityManager.flush();
@@ -237,9 +246,12 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
     @Override
     public AsesoramientosView obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
-        String sql = "SELECT ROW_NUMBER() OVER (ORDER BY ID_PROY_EMPRENDIMIENTO) AS ID_VIEW, v.* FROM V_SINAPSIS_ASESORAMIENTOS v " +
-                "WHERE (v.ESTADO_RUTA_EMPRENDI = 'PENDIENTE' or v.ESTADO_RUTA_EMPRENDI= 'PENDIENTE_APROBAR') AND v.ID_PROY_EMPRENDIMIENTO = " + idProyectoEmprendimiento;
+        String sql = "SELECT ROW_NUMBER() OVER (ORDER BY ID_RUTA_EMPRENDI) AS ID_VIEW, v.* FROM V_SINAPSIS_ASESORAMIENTOS v " +
+                "WHERE --(v.ESTADO_RUTA_EMPRENDI = 'PENDIENTE' or v.ESTADO_RUTA_EMPRENDI= 'PENDIENTE_APROBAR') AND " +
+                "\nv.ID_PROY_EMPRENDIMIENTO = ?1 ORDER BY ID_VIEW DESC";
+
         Query query = entityManager.createNativeQuery(sql, AsesoramientosView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
 
         List<AsesoramientosView> resultados = query.getResultList();
 
@@ -288,7 +300,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<SubActividadesEmprendedorView> obtenerSubActividadesEmprendedor(Long idProyectoEmprendimiento, Long idRutaEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_ACT_EMPRENDEDOR \n" +
-                "    WHERE ESTADO_ACTIVIDAD = 'COMPLETADA' \n " +
+                "    WHERE ESTADO_ACTIVIDAD = 'COMPLETADO' \n " +
                 "    AND RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
         Query query = entityManager.createNativeQuery(sql, SubActividadesEmprendedorView.class);
 
@@ -298,9 +310,11 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ActividadesEmprendedorView> obtenerActividadesEmprendedor(Long idRutaEmprendimiento) {
         String sql = "SELECT * FROM T_SINAPSIS_ACT_RUTA_EMP \n" +
-                "    WHERE ESTADO = 'COMPLETADA' AND RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
+                "    WHERE ESTADO = 'COMPLETADO' AND RUTAS_EMPRENDIMIENTOS_ID = ?1 ORDER BY ACTIVIDADES_RUTAS_ID ASC ";
 
         Query query = entityManager.createNativeQuery(sql, ActividadesEmprendedorView.class);
+
+        query.setParameter(1, idRutaEmprendimiento);
 
         return (List<ActividadesEmprendedorView>) query.getResultList();
     }
