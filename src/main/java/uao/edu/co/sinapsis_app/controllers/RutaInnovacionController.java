@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
+import uao.edu.co.sinapsis_app.dto.EtapaRutaEmprendimientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
@@ -167,7 +168,7 @@ public class RutaInnovacionController {
 
             } else {
                 response.setCode(STATUS_EMPTY);
-                response.setMessage("Ha ocurrido algun error");
+                response.setMessage("Ha ocurrido algún error");
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         }catch (Exception e) {
@@ -184,7 +185,7 @@ public class RutaInnovacionController {
             @RequestParam(required = true) Long idProyectoEmprendimiento) {
         ResponseDTO response = new ResponseDTO();
         try {
-            AsesoramientosView solicitud = rutaInnovacionService.obtenerEtapaProyectoEmprendimiento(idProyectoEmprendimiento);
+            EtapaRutaEmprendimientoDTO solicitud = rutaInnovacionService.obtenerEtapaProyectoEmprendimiento(idProyectoEmprendimiento);
 
             if (solicitud == null) {
                 response.setCode(0);

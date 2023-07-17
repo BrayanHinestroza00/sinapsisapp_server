@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
+import uao.edu.co.sinapsis_app.dto.EtapaRutaEmprendimientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
@@ -17,6 +18,7 @@ import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.Consultoria;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
+import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.Tarea;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
@@ -127,8 +129,16 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     }
 
     @Override
-    public AsesoramientosView obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
-        return rutaInnovacionDAO.obtenerEtapaProyectoEmprendimiento(idProyectoEmprendimiento);
+    public EtapaRutaEmprendimientoDTO obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
+        AsesoramientosView etapasProyecto = rutaInnovacionDAO.obtenerEtapaProyectoEmprendimiento(idProyectoEmprendimiento);
+
+        List<RutaProyectoEmprendimiento> rutaProyectoEmprendimientos = rutaInnovacionDAO.obtenerRutaProyectoEmprendimiento(idProyectoEmprendimiento);
+
+        EtapaRutaEmprendimientoDTO etapaRutaEmprendimientoDTO = new EtapaRutaEmprendimientoDTO();
+        etapaRutaEmprendimientoDTO.setAsesoramientosView(etapasProyecto);
+        etapaRutaEmprendimientoDTO.setRutaProyectoEmprendimientos(rutaProyectoEmprendimientos);
+
+        return etapaRutaEmprendimientoDTO;
     }
 
     @Override

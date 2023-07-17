@@ -52,4 +52,8 @@ public class AsesoramientosView {
     private Date fechaEstadoRuta;
     @Column(name = "CREATED_BY")
     private Long creadoPor;
+    @Column(name = "FECHA_INICIO_ETAPARUTA")
+    private Date fechaInicioEtapa;
+    @Column(name = "FECHA_FIN_ETAPARUTA")
+    private Date fechaFinEtapa;
 }

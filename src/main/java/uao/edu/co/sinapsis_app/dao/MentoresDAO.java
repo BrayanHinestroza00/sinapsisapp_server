@@ -220,6 +220,7 @@ public class MentoresDAO implements IMentoresDAO {
         // Se finaliza la etapa en la ruta de innovacion y emprendimiento
         rutaProyecto.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_ESTADO_COMPLETADO);
         rutaProyecto.setFechaEstadoRuta(new Date());
+        rutaProyecto.setFechaFin(new Date());
 
         entityManager.merge(rutaProyecto);
         entityManager.flush();
@@ -255,15 +256,18 @@ public class MentoresDAO implements IMentoresDAO {
             queryNewEtapa.setParameter(1, idEtapaRutaNueva );
             EtapaRutaInnovacion etapaRutaNueva = (EtapaRutaInnovacion) queryNewEtapa.getSingleResult();
 
+            Date fechaActual = new Date();
+
             // Se genera la etapa en la ruta de innovacion
             RutaProyectoEmprendimiento newRuta = new RutaProyectoEmprendimiento();
             newRuta.setIdEtapa(etapaRutaNueva.getId());
             newRuta.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
             newRuta.setCreadoPor(idMentorCrea);
             newRuta.setIdProyectoEmprendimiento(rutaProyecto.getIdProyectoEmprendimiento());
-            newRuta.setFechaEstadoRuta(new Date());
-            newRuta.setFechaCreacion(new Date());
-            newRuta.setFechaModificacion(new Date());
+            newRuta.setFechaInicio(fechaActual);
+            newRuta.setFechaEstadoRuta(fechaActual);
+            newRuta.setFechaCreacion(fechaActual);
+            newRuta.setFechaModificacion(fechaActual);
 
             entityManager.persist(newRuta);
 

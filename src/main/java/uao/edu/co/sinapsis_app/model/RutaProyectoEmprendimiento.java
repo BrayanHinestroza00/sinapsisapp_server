@@ -42,4 +42,10 @@ public class RutaProyectoEmprendimiento {
 
     @Column(name = "UPDATED_AT")
     private Date fechaModificacion;
+
+    @Column(name = "FECHA_INICIO")
+    private Date fechaInicio;
+
+    @Column(name = "FECHA_FIN")
+    private Date fechaFin;
 }

@@ -268,7 +268,7 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         PrimeraAtencion updatedPrimeraAtencion = primeraAtencionDAO.registrarPrimeraAtencion(primeraAtencion);
 
         if (updatedPrimeraAtencion == null) {
-            throw new Exception("Problema al registrar la primera atencion");
+            throw new Exception("Problema al registrar la primera atención");
         }
 
         ProyectoEmprendimiento proyectoEmprendimiento = new ProyectoEmprendimiento();
@@ -279,6 +279,7 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         proyectoEmprendimiento.setEstadoEmprendimiento(T_SINAPSIS_PROY_EMPRENDIMIENTO_DEFAULT_ESTADO);
         proyectoEmprendimiento.setFechaCreacion(new Date());
         proyectoEmprendimiento.setFechaModificacion(new Date());
+        proyectoEmprendimiento.setFechaInicio(new Date());
 
         ProyectoEmprendimiento updatedProyectoEmprendimiento = proyectoEmprendimientoDAO.registrarProyectoEmprendimiento(proyectoEmprendimiento);
 

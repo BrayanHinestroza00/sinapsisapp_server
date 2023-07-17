@@ -14,6 +14,7 @@ import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.Consultoria;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
+import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.Tarea;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
@@ -39,6 +40,8 @@ public interface IRutaInnovacionDAO {
     boolean asignarMentor(AsignarMentorDTO asignarMentorDTO) throws Exception;
 
     AsesoramientosView obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento);
+
+    List<RutaProyectoEmprendimiento> obtenerRutaProyectoEmprendimiento(Long idProyectoEmprendimiento);
 
     List<ActividadRuta> obtenerActividadesEtapa();
 

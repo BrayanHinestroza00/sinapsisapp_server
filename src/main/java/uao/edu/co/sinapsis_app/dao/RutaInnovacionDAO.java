@@ -156,6 +156,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             etapaRutaEmprendimiento.setIdEtapa(rutaPrimeraAtencionDTO.getIdEtapaRuta());
             etapaRutaEmprendimiento.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
             etapaRutaEmprendimiento.setFechaCreacion(fechaActual);
+            etapaRutaEmprendimiento.setFechaInicio(fechaActual);
             etapaRutaEmprendimiento.setFechaModificacion(fechaActual);
             etapaRutaEmprendimiento.setCreadoPor(rutaPrimeraAtencionDTO.getCreado_por());
 
@@ -259,6 +260,23 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             return resultados.get(0);
         }
         return null;
+    }
+
+    @Override
+    public List<RutaProyectoEmprendimiento> obtenerRutaProyectoEmprendimiento(Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM T_SINAPSIS_RUT_EMPRENDIMIENTO WHERE PROYECTOS_EMPRENDIMIENTOS_ID = ?1  ORDER BY ETAPAS_ID";
+
+        Query query = entityManager.createNativeQuery(sql, RutaProyectoEmprendimiento.class);
+
+        query.setParameter(1, idProyectoEmprendimiento);
+
+        List<RutaProyectoEmprendimiento> result = query.getResultList();
+
+        if (result.size() > 0 ) {
+            return result;
+        } else {
+            return null;
+        }
     }
 
     @Override

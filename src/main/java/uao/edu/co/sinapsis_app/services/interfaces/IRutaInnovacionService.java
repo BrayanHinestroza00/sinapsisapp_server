@@ -1,6 +1,7 @@
 package uao.edu.co.sinapsis_app.services.interfaces;
 
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
+import uao.edu.co.sinapsis_app.dto.EtapaRutaEmprendimientoDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.AsignarRutaPrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.CalificarTareaDTO;
@@ -33,7 +34,7 @@ public interface IRutaInnovacionService {
 
     boolean asignarMentor(AsignarMentorDTO asignarMentorDTO) throws Exception;
 
-    AsesoramientosView obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento);
+    EtapaRutaEmprendimientoDTO obtenerEtapaProyectoEmprendimiento(Long idProyectoEmprendimiento);
 
     List<ActividadRuta> obtenerActividadesEtapa();
 
