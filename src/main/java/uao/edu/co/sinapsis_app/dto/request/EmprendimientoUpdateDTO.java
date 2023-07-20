@@ -26,7 +26,7 @@ public class EmprendimientoUpdateDTO {
     private String nitEmpresa;
     private String razonSocialEmpresa;
     private MultipartFile logoEmpresa;
-    private String logoEmpresaURL;
+    private Long logoEmpresaURL;
     @NotNull(message = "El campo 'Descripcion Producto' no puede estar vacio")
     private String descripcionProducto;
     @NotNull(message = "El campo 'Materias Primas' no puede estar vacio")

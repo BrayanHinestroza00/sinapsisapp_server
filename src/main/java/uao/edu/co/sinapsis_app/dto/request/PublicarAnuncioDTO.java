@@ -11,7 +11,7 @@ import java.util.Date;
 public class PublicarAnuncioDTO implements Serializable {
     @JsonAlias("fileAnuncio")
     private MultipartFile flyerAnuncio;
-    private String flyerAnuncioURL;
+    private Long flyerAnuncioURL;
     private String tituloAnuncio;
     private String descripcionAnuncio;
     private String permanente;

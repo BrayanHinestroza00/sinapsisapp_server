@@ -23,7 +23,7 @@ public class Anuncio {
     @Column(name = "DESCRIPCION")
     private String descripcion;
     @Column(name = "URL_ANUNCIO")
-    private String urlAnuncio;
+    private Long urlAnuncio;
     @Column(name = "ESTADO")
     private Integer estado;
     @Column(name = "CREATED_AT")

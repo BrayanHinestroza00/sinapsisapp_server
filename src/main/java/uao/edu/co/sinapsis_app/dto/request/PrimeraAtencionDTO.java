@@ -20,7 +20,7 @@ public class PrimeraAtencionDTO implements Serializable {
     private String telefonoContacto;
     @JsonAlias("files")
     private MultipartFile fotoPerfil;
-    private String fotoPerfilURL;
+    private Long fotoPerfilURL;
     private String correoPersonal;
 
     // Datos del emprendedor
@@ -59,7 +59,7 @@ public class PrimeraAtencionDTO implements Serializable {
     private String nitEmpresa;
     private String razonSocialEmpresa;
     private MultipartFile logoEmpresa;
-    private String logoEmpresaURL;
+    private Long logoEmpresaURL;
     @NotNull(message = "El campo 'Descripcion Producto' no puede estar vacio")
     private String descripcionProducto;
     @NotNull(message = "El campo 'Materias Primas' no puede estar vacio")
@@ -88,7 +88,7 @@ public class PrimeraAtencionDTO implements Serializable {
     private String cualOtroDescubrioSinapsis;
     @NotNull(message = "El campo 'Autodiagnostico' no puede estar vacio")
     private MultipartFile fileAutodiagnostico;
-    private String fileAutodiagnosticoURL;
+    private Long fileAutodiagnosticoURL;
 
     public void setRedesSociales(String redesSociales) {
         Gson gson = new Gson();

@@ -29,11 +29,11 @@ public class Tarea {
     @Column(name = "FECHA_LIMITE_ENTREGA")
     private Date fechaLimiteEntrega;
     @Column(name = "URL_MATERIAL_APOYO")
-    private String urlMaterialApoyo;
+    private Long urlMaterialApoyo;
     @Column(name = "ESTADO_ENTREGA")
     private String estadoEntrega;
     @Column(name = "URL_ARCHIVOS_ENTREGA")
-    private String urlArchivosEntregados;
+    private Long urlArchivosEntregados;
     @Column(name = "COMENTARIOS_ENTREGA")
     private String comentariosEntregaUsuario;
     @Column(name = "CALIFICACION")

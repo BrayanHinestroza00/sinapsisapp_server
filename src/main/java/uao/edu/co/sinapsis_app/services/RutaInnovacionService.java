@@ -281,7 +281,7 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     @Override
     public boolean registrarTareaEmprendedor(CrearTareaDTO crearTareaDTO) throws Exception {
         if (crearTareaDTO.getFileTarea() != null) {
-            String filePathFileTarea = storageService.store(crearTareaDTO.getFileTarea());
+            Long filePathFileTarea = storageService.storeDB(crearTareaDTO.getFileTarea());
             crearTareaDTO.setFileTareaURL(filePathFileTarea);
         }
 
@@ -308,7 +308,7 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     @Override
     public boolean registrarEntregaTareaEmprendedor(EntregaTareaDTO entregaTareaDTO) throws Exception {
         if (entregaTareaDTO.getFileEntrega() != null) {
-            String filePathFileEntrega = storageService.store(entregaTareaDTO.getFileEntrega());
+            Long filePathFileEntrega = storageService.storeDB(entregaTareaDTO.getFileEntrega());
             entregaTareaDTO.setFileEntregaURL(filePathFileEntrega);
         }
 

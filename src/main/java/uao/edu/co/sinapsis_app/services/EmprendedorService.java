@@ -62,17 +62,17 @@ public class EmprendedorService implements IEmprendedorService {
     @Override
     public boolean registrarPrimeraAtencion(PrimeraAtencionDTO primeraAtencion) throws Exception {
         if (primeraAtencion.getFotoPerfil() != null) {
-            String filePathFotoPerfil = storageService.store(primeraAtencion.getFotoPerfil());
+            Long filePathFotoPerfil = storageService.storeDB(primeraAtencion.getFotoPerfil());
             primeraAtencion.setFotoPerfilURL(filePathFotoPerfil);
         }
 
         if (primeraAtencion.getLogoEmpresa() != null) {
-            String filePathLogoEmpresa = storageService.store(primeraAtencion.getLogoEmpresa());
+            Long filePathLogoEmpresa = storageService.storeDB(primeraAtencion.getLogoEmpresa());
             primeraAtencion.setLogoEmpresaURL(filePathLogoEmpresa);
         }
 
         if (primeraAtencion.getFileAutodiagnostico() != null) {
-            String filePathFileAutodiagnostico = storageService.store(primeraAtencion.getFileAutodiagnostico());
+            Long filePathFileAutodiagnostico = storageService.storeDB(primeraAtencion.getFileAutodiagnostico());
             primeraAtencion.setFileAutodiagnosticoURL(filePathFileAutodiagnostico);
         }
 
@@ -103,7 +103,7 @@ public class EmprendedorService implements IEmprendedorService {
     @Override
     public boolean actualizarEmprendedor(EmprendedorUpdateDTO emprendedorUpdateDTO) throws Exception {
         if (emprendedorUpdateDTO.getFotoPerfil() != null) {
-            String filePathFotoPerfil = storageService.store(emprendedorUpdateDTO.getFotoPerfil());
+            Long filePathFotoPerfil = storageService.storeDB(emprendedorUpdateDTO.getFotoPerfil());
             emprendedorUpdateDTO.setFotoPerfilURL(filePathFotoPerfil);
         }
         return emprendedorDAO.actualizarEmprendedor(emprendedorUpdateDTO);
@@ -127,7 +127,7 @@ public class EmprendedorService implements IEmprendedorService {
     @Override
     public boolean actualizarEmprendimiento(EmprendimientoUpdateDTO emprendimientoUpdateDTO) throws Exception {
         if (emprendimientoUpdateDTO.getLogoEmpresa() != null) {
-            String filePathLogoEmpresa = storageService.store(emprendimientoUpdateDTO.getLogoEmpresa());
+            Long filePathLogoEmpresa = storageService.storeDB(emprendimientoUpdateDTO.getLogoEmpresa());
             emprendimientoUpdateDTO.setLogoEmpresaURL(filePathLogoEmpresa);
         }
 

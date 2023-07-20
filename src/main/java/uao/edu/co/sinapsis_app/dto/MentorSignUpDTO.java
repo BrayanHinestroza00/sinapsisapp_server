@@ -17,7 +17,7 @@ public class MentorSignUpDTO implements Serializable {
     private String telefonoContacto;
     private String estado;
     private Boolean aceptoTratamientoDatos;
-    private String fotoUrl;
+    private Long fotoUrl;
     private Long idTipoDocumento;
     private Integer estadoCuenta;
 

@@ -244,7 +244,6 @@ public class AppDAO implements IAppDAO {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public boolean actualizarPerfilUsuario(UsuarioUpdateDTO usuarioUpdateDTO) throws Exception {
         Usuario usuario = entityManager.find(Usuario.class, usuarioUpdateDTO.getIdUsuario());
 

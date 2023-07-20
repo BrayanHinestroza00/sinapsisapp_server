@@ -28,6 +28,12 @@ public class EmprendimientoDAO implements IEmprendimientoDAO {
             if (emprendimientoDTO.getNombreEmprendimiento() != null) {
                 emprendimiento.setNombreEmprendimiento(emprendimientoDTO.getNombreEmprendimiento());
             }
+            if (emprendimientoDTO.getNecesidadesIdentificadas() != null) {
+                emprendimiento.setNecesidadesIdentificadas(emprendimientoDTO.getNecesidadesIdentificadas());
+            }
+            if (emprendimientoDTO.getSectorEmprendimiento() != null) {
+                emprendimiento.setSectorEmprendimiento(emprendimientoDTO.getSectorEmprendimiento());
+            }
             if (emprendimientoDTO.getNombreEmpresa() != null) {
                 emprendimiento.setNombreEmpresa(emprendimientoDTO.getNombreEmpresa());
             }

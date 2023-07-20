@@ -2,6 +2,8 @@ package uao.edu.co.sinapsis_app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAppDAO;
 import uao.edu.co.sinapsis_app.dto.UsuarioUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
@@ -148,7 +150,7 @@ public class AppService implements IAppService {
     @Override
     public boolean registrarAnuncio(PublicarAnuncioDTO anuncioDTO) throws ParseException {
         if (anuncioDTO.getFlyerAnuncio() != null) {
-            String filePathFlyerAnuncio = storageService.storeAnuncio(anuncioDTO.getFlyerAnuncio());
+            Long filePathFlyerAnuncio = storageService.storeDB(anuncioDTO.getFlyerAnuncio());
             anuncioDTO.setFlyerAnuncioURL(filePathFlyerAnuncio);
         }
 
@@ -167,9 +169,10 @@ public class AppService implements IAppService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public boolean actualizarPerfilUsuario(UsuarioUpdateDTO usuarioUpdateDTO) throws Exception {
         if (usuarioUpdateDTO.getFotoPerfil() != null) {
-            String filePathFotoPerfil = storageService.store(usuarioUpdateDTO.getFotoPerfil());
+            Long filePathFotoPerfil = storageService.storeDB(usuarioUpdateDTO.getFotoPerfil());
             usuarioUpdateDTO.setFotoPerfilURL(filePathFotoPerfil);
         }
         return appDAO.actualizarPerfilUsuario(usuarioUpdateDTO);

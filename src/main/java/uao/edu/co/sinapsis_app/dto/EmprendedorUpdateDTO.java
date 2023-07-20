@@ -37,5 +37,5 @@ public class EmprendedorUpdateDTO implements Serializable {
     private String correoPersonal;
     private String telefonoContacto;
     private MultipartFile fotoPerfil;
-    private String fotoPerfilURL;
+    private Long fotoPerfilURL;
 }

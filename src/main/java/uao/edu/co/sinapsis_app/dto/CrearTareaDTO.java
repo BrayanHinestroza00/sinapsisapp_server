@@ -19,5 +19,5 @@ public class CrearTareaDTO {
     @NotNull(message = "El campo 'Usuario Crea' no puede estar vacio")
     private Long usuarioCrea;
     private MultipartFile fileTarea;
-    private String fileTareaURL;
+    private Long fileTareaURL;
 }

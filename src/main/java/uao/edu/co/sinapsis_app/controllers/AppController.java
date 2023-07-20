@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uao.edu.co.sinapsis_app.dto.ArchivoDTO;
 import uao.edu.co.sinapsis_app.dto.UsuarioUpdateDTO;
 import uao.edu.co.sinapsis_app.dto.request.PublicarAnuncioDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
@@ -27,6 +28,7 @@ import uao.edu.co.sinapsis_app.model.view.ActividadesEtapaView;
 import uao.edu.co.sinapsis_app.model.view.EmprendimientosEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.UsuariosView;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
+import uao.edu.co.sinapsis_app.services.interfaces.IStorageService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,12 +36,16 @@ import java.util.Map;
 
 import static uao.edu.co.sinapsis_app.util.Constants.STATUS_EMPTY;
 import static uao.edu.co.sinapsis_app.util.Constants.STATUS_ERROR;
+import static uao.edu.co.sinapsis_app.util.Constants.STATUS_OK;
 
 @RestController
 @RequestMapping("/app/")
 public class AppController {
     @Autowired
     private IAppService appService;
+
+    @Autowired
+    IStorageService storageService;
 
     @CrossOrigin( origins = "http://localhost:3000")
     @RequestMapping(value = "/tipoDocumento", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -450,6 +456,27 @@ public class AppController {
             response.setCode(STATUS_ERROR);
             response.setMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:3000")
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public ResponseEntity<ResponseDTO> obtenerArchivo(@RequestParam Long idArchivo) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try {
+            ArchivoDTO file = storageService.downloadDB(idArchivo);
+
+            responseDTO.setResponse(file);
+            responseDTO.setCode(STATUS_OK);
+
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            responseDTO.setMessage(e.getMessage());
+            responseDTO.setCode(STATUS_ERROR);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

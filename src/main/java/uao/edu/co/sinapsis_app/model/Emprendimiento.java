@@ -40,7 +40,7 @@ public class Emprendimiento {
     @Column(name = "RAZON_SOCIAL")
     private String razonSocial;
     @Column(name = "URL_LOGO_EMPRESA")
-    private String urlLogoEmpresa;
+    private Long urlLogoEmpresa;
     @Column(name = "DESCRIPCION_PRODUCTO")
     private String descripcionProducto;
     @Column(name = "MATERIAS_PRIMAS")

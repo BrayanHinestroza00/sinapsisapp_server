@@ -43,7 +43,7 @@ public class PrimeraAtencion {
     @Column(name = "DESCUBRIO_SINAPSIS")
     private String descubrioSinapsis;
     @Column(name = "AUTODIAGNOSTICO")
-    private String fileAutodiagnosticoURL;
+    private Long fileAutodiagnosticoURL;
     @Column(name = "CUAL_OTRO_DESCUBRIO_SINAPSIS")
     private String cualOtroDescubrioSinapsis;
     @Column(name = "CREATED_AT")

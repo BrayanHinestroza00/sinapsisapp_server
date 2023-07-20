@@ -22,7 +22,7 @@ public class EmprendimientoDTO {
     private String descripcionClientes;
     private String enfoqueSocial;
     private String necesidadIdentificada;
-    private String logoEmpresaURL;
-    private String fileAutodiagnosticoURL;
+    private Long logoEmpresaURL;
+    private Long fileAutodiagnosticoURL;
     private RedSocialDTO[] redesSociales;
 }

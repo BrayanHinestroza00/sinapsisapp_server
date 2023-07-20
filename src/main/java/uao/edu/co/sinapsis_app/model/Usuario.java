@@ -36,7 +36,7 @@ public class Usuario {
     @Column(name = "ESTADO")
     private String estado;
     @Column(name = "FOTO_URL")
-    private String fotoUrl;
+    private Long fotoUrl;
     @Column(name = "ESTADO_CUENTA")
     private Integer estadoCuenta;
     @Column(name = "TIPOS_DOCUMENTO_ID")

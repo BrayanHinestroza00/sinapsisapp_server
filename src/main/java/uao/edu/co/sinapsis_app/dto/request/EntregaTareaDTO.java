@@ -10,6 +10,6 @@ public class EntregaTareaDTO {
     @NotNull(message = "El campo 'ID Tarea' no puede estar vacio")
     private Long idTarea;
     private String comentariosEntrega;
-    private String fileEntregaURL;
+    private Long fileEntregaURL;
     private MultipartFile fileEntrega;
 }

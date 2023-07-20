@@ -14,7 +14,7 @@ public class UsuarioUpdateDTO implements Serializable {
     private String correoInstitucional;
     private String telefonoContacto;
     private MultipartFile fotoPerfil;
-    private String fotoPerfilURL;
+    private Long fotoPerfilURL;
 
     //Datos compartidos (Mentor y Administrador)
     private String dependencia;
