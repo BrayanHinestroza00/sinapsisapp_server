@@ -166,7 +166,7 @@ public class MentoresDAO implements IMentoresDAO {
     @Override
     public List<MentoresView> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
         String sql = "SELECT * FROM V_SINAPSIS_MENTORES WHERE " +
-                "ETAPAS_RUTA_ID = "+ idEtapaRutaInnovacion + " ORDER BY ID";
+                "ETAPAS_RUTA_ID = "+ idEtapaRutaInnovacion + " AND ESTADO_CUENTA = 1 ORDER BY ID";
 
         Query query = entityManager.createNativeQuery(sql, MentoresView.class);
 

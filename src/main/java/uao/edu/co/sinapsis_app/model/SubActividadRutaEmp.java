@@ -30,7 +30,7 @@ public class SubActividadRutaEmp {
     private Date fechaEstadoActividad;
 
     @Column(name = "URL_EVIDENCIA_ACTIVIDAD")
-    private String urlEvidenciaActividad;
+    private Long urlEvidenciaActividad;
 
     @Column(name = "FECHA_EVIDENCIA")
     private Date fechaEvidencia;

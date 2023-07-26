@@ -46,4 +46,6 @@ public class ListadoProyectoEmprendimientoView {
     private Long asesoramientoId;
     @Column(name = "MENTOR_ASESORAMIENTOS_ID")
     private Long mentorAsesoramientoId;
+    @Column(name = "ID_RUTA_EMPRENDIMIENTO")
+    private Long rutaEmprendimientoId;
 }

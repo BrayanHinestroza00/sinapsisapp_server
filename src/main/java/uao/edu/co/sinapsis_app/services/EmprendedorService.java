@@ -206,10 +206,14 @@ public class EmprendedorService implements IEmprendedorService {
 
         if (subActividadRutaEmp != null) {
             if (subActividadRutaEmp.getEstadoActividad().equalsIgnoreCase("PENDIENTE")) {
+                if (registrarAvanceRutaDTO.getEvidencia() != null) {
+                    Long filePathHerramienta = storageService.storeDB(registrarAvanceRutaDTO.getEvidencia());
+                    subActividadRutaEmp.setUrlEvidenciaActividad(filePathHerramienta);
+                }
+
                 subActividadRutaEmp.setEstadoActividad("COMPLETADO");
                 subActividadRutaEmp.setSubActividadRutaId(registrarAvanceRutaDTO.getIdSubActividadRuta());
                 subActividadRutaEmp.setRutaEmprendimientoId(registrarAvanceRutaDTO.getIdRutaProyecto());
-                subActividadRutaEmp.setUrlEvidenciaActividad(registrarAvanceRutaDTO.getEvidencia());
                 subActividadRutaEmp.setFechaEvidencia(new Date());
                 subActividadRutaEmp.setFechaEstadoActividad(new Date());
                 subActividadRutaEmp.setFechaModificacion(new Date());
@@ -264,9 +268,9 @@ public class EmprendedorService implements IEmprendedorService {
             }
 
             if (subActividadRutaEmp.getSubActividadRutaId() == 3L || subActividadRutaEmp.getSubActividadRutaId() == 5L
-                || subActividadRutaEmp.getSubActividadRutaId() == 8L || subActividadRutaEmp.getSubActividadRutaId() == 10L
-                    || subActividadRutaEmp.getSubActividadRutaId() == 12L || subActividadRutaEmp.getSubActividadRutaId() == 14L
-                    || subActividadRutaEmp.getSubActividadRutaId() == 16L || subActividadRutaEmp.getSubActividadRutaId() == 18L) {
+                || subActividadRutaEmp.getSubActividadRutaId() == 9L || subActividadRutaEmp.getSubActividadRutaId() == 11L
+                    || subActividadRutaEmp.getSubActividadRutaId() == 13L || subActividadRutaEmp.getSubActividadRutaId() == 15L
+                    || subActividadRutaEmp.getSubActividadRutaId() == 17L || subActividadRutaEmp.getSubActividadRutaId() == 19L) {
                 ActividadRutaEmp actividadRutaEmp =
                         emprendedorDAO.buscarActividadRutaEmp(
                                 subActividadRutaEmp.getSubActividadRutaId(),
@@ -279,9 +283,9 @@ public class EmprendedorService implements IEmprendedorService {
                  emprendedorDAO.almacenarActividadRuta(actividadRutaEmp);
 
                  if (subActividadRutaEmp.getSubActividadRutaId() != 5L &&
-                         subActividadRutaEmp.getSubActividadRutaId() != 8L &&
-                         subActividadRutaEmp.getSubActividadRutaId() != 14L &&
-                         subActividadRutaEmp.getSubActividadRutaId() != 18L) {
+                         subActividadRutaEmp.getSubActividadRutaId() != 9L &&
+                         subActividadRutaEmp.getSubActividadRutaId() != 15L &&
+                         subActividadRutaEmp.getSubActividadRutaId() != 19L) {
                      ActividadRutaEmp newActividadRutaEmp =
                              new ActividadRutaEmp(
                                      actividadRutaEmp.getActividadRutaEmpId().getIdRutaEmprendimiento(),
