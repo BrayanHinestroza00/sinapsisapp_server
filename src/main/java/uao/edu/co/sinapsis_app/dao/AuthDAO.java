@@ -7,11 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IAuthDAO;
 import uao.edu.co.sinapsis_app.dto.EmprendedorSignUpDTO;
 import uao.edu.co.sinapsis_app.dto.MentorSignUpDTO;
+import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendedor;
 import uao.edu.co.sinapsis_app.model.IntegrationTable;
 import uao.edu.co.sinapsis_app.model.Mentor;
+import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
 import uao.edu.co.sinapsis_app.model.Usuario;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
+import uao.edu.co.sinapsis_app.model.embeddable.AsignaturaEmprendedorId;
 import uao.edu.co.sinapsis_app.model.embeddable.UsuarioRolId;
 
 import javax.persistence.EntityManager;
@@ -100,26 +103,13 @@ public class AuthDAO implements IAuthDAO {
     }
 
     @Override
-    public IntegrationTable findUsuarioByUserNameInITB(String usuario) {
-        String sql = "SELECT * FROM T_SINAPSIS_INTEGRATION WHERE UPPER(USERNAME) = UPPER('"+usuario+"')";
+    public IntegrationTable buscarIntegracionPorUsuarioYTipoDocumentoYNumeroDocumento(String usuario, int tipoDocumento, String numeroDocumento) {
+        String sql = "SELECT * FROM T_SINAPSIS_INTEGRATION WHERE UPPER(USERNAME) = UPPER(?1) AND TIPO_DOCUMENTO = ?2  AND NUMERO_DOCUMENTO = ?3";
 
         Query q = entityManager.createNativeQuery(sql, IntegrationTable.class);
-
-        List<IntegrationTable> result =  q.getResultList();
-
-        if (result.size() > 0) {
-            return result.get(0);
-        }
-
-        return null;
-    }
-
-    @Override
-    public IntegrationTable findUsuarioByDocumentoInITB(int tipoDocumento, String numeroDocumento) {
-        String sql = "SELECT * FROM T_SINAPSIS_INTEGRATION WHERE TIPO_DOCUMENTO = '"+tipoDocumento+"' AND NUMERO_DOCUMENTO = '"+numeroDocumento+"' "  +
-                "ORDER BY VINCULO_CON_U ASC";
-
-        Query q = entityManager.createNativeQuery(sql);
+        q.setParameter(1, usuario);
+        q.setParameter(2, tipoDocumento);
+        q.setParameter(3, numeroDocumento);
 
         List<IntegrationTable> result =  q.getResultList();
 
@@ -138,8 +128,6 @@ public class AuthDAO implements IAuthDAO {
         Query queryNextVal = entityManager.createNativeQuery(sqlNextVal);
 
         long ID_NEW_USER = ((BigDecimal) queryNextVal.getSingleResult()).longValue();
-
-//        long ID_NEW_USER = 15L;
 
         Usuario usuario = new Usuario();
         Emprendedor emprendedor = new Emprendedor();
@@ -171,34 +159,14 @@ public class AuthDAO implements IAuthDAO {
             emprendedor.setCodigoEstudiantil(emprendedorDTO.getCodigoEstudiantil());
             emprendedor.setNivelAcademico(emprendedorDTO.getNivelAcademico());
             emprendedor.setModalidadTrabajoGrado(emprendedorDTO.getModalidadTrabajoGrado());
-            /**
-             * Realizar manejo de cursos de emprendimiento
-             */
-            // ....
-
-//            if (emprendedorDTO.getIdProgramaAcademico() == 1) {
-//                /**
-//                 * Realizar manejo de Programa academico cuando es otro
-//                 */
-//                // ....
-//            } else {
-//                emprendedor.setProgramaAcademico(emprendedorDTO.getIdProgramaAcademico());
-//            }
+            emprendedor.setProgramaAcademico(emprendedorDTO.getIdProgramaAcademico());
         }
 
         // Datos de Egresado
         if (emprendedorDTO.getTipoContacto() == TIPO_CONTACTO_EGRESADO) {
             emprendedor.setCodigoEstudiantil(emprendedorDTO.getCodigoEstudiantil());
             emprendedor.setNivelAcademico(emprendedorDTO.getNivelAcademico());
-
-//            if (emprendedorDTO.getIdProgramaAcademico() == 1) {
-//                /**
-//                 * Realizar manejo de Programa academico cuando es otro
-//                 */
-//                // ....
-//            } else {
-//                emprendedor.setProgramaAcademico(emprendedorDTO.getIdProgramaAcademico());
-//            }
+            emprendedor.setProgramaAcademico(emprendedorDTO.getIdProgramaAcademico());
         }
 
         if (emprendedorDTO.getTipoContacto() == TIPO_CONTACTO_COLABORADOR ) {
@@ -218,6 +186,23 @@ public class AuthDAO implements IAuthDAO {
 
         entityManager.persist(usuarioRol);
         entityManager.flush();
+
+        if (emprendedorDTO.getTipoContacto() == TIPO_CONTACTO_ESTUDIANTE) {
+            /**
+             * Logica para almacenar Cursos de Emprendimiento
+             */
+            if (emprendedorDTO.getCursosEmprendimiento() != null &&
+                    emprendedorDTO.getCursosEmprendimiento().size() > 0 ) {
+
+                for (String cursoEmprendimiento: emprendedorDTO.getCursosEmprendimiento()) {
+                    AsignaturaEmprendedor asignaturaEmprendedor = new AsignaturaEmprendedor();
+                    asignaturaEmprendedor.setId(
+                            new AsignaturaEmprendedorId(
+                                    ID_NEW_USER, cursoEmprendimiento));
+                    entityManager.persist(asignaturaEmprendedor);
+                }
+            }
+        }
 
         return true;
     }
@@ -304,5 +289,33 @@ public class AuthDAO implements IAuthDAO {
         int result = query.executeUpdate();
 
         return result > 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void updateLastLogin(Usuario usuario) {
+        String sql = "UPDATE T_SINAPSIS_EMPRENDEDORES SET ULTIMO_INGRESO = sysdate, NOTIFICADO = 0, FECHA_NOTIFICADO = NULL " +
+                "WHERE ID = ?1";
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, usuario.getId());
+
+        query.executeUpdate();
+    }
+
+    @Override
+    public ProgramaAcademico buscarProgramaAcademicoPorAcronimo(String acronimoProgramaAcademico) {
+        String sql = "SELECT * FROM T_SINAPSIS_PROGRAMAS WHERE UPPER(ACRONIMO) = UPPER(?1)";
+
+        Query q = entityManager.createNativeQuery(sql, ProgramaAcademico.class);
+        q.setParameter(1, acronimoProgramaAcademico);
+
+        List<ProgramaAcademico> result =  q.getResultList();
+
+        if (result.size() > 0) {
+            return result.get(0);
+        }
+
+        return null;
     }
 }

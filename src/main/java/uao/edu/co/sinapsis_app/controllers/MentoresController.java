@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uao.edu.co.sinapsis_app.dto.HorarioMentorDTO;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.FinalizarAcompanamientoDTO;
-import uao.edu.co.sinapsis_app.dto.request.HorarioMentorRequestDTO;
 import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
@@ -27,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.Constants.STATUS_EMPTY;
-import static uao.edu.co.sinapsis_app.util.Constants.STATUS_OK;
 
 @RestController
 @RequestMapping("/mentores")
@@ -156,59 +153,6 @@ public class MentoresController {
                 response.setMessage("Sin datos");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
-            e.printStackTrace();
-            response.setCode(-1);
-            response.setMessage(e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @CrossOrigin( origins = "http://localhost:3000")
-    @RequestMapping(value = "/horario", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
-    public ResponseEntity<ResponseDTO> obtenerHorarioMentor(
-            @RequestParam(required = true) Long idMentor ){
-
-        ResponseDTO response = new ResponseDTO();
-        try {
-            HorarioMentorDTO horarioMentor =
-                    mentoresService.obtenerHorarioMentor(idMentor);
-
-            if (horarioMentor != null ) {
-                response.setCode(1);
-                response.setResponse(horarioMentor);
-            }else {
-                response.setCode(0);
-                response.setMessage("Sin datos");
-            }
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
-            e.printStackTrace();
-            response.setCode(-1);
-            response.setMessage(e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @CrossOrigin( origins = "http://localhost:3000")
-    @RequestMapping(value = "/horario", method = RequestMethod.POST,  produces = "application/json;charset=UTF-8")
-    public ResponseEntity<ResponseDTO> actualizarHorarioMentor(
-            @RequestBody() @Valid HorarioMentorRequestDTO horarioMentorDTO ){
-
-        ResponseDTO response = new ResponseDTO();
-        try {
-            boolean esActualizado = mentoresService.actualizarHorarioMentor(horarioMentorDTO);
-
-            if (esActualizado) {
-                response.setCode(STATUS_OK);
-                response.setMessage("OK");
-                return new ResponseEntity<>(response, HttpStatus.OK);
-
-            } else {
-                response.setCode(STATUS_EMPTY);
-                response.setMessage("No se pudo actualizar el horario");
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            }
         }catch (Exception e) {
             e.printStackTrace();
             response.setCode(-1);

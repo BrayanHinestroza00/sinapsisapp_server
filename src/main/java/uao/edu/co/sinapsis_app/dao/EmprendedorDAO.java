@@ -65,8 +65,8 @@ public class EmprendedorDAO implements IEmprendedorDAO {
 
         emprendedorUpdateDTO.setIdEmprendedor(primeraAtencionDTO.getIdEmprendedor());
         // Datos de usuario
-        if (primeraAtencionDTO.getTelefonoContacto() != null) {
-            emprendedorUpdateDTO.setTelefonoContacto(primeraAtencionDTO.getTelefonoContacto());
+        if (primeraAtencionDTO.getCelular() != null) {
+            emprendedorUpdateDTO.setTelefonoContacto(primeraAtencionDTO.getCelular());
         }
         if (primeraAtencionDTO.getFotoPerfil() != null) {
             emprendedorUpdateDTO.setFotoPerfilURL(primeraAtencionDTO.getFotoPerfilURL());
@@ -89,31 +89,32 @@ public class EmprendedorDAO implements IEmprendedorDAO {
         }
 
         if (primeraAtencionDTO.getMunicipio() != null) {
-            emprendedorUpdateDTO.setMunicipio(primeraAtencionDTO.getMunicipio());
+            emprendedorUpdateDTO.setMunicipioId(primeraAtencionDTO.getMunicipio());
         }
 
-        if (primeraAtencionDTO.getTipoContacto() != null) {
-            emprendedorUpdateDTO.setTipoContacto(primeraAtencionDTO.getTipoContacto());
+        if (primeraAtencionDTO.getVinculoConU() != null) {
+            emprendedorUpdateDTO.setVinculoConU(primeraAtencionDTO.getVinculoConU());
         }
 
         if (primeraAtencionDTO.getCodigoEstudiantil() != null) {
             emprendedorUpdateDTO.setCodigoEstudiantil(primeraAtencionDTO.getCodigoEstudiantil());
         }
 
-        if (primeraAtencionDTO.getNivelAcademico() != null) {
-            emprendedorUpdateDTO.setNivelAcademico(primeraAtencionDTO.getNivelAcademico());
+        if (primeraAtencionDTO.getTipoEstudiante() != null) {
+            emprendedorUpdateDTO.setTipoEstudiante(primeraAtencionDTO.getTipoEstudiante());
         }
 
         if (primeraAtencionDTO.getProgramaAcademico() != null) {
             emprendedorUpdateDTO.setProgramaAcademico(primeraAtencionDTO.getProgramaAcademico());
+            emprendedorUpdateDTO.setCualOtroProgramaAcademico(primeraAtencionDTO.getCualOtroProgramaAcademico());
         }
 
-        if (primeraAtencionDTO.getOtroProgramaAcademico() != null) {
-            emprendedorUpdateDTO.setOtroProgramaAcademico(primeraAtencionDTO.getOtroProgramaAcademico());
-        }
+        /*if (primeraAtencionDTO.getOtroProgramaAcademico() != null) {
+            emprendedorUpdateDTO.setCualOtroProgramaAcademico(primeraAtencionDTO.getOtroProgramaAcademico());
+        }*/
 
-        if (primeraAtencionDTO.getModalidadTrabajoGrado() != null) {
-            emprendedorUpdateDTO.setModalidadTrabajoGrado(primeraAtencionDTO.getModalidadTrabajoGrado());
+        if (primeraAtencionDTO.getModTrabajoGrado() != null) {
+            emprendedorUpdateDTO.setModTrabajoGrado(primeraAtencionDTO.getModTrabajoGrado());
         }
 
         if (primeraAtencionDTO.getCursosEmprendimiento() != null &&
@@ -154,8 +155,8 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             emprendimiento.setSectorEmprendimiento(primeraAtencionDTO.getSectorEmprendimiento());
         }
 
-        if (primeraAtencionDTO.getSitioWebEmpresa() != null) {
-            emprendimiento.setSitioWebEmpresa(primeraAtencionDTO.getSitioWebEmpresa());
+        if (primeraAtencionDTO.getSitioWeb() != null) {
+            emprendimiento.setSitioWebEmpresa(primeraAtencionDTO.getSitioWeb());
         }
 
         if (primeraAtencionDTO.getEstaConstituida() != null) {
@@ -192,8 +193,8 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             emprendimiento.setEnfoqueSocial(primeraAtencionDTO.getEnfoqueSocial());
         }
 
-        if (primeraAtencionDTO.getNecesidadIdentificada() != null) {
-            emprendimiento.setNecesidadIdentificada(primeraAtencionDTO.getNecesidadIdentificada());
+        if (primeraAtencionDTO.getNecesidadesIdentificadas() != null) {
+            emprendimiento.setNecesidadIdentificada(primeraAtencionDTO.getNecesidadesIdentificadas());
         }
 
         if (primeraAtencionDTO.getRedesSociales() != null && primeraAtencionDTO.getRedesSociales().length > 0 ) {
@@ -217,8 +218,8 @@ public class EmprendedorDAO implements IEmprendedorDAO {
             primeraAtencion.setPromedioVentas(primeraAtencionDTO.getPromedioVentas());
         }
 
-        if (primeraAtencionDTO.getEvidenciasProducto() != null) {
-            primeraAtencion.setEvidenciasProducto(primeraAtencionDTO.getEvidenciasProducto());
+        if (primeraAtencionDTO.getEvidenciaProducto() != null) {
+            primeraAtencion.setEvidenciasProducto(primeraAtencionDTO.getEvidenciaProducto());
         }
 
         if (primeraAtencionDTO.getObtencionMateriasPrimas() != null) {
@@ -334,16 +335,16 @@ public class EmprendedorDAO implements IEmprendedorDAO {
                 emprendedor.setCodigoEstudiantil(emprendedorUpdateDTO.getCodigoEstudiantil());
             }
 
-            if (emprendedorUpdateDTO.getTipoContacto() != null) {
-                emprendedor.setTipoContacto(emprendedorUpdateDTO.getTipoContacto());
+            if (emprendedorUpdateDTO.getVinculoConU() != null) {
+                emprendedor.setTipoContacto(emprendedorUpdateDTO.getVinculoConU());
             }
 
-            if (emprendedorUpdateDTO.getNivelAcademico() != null) {
-                emprendedor.setNivelAcademico(emprendedorUpdateDTO.getNivelAcademico());
+            if (emprendedorUpdateDTO.getTipoEstudiante() != null) {
+                emprendedor.setNivelAcademico(emprendedorUpdateDTO.getTipoEstudiante());
             }
 
-            if (emprendedorUpdateDTO.getModalidadTrabajoGrado() != null) {
-                emprendedor.setModalidadTrabajoGrado(emprendedorUpdateDTO.getModalidadTrabajoGrado());
+            if (emprendedorUpdateDTO.getModTrabajoGrado() != null) {
+                emprendedor.setModalidadTrabajoGrado(emprendedorUpdateDTO.getModTrabajoGrado());
             }
 
             if (emprendedorUpdateDTO.getDependenciaColaborador() != null) {
@@ -354,17 +355,18 @@ public class EmprendedorDAO implements IEmprendedorDAO {
                 emprendedor.setCargo(emprendedorUpdateDTO.getCargoColaborador());
             }
 
-            if (emprendedorUpdateDTO.getMunicipio() != null) {
-                emprendedor.setMunicipio(emprendedorUpdateDTO.getMunicipio());
+            if (emprendedorUpdateDTO.getMunicipioId() != null) {
+                emprendedor.setMunicipio(emprendedorUpdateDTO.getMunicipioId());
             }
 
             if (emprendedorUpdateDTO.getProgramaAcademico() != null) {
                 emprendedor.setProgramaAcademico(emprendedorUpdateDTO.getProgramaAcademico());
+                emprendedor.setOtroProgramaAcademico(emprendedorUpdateDTO.getCualOtroProgramaAcademico());
             }
 
-            if (emprendedorUpdateDTO.getOtroProgramaAcademico() != null) {
-                emprendedor.setOtroProgramaAcademico(emprendedorUpdateDTO.getOtroProgramaAcademico());
-            }
+            /*if (emprendedorUpdateDTO.getCualOtroProgramaAcademico() != null) {
+                emprendedor.setOtroProgramaAcademico(emprendedorUpdateDTO.getCualOtroProgramaAcademico());
+            }*/
 
             if (emprendedorUpdateDTO.getPrimeraVez() != null) {
                 emprendedor.setPrimeraVez(emprendedorUpdateDTO.getPrimeraVez());
@@ -384,7 +386,7 @@ public class EmprendedorDAO implements IEmprendedorDAO {
                 String sqlDelete = "DELETE FROM T_SINAPSIS_ASIG_EMPRENDEDOR WHERE EMPRENDEDORES_ID = " + emprendedorUpdateDTO.getIdEmprendedor();
                 Query queryDelete = entityManager.createNativeQuery(sqlDelete);
 
-                if (queryDelete.executeUpdate() == 1)  {
+                if (queryDelete.executeUpdate() > 0)  {
                     for (String cursoEmprendimiento: emprendedorUpdateDTO.getCursosEmprendimiento()) {
                         AsignaturaEmprendedor asignaturaEmprendedor = new AsignaturaEmprendedor();
                         asignaturaEmprendedor.setId(

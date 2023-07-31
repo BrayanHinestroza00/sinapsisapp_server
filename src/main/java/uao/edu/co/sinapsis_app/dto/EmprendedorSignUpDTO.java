@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class EmprendedorSignUpDTO implements Serializable {
@@ -37,6 +38,7 @@ public class EmprendedorSignUpDTO implements Serializable {
     private Integer primeraVez;
     private String correoPersonal;
     private String otroProgramaAcademico;
+    private List<String> cursosEmprendimiento;
 
     public String getNombres() {
         if (nombres == null){

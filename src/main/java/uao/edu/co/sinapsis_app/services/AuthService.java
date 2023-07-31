@@ -13,12 +13,13 @@ import uao.edu.co.sinapsis_app.dto.MentorSignUpDTO;
 import uao.edu.co.sinapsis_app.dto.request.ActualizarContrasenaDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
 import uao.edu.co.sinapsis_app.model.IntegrationTable;
-import uao.edu.co.sinapsis_app.model.Mentor;
+import uao.edu.co.sinapsis_app.model.ProgramaAcademico;
 import uao.edu.co.sinapsis_app.model.Usuario;
 import uao.edu.co.sinapsis_app.model.UsuarioRol;
 import uao.edu.co.sinapsis_app.services.interfaces.IAppService;
 import uao.edu.co.sinapsis_app.services.interfaces.IAuthService;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static uao.edu.co.sinapsis_app.util.AppUtil.stringToDateFormatter;
@@ -29,6 +30,7 @@ import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_EGRESADO;
 import static uao.edu.co.sinapsis_app.util.Constants.TIPO_CONTACTO_ESTUDIANTE;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_EMPRENDEDORES_DEFAULT_PRIMERA_VEZ;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_EMPRENDEDORES_DEFAULT_TIPO_CONTACTO;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_ROLES_EMPRENDEDOR;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_USUARIOS_DEFAULT_ESTADO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_USUARIOS_DEFAULT_ESTADO_CUENTA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_USUARIOS_DEFAULT_TTO_DATOS_PERSONALES_INTEGRATION;
@@ -70,6 +72,9 @@ public class AuthService implements IAuthService {
         long[] roles = new long[usuariosRol.size()];
 
         for (int i = 0; i < usuariosRol.size(); i++){
+            if (usuariosRol.get(i).getId().getRolId() == T_SINAPSIS_ROLES_EMPRENDEDOR) {
+                authDAO.updateLastLogin(usuario);
+            }
             roles[i] = usuariosRol.get(i).getId().getRolId();
         }
 
@@ -89,17 +94,14 @@ public class AuthService implements IAuthService {
         ResponseDTO response = new ResponseDTO();
 
         // Busca si el usuario/documento hace parte de la Comunidad UAO
-        IntegrationTable usuarioIntegration = authDAO.findUsuarioByUserNameInITB(
-                signUpUser.getUsuario()
+        IntegrationTable usuarioIntegration = authDAO.buscarIntegracionPorUsuarioYTipoDocumentoYNumeroDocumento(
+                signUpUser.getUsuario(), signUpUser.getTipoDocumento(), signUpUser.getNumeroDocumento()
         );
 
         if (usuarioIntegration == null) {
-            usuarioIntegration = authDAO.findUsuarioByDocumentoInITB(signUpUser.getTipoDocumento(), signUpUser.getNumeroDocumento());
-            if (usuarioIntegration == null){
-                response.setCode(400);
-                response.setMessage("El usuario y/o documento NO se encuentra registrado como parte de la COMUNIDAD UAO");
-                return response;
-            }
+            response.setCode(400);
+            response.setMessage("El usuario y/o documento NO se encuentra registrado como parte de la COMUNIDAD UAO");
+            return response;
         }
 
         if ((usuarioIntegration.getTipoDocumento() != signUpUser.getTipoDocumento()) || !(usuarioIntegration.getNumeroDocumento().equalsIgnoreCase(signUpUser.getNumeroDocumento()))) {
@@ -147,7 +149,7 @@ public class AuthService implements IAuthService {
         emprendedor.setGenero(usuarioIntegration.getGenero());
         emprendedor.setDireccion(usuarioIntegration.getDireccion());
         /**
-         * REALIZAR TRANSFORMACION DE MUNICIPIO
+         * REALIZAR TRANSFORMACIÓN DE MUNICIPIO
          */
 //        emprendedor.setIdMunicipio(1L);
         emprendedor.setFechaNacimiento(stringToDateFormatter(usuarioIntegration.getFechaNacimiento(), APP_INTEGRATION_DATE_INPUT_FORMAT, APP_DATE_OUT_FORMAT));
@@ -161,12 +163,22 @@ public class AuthService implements IAuthService {
             /**
              * Realizar manejo de cursos de emprendimiento
              */
-            // ....
+            if (usuarioIntegration.getCursosEmprendimiento().length() > 0) {
+                String[] cursos = usuarioIntegration.getCursosEmprendimiento().split(",");
+
+                emprendedor.setCursosEmprendimiento(Arrays.asList(cursos));
+            }
 
             /**
-             * Realizar Transformacion de Programa academico
+             * Realizar Transformación de Programa académico
              */
-            //emprendedor.setIdProgramaAcademico(usuarioIntegration.getProgramaAcademico());
+            if (usuarioIntegration.getProgramaAcademico() != null) {
+                ProgramaAcademico programaAcademico = authDAO.buscarProgramaAcademicoPorAcronimo(usuarioIntegration.getProgramaAcademico());
+
+                if (programaAcademico != null) {
+                    emprendedor.setIdProgramaAcademico(programaAcademico.getId());
+                }
+            }
         }
 
         // Datos de Egresado
@@ -174,9 +186,15 @@ public class AuthService implements IAuthService {
             emprendedor.setCodigoEstudiantil(usuarioIntegration.getCodigoEstudiantil());
             emprendedor.setNivelAcademico(usuarioIntegration.getNivelAcademicoEgresado());
             /**
-             * Realizar Transformacion de Programa academico
+             * Realizar Transformación de Programa académico
              */
-            //emprendedor.setIdProgramaAcademico(usuarioIntegration.getProgramaAcademicoEgresado());
+            if (usuarioIntegration.getProgramaAcademicoEgresado() != null) {
+                ProgramaAcademico programaAcademico = authDAO.buscarProgramaAcademicoPorAcronimo(usuarioIntegration.getProgramaAcademicoEgresado());
+
+                if (programaAcademico != null) {
+                    emprendedor.setIdProgramaAcademico(programaAcademico.getId());
+                }
+            }
         }
 
         if (usuarioIntegration.getTipoContacto() == TIPO_CONTACTO_COLABORADOR) {
@@ -187,7 +205,6 @@ public class AuthService implements IAuthService {
         emprendedor.setPrimeraVez(T_SINAPSIS_EMPRENDEDORES_DEFAULT_PRIMERA_VEZ);
 
         boolean registrado = authDAO.registrarEmprendedor(emprendedor);
-
         if (registrado) {
             response.setCode(200);
             response.setMessage("OK");
@@ -204,17 +221,14 @@ public class AuthService implements IAuthService {
         ResponseDTO response = new ResponseDTO();
 
         // Busca si el usuario/documento hace parte de la Comunidad UAO
-        IntegrationTable usuarioIntegration = authDAO.findUsuarioByUserNameInITB(
-                signUpMentor.getUsuario()
+        IntegrationTable usuarioIntegration = authDAO.buscarIntegracionPorUsuarioYTipoDocumentoYNumeroDocumento(
+                signUpMentor.getUsuario(), signUpMentor.getTipoDocumento(), signUpMentor.getNumeroDocumento()
         );
 
         if (usuarioIntegration == null) {
-            usuarioIntegration = authDAO.findUsuarioByDocumentoInITB(signUpMentor.getTipoDocumento(), signUpMentor.getNumeroDocumento());
-            if (usuarioIntegration == null){
-                response.setCode(400);
-                response.setMessage("El usuario y/o documento NO se encuentra registrado como parte de la COMUNIDAD UAO");
-                return response;
-            }
+            response.setCode(400);
+            response.setMessage("El usuario y/o documento NO se encuentra registrado como parte de la COMUNIDAD UAO");
+            return response;
         }
 
         if ((usuarioIntegration.getTipoDocumento() != signUpMentor.getTipoDocumento()) ||

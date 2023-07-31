@@ -20,17 +20,17 @@ public class EmprendedorUpdateDTO implements Serializable {
 //    @NotNull(message = "El campo 'Fecha de Nacimiento' no puede estar vacio")
     private String fechaNacimiento;
 //    @NotNull(message = "El campo 'Municipio' no puede estar vacio")
-    private Long municipio;
+    private Long municipioId;
 //    @NotNull(message = "El campo 'Tipo de Contacto' no puede estar vacio")
-    private Integer tipoContacto;
+    private Integer vinculoConU;
     private String codigoEstudiantil;
     private Long programaAcademico;
-    private String nivelAcademico;
-    private Integer modalidadTrabajoGrado;
+    private String tipoEstudiante;
+    private Integer modTrabajoGrado;
     private String dependenciaColaborador;
     private String cargoColaborador;
     private Integer primeraVez;
-    private String otroProgramaAcademico;
+    private String cualOtroProgramaAcademico;
     private List<String> cursosEmprendimiento;
 
     //Datos de usuario

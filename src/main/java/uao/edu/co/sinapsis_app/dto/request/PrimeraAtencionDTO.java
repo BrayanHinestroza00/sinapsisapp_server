@@ -17,67 +17,67 @@ public class PrimeraAtencionDTO implements Serializable {
     private long idEmprendedor;
     // PASO 1 - Información Básica del Usuario
     // Datos de usuario
-    private String telefonoContacto;
+    private String celular;
     @JsonAlias("files")
     private MultipartFile fotoPerfil;
     private Long fotoPerfilURL;
     private String correoPersonal;
 
     // Datos del emprendedor
-    @NotNull(message = "El campo 'Genero' no puede estar vacio")
+    @NotNull(message = "El campo 'Genero' no puede estar vació")
     private String genero;
-    @NotNull(message = "El campo 'Direccion' no puede estar vacio")
+    @NotNull(message = "El campo 'Dirección' no puede estar vació")
     private String direccion;
-    @NotNull(message = "El campo 'Fecha de Nacimiento' no puede estar vacio")
+    @NotNull(message = "El campo 'Fecha de Nacimiento' no puede estar vació")
     private String fechaNacimiento;
 
-    @NotNull(message = "El campo 'Departamento' no puede estar vacio")
+    @NotNull(message = "El campo 'Departamento' no puede estar vació")
     private Long departamento;
-    @NotNull(message = "El campo 'Municipio' no puede estar vacio")
+    @NotNull(message = "El campo 'Municipio' no puede estar vació")
     private Long municipio;
 
-    @NotNull(message = "El campo 'Tipo Contacto' no puede estar vacio")
-    private Integer tipoContacto;
+    @NotNull(message = "El campo 'Vinculo con Universidad' no puede estar vació")
+    private Integer vinculoConU;
     private String codigoEstudiantil;
-    private String nivelAcademico;
+    private String tipoEstudiante;
     private Long programaAcademico;
-    private String otroProgramaAcademico;
-    private Integer modalidadTrabajoGrado;
-    private List<String> cursosEmprendimiento; // codigoAsignaturas separadas por ','
+    private String cualOtroProgramaAcademico;
+    private Integer modTrabajoGrado;
+    private List<String> cursosEmprendimiento; // códigoAsignaturas separadas por ','
     private String cargoColaborador;
     private String dependenciaColaborador;
 
     // Datos del emprendimiento
-    @NotNull(message = "El campo 'Nombre Emprendimiento' no puede estar vacio")
+    @NotNull(message = "El campo 'Nombre Emprendimiento' no puede estar vació")
     private String nombreEmprendimiento;
     private String nombreEmpresa;
     private String sectorEmprendimiento;
-    private String sitioWebEmpresa;
-    @NotNull(message = "El campo 'Esta Constituida' no puede estar vacio")
+    private String sitioWeb;
+    @NotNull(message = "El campo 'Esta Constituida' no puede estar vació")
     private String estaConstituida;
     private String fechaConstitucion;
     private String nitEmpresa;
     private String razonSocialEmpresa;
     private MultipartFile logoEmpresa;
     private Long logoEmpresaURL;
-    @NotNull(message = "El campo 'Descripcion Producto' no puede estar vacio")
+    @NotNull(message = "El campo 'Descripción Producto' no puede estar vació")
     private String descripcionProducto;
-    @NotNull(message = "El campo 'Materias Primas' no puede estar vacio")
+    @NotNull(message = "El campo 'Materias Primas' no puede estar vació")
     private String materiasPrimas;
-    @NotNull(message = "El campo 'Descripcion Clientes' no puede estar vacio")
+    @NotNull(message = "El campo 'Descripción Clientes' no puede estar vació")
     private String descripcionClientes;
     private String enfoqueSocial;
-    private String necesidadIdentificada;
+    private String necesidadesIdentificadas;
     private RedSocialDTO[] redesSociales;
 
-    // Datos de Primera atencion
-    @NotNull(message = "El campo 'Nombre Producto' no puede estar vacio")
+    // Datos de Primera atención
+    @NotNull(message = "El campo 'Nombre Producto' no puede estar vació")
     private String nombreProducto;
     private Double promedioVentas;
-    private String evidenciasProducto;
-    @NotNull(message = "El campo 'Obtencion Materias Primas' no puede estar vacio")
+    private String evidenciaProducto;
+    @NotNull(message = "El campo 'Obtención Materias Primas' no puede estar vació")
     private String obtencionMateriasPrimas;
-    @NotNull(message = "El campo 'Equipo Trabajo' no puede estar vacio")
+    @NotNull(message = "El campo 'Equipo Trabajo' no puede estar vació")
     private String equipoTrabajo;
     private String cualEquipoTrabajo;
     private String dedicacion;
@@ -86,7 +86,7 @@ public class PrimeraAtencionDTO implements Serializable {
     private String motivacion;
     private String descubrioSinapsis;
     private String cualOtroDescubrioSinapsis;
-    @NotNull(message = "El campo 'Autodiagnostico' no puede estar vacio")
+    @NotNull(message = "El campo 'Autodiagnostico' no puede estar vació")
     private MultipartFile fileAutodiagnostico;
     private Long fileAutodiagnosticoURL;
 

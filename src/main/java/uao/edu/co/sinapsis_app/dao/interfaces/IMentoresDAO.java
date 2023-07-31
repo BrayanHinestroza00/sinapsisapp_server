@@ -3,7 +3,6 @@ package uao.edu.co.sinapsis_app.dao.interfaces;
 import uao.edu.co.sinapsis_app.dto.request.EmprendedoresAsignadosFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
-import uao.edu.co.sinapsis_app.model.HorarioMentor;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.MentoresProyectoEmprendimientoView;
@@ -24,15 +23,11 @@ public interface IMentoresDAO {
 
     List<AsesoramientosView> obtenerEmprendedoresPorMentor(EmprendedoresAsignadosFilterDTO emprendedoresAsignadosFilterDTO);
 
-    List<HorarioMentor> obtenerHorarioMentor(Long idMentor);
-
     List<MentoresView> obtenerMentores(MentoresAdmFilterDTO mentoresAdmFilterDTO);
 
     List<MentoresView> obtenerMentoresPorId(Long idMentor);
 
     List<MentoresView> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion);
-
-    boolean actualizarHorarioMentor(Long idMentor, List<HorarioMentor> horarios) throws Exception;
 
     HashMap<String, Object> finalizarAcompanamiento(Long idRutaProyectoEmprendimiento, Long idMentorCrea, String observaciones) throws Exception;
 

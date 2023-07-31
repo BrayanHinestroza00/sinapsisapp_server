@@ -70,6 +70,8 @@ public class EmprendedoresView {
     private String programaAcademicoCodigo;
     @Column(name = "PROGRAMA_ACADEMICO_ACRONIMO")
     private String programaAcademicoAcronimo;
+    @Column(name = "OTRO_PROGRAMA_ACADEMICO")
+    private String cualOtroProgramaAcademico;
     @Column(name = "FACULTAD")
     private String facultad;
     @Column(name = "FACULTAD_ID")

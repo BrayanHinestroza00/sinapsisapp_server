@@ -9,7 +9,6 @@ import uao.edu.co.sinapsis_app.dto.request.MentoresAdmFilterDTO;
 import uao.edu.co.sinapsis_app.model.Asesoramiento;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
-import uao.edu.co.sinapsis_app.model.HorarioMentor;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
@@ -117,16 +116,6 @@ public class MentoresDAO implements IMentoresDAO {
     }
 
     @Override
-    public List<HorarioMentor> obtenerHorarioMentor(Long idMentor) {
-        String sql = "SELECT * FROM T_SINAPSIS_HORARIOS_MENTOR WHERE " +
-                "MENTORES_ID = "+ idMentor + " ORDER BY DIA";
-
-        Query query = entityManager.createNativeQuery(sql, HorarioMentor.class);
-
-        return (List<HorarioMentor>) query.getResultList();
-    }
-
-    @Override
     public List<MentoresView> obtenerMentores(MentoresAdmFilterDTO mentoresAdmFilterDTO) {
         String sql = "SELECT * FROM V_SINAPSIS_MENTORES WHERE ESTADO_CUENTA = " + mentoresAdmFilterDTO.getEstadoCuenta();
 
@@ -171,26 +160,6 @@ public class MentoresDAO implements IMentoresDAO {
         Query query = entityManager.createNativeQuery(sql, MentoresView.class);
 
         return (List<MentoresView>) query.getResultList();
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public boolean actualizarHorarioMentor(Long idMentor, List<HorarioMentor> horarios) throws Exception {
-        String sql = "DELETE FROM T_SINAPSIS_HORARIOS_MENTOR WHERE MENTORES_ID = ?";
-        Query query = entityManager.createNativeQuery(sql);
-
-        query.setParameter(1, idMentor);
-        query.executeUpdate();
-
-        for (HorarioMentor horario: horarios ) {
-            horario.setId(null);
-            horario.setIdMentor(idMentor);
-            entityManager.persist(horario);
-        }
-
-        entityManager.flush();
-
-        return true;
     }
 
     @Override
