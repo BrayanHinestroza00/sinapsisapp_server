@@ -8,4 +8,5 @@ public class EmprendedoresAdmFilterDTO {
     private String nombreEmprendedor;
     private Long tiposContacto;
     private String estadoEnRuta;
+    private String estadosCuenta;
 }

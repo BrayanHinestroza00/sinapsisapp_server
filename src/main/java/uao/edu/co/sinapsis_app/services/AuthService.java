@@ -316,7 +316,7 @@ public class AuthService implements IAuthService {
 
         if (correoRegistrado != null) {
             response.setCode(409);
-            response.setMessage("El correo electronico YA se encuentra REGISTRADO");
+            response.setMessage("El correo electrónico YA se encuentra REGISTRADO");
             return response;
         }
 

@@ -50,9 +50,9 @@ public class AuthDAO implements IAuthDAO {
 
     @Override
     public Usuario buscarUsuario(int tipoDocumento, String numeroDocumento, String usuario) {
-        String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE (TIPOS_DOCUMENTO_ID = '"
+        String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE TIPOS_DOCUMENTO_ID = '"
                 +tipoDocumento+"' AND NUMERO_DOCUMENTO = '"
-                +numeroDocumento+"') OR USERNAME = '"+usuario+"'";
+                +numeroDocumento+"' AND USERNAME = '"+usuario+"'";
 
         Query q = entityManager.createNativeQuery(sql, Usuario.class);
 
@@ -267,7 +267,7 @@ public class AuthDAO implements IAuthDAO {
     @Transactional
     public boolean restablecerContraseña(Long idUsuario) {
         String sql = "UPDATE T_SINAPSIS_USUARIOS " +
-                "SET PASSWORD = CONCAT(UPPER(SUBSTR(APELLIDOS, 1 ,1)), NUMERO_DOCUMENTO) " +
+                "SET PASSWORD = (UPPER(SUBSTR(APELLIDOS, 1 ,1)) || LOWER(SUBSTR(APELLIDOS, 2 ,1)) || NUMERO_DOCUMENTO || '.') " +
                 "WHERE ID = " + idUsuario;
 
         Query query = entityManager.createNativeQuery(sql);

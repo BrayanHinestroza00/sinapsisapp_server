@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.Base64Utils;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 
 import javax.servlet.ServletOutputStream;
@@ -141,7 +142,7 @@ public class ReporteConsultoriasMentorExportExcel {
         outputStream.close();
     }
 
-    public byte[] generateExcel() throws IOException {
+    public String generateExcel() throws IOException {
         writeDataLines();
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -150,6 +151,6 @@ public class ReporteConsultoriasMentorExportExcel {
         } finally {
             bos.close();
         }
-        return bos.toByteArray();
+        return new String(Base64Utils.encode(bos.toByteArray()));
     }
 }

@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class ArchivoExcelDTO {
     private String filename;
-    private byte[] file;
+    private String file;
 }

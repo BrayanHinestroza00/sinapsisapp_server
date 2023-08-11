@@ -10,7 +10,6 @@ import uao.edu.co.sinapsis_app.dto.request.IniciarAvanceRutaDTO;
 import uao.edu.co.sinapsis_app.dto.request.PrimeraAtencionDTO;
 import uao.edu.co.sinapsis_app.dto.request.RegistrarAvanceRutaDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
-import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.ActividadRutaEmp;
 import uao.edu.co.sinapsis_app.model.AsignaturaEmprendedor;
 import uao.edu.co.sinapsis_app.model.Emprendimiento;
@@ -71,8 +70,8 @@ public class EmprendedorService implements IEmprendedorService {
             primeraAtencion.setLogoEmpresaURL(filePathLogoEmpresa);
         }
 
-        if (primeraAtencion.getFileAutodiagnostico() != null) {
-            Long filePathFileAutodiagnostico = storageService.storeDB(primeraAtencion.getFileAutodiagnostico());
+        if (primeraAtencion.getFileDiagnostico() != null) {
+            Long filePathFileAutodiagnostico = storageService.storeDB(primeraAtencion.getFileDiagnostico());
             primeraAtencion.setFileAutodiagnosticoURL(filePathFileAutodiagnostico);
         }
 

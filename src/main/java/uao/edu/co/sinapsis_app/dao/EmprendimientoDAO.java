@@ -34,9 +34,7 @@ public class EmprendimientoDAO implements IEmprendimientoDAO {
             if (emprendimientoDTO.getSectorEmprendimiento() != null) {
                 emprendimiento.setSectorEmprendimiento(emprendimientoDTO.getSectorEmprendimiento());
             }
-            if (emprendimientoDTO.getNombreEmpresa() != null) {
-                emprendimiento.setNombreEmpresa(emprendimientoDTO.getNombreEmpresa());
-            }
+
             if (emprendimientoDTO.getSectorEmprendimiento() != null) {
                 emprendimiento.setSectorEmprendimiento(emprendimientoDTO.getSectorEmprendimiento());
             }
@@ -45,16 +43,25 @@ public class EmprendimientoDAO implements IEmprendimientoDAO {
             }
             if (emprendimientoDTO.getEstaConstituida() != null) {
                 emprendimiento.setEstaConstituida(emprendimientoDTO.getEstaConstituida());
+                if (emprendimiento.getEstaConstituida().equalsIgnoreCase("S")) {
+                    if (emprendimientoDTO.getFechaConstitucion() != null) {
+                        emprendimiento.setFechaConstitucion(getFormatoFecha(emprendimientoDTO.getFechaConstitucion(), APP_DATE_OUT_FORMAT));
+                    }
+                    if (emprendimientoDTO.getNitEmpresa() != null) {
+                        emprendimiento.setNit(emprendimientoDTO.getNitEmpresa());
+                    }
+                    if (emprendimientoDTO.getRazonSocialEmpresa() != null) {
+                        emprendimiento.setRazonSocial(emprendimientoDTO.getRazonSocialEmpresa());
+                    }
+                    if (emprendimientoDTO.getLogoEmpresaURL() != null) {
+                        emprendimiento.setUrlLogoEmpresa(emprendimientoDTO.getLogoEmpresaURL());
+                    }
+                    if (emprendimientoDTO.getNombreEmpresa() != null) {
+                        emprendimiento.setNombreEmpresa(emprendimientoDTO.getNombreEmpresa());
+                    }
+                }
             }
-            if (emprendimientoDTO.getFechaConstitucion() != null) {
-                emprendimiento.setFechaConstitucion(getFormatoFecha(emprendimientoDTO.getFechaConstitucion(), APP_DATE_OUT_FORMAT));
-            }
-            if (emprendimientoDTO.getNitEmpresa() != null) {
-                emprendimiento.setNit(emprendimientoDTO.getNitEmpresa());
-            }
-            if (emprendimientoDTO.getRazonSocialEmpresa() != null) {
-                emprendimiento.setRazonSocial(emprendimientoDTO.getRazonSocialEmpresa());
-            }
+
             if (emprendimientoDTO.getDescripcionProducto() != null) {
                 emprendimiento.setDescripcionProducto(emprendimientoDTO.getDescripcionProducto());
             }
@@ -66,10 +73,6 @@ public class EmprendimientoDAO implements IEmprendimientoDAO {
             }
             if (emprendimientoDTO.getEnfoqueSocial() != null) {
                 emprendimiento.setEnfoqueSocial(emprendimientoDTO.getEnfoqueSocial());
-            }
-
-            if (emprendimientoDTO.getLogoEmpresaURL() != null) {
-                emprendimiento.setUrlLogoEmpresa(emprendimientoDTO.getLogoEmpresaURL());
             }
 
             if (emprendimientoDTO.getRedesSociales() != null && emprendimientoDTO.getRedesSociales().length > 0 ) {
@@ -110,10 +113,6 @@ public class EmprendimientoDAO implements IEmprendimientoDAO {
             emprendimiento.setNombreEmprendimiento(emprendimientoDTO.getNombreEmprendimiento());
         }
 
-        if (emprendimientoDTO.getNombreEmpresa() != null) {
-            emprendimiento.setNombreEmpresa(emprendimientoDTO.getNombreEmpresa());
-        }
-
         if (emprendimientoDTO.getSectorEmprendimiento() != null) {
             emprendimiento.setSectorEmprendimiento(emprendimientoDTO.getSectorEmprendimiento());
         }
@@ -124,20 +123,26 @@ public class EmprendimientoDAO implements IEmprendimientoDAO {
 
         if (emprendimientoDTO.getEstaConstituida() != null) {
             emprendimiento.setEstaConstituida(emprendimientoDTO.getEstaConstituida());
-        }
-        if (emprendimientoDTO.getFechaConstitucion() != null) {
-            emprendimiento.setFechaConstitucion(emprendimientoDTO.getFechaConstitucion());
-        }
-        if (emprendimientoDTO.getNitEmpresa() != null) {
-            emprendimiento.setNit(emprendimientoDTO.getNitEmpresa());
-        }
+            if (emprendimiento.getEstaConstituida().equalsIgnoreCase("S")) {
+                if (emprendimientoDTO.getFechaConstitucion() != null) {
+                    emprendimiento.setFechaConstitucion(emprendimientoDTO.getFechaConstitucion());
+                }
+                if (emprendimientoDTO.getNitEmpresa() != null) {
+                    emprendimiento.setNit(emprendimientoDTO.getNitEmpresa());
+                }
 
-        if (emprendimientoDTO.getRazonSocialEmpresa() != null) {
-            emprendimiento.setRazonSocial(emprendimientoDTO.getRazonSocialEmpresa());
-        }
+                if (emprendimientoDTO.getRazonSocialEmpresa() != null) {
+                    emprendimiento.setRazonSocial(emprendimientoDTO.getRazonSocialEmpresa());
+                }
 
-        if (emprendimientoDTO.getLogoEmpresaURL() != null) {
-            emprendimiento.setUrlLogoEmpresa(emprendimientoDTO.getLogoEmpresaURL());
+                if (emprendimientoDTO.getLogoEmpresaURL() != null) {
+                    emprendimiento.setUrlLogoEmpresa(emprendimientoDTO.getLogoEmpresaURL());
+                }
+
+                if (emprendimientoDTO.getNombreEmpresa() != null) {
+                    emprendimiento.setNombreEmpresa(emprendimientoDTO.getNombreEmpresa());
+                }
+            }
         }
 
         if (emprendimientoDTO.getDescripcionProducto() != null) {

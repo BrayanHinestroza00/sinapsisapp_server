@@ -54,7 +54,7 @@ public class ReportesController {
 
 //                headers.setContentType(MediaType.valueOf("application/vnd.ms-excel"));
 //                headers.setContentDisposition(contentDisposition);
-                byte[] file = exportExcel.generateExcel();
+                String file = exportExcel.generateExcel();
                 ArchivoExcelDTO archivoExcelDTO = new ArchivoExcelDTO();
 
                 archivoExcelDTO.setFilename(filename);

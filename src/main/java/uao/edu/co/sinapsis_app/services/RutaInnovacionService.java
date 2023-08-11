@@ -2,6 +2,8 @@ package uao.edu.co.sinapsis_app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import uao.edu.co.sinapsis_app.dao.interfaces.IRutaInnovacionDAO;
 import uao.edu.co.sinapsis_app.dto.CrearTareaDTO;
 import uao.edu.co.sinapsis_app.dto.EtapaRutaEmprendimientoDTO;
@@ -70,6 +72,7 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception {
         boolean  rutaAsignada = rutaInnovacionDAO.asignarRutaPrimeraAtencion(rutaPrimeraAtencionDTO);
 

@@ -17,12 +17,15 @@ import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
+import uao.edu.co.sinapsis_app.model.ActividadRutaEmp;
 import uao.edu.co.sinapsis_app.model.Asesoramiento;
 import uao.edu.co.sinapsis_app.model.Consultoria;
 import uao.edu.co.sinapsis_app.model.EtapaRutaInnovacion;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.ProyectoEmprendimiento;
 import uao.edu.co.sinapsis_app.model.RutaProyectoEmprendimiento;
+import uao.edu.co.sinapsis_app.model.SubActividadRuta;
+import uao.edu.co.sinapsis_app.model.SubActividadRutaEmp;
 import uao.edu.co.sinapsis_app.model.Tarea;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
 import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
@@ -49,6 +52,7 @@ import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_CONSULTORIAS_EST
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_CONSULTORIAS_ESTADO_TERMINADA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO;
+import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_RUT_EMPRENDIMIENTO_ESTADO_COMPLETADO;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_CALIFICADA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_ENTREGADA;
 import static uao.edu.co.sinapsis_app.util.Constants.T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE;
@@ -145,58 +149,172 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public boolean asignarRutaPrimeraAtencion(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO) throws Exception {
         ProyectoEmprendimiento proyectoEmprendimiento = proyectoEmprendimientoDAO.find(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
-        Date fechaActual = new Date();
 
         if (proyectoEmprendimiento != null) {
-            RutaProyectoEmprendimiento etapaRutaEmprendimiento = new RutaProyectoEmprendimiento();
-            etapaRutaEmprendimiento.setIdProyectoEmprendimiento(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
-            etapaRutaEmprendimiento.setIdEtapa(rutaPrimeraAtencionDTO.getIdEtapaRuta());
-            etapaRutaEmprendimiento.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
-            etapaRutaEmprendimiento.setFechaCreacion(fechaActual);
-            etapaRutaEmprendimiento.setFechaInicio(fechaActual);
-            etapaRutaEmprendimiento.setFechaModificacion(fechaActual);
-            etapaRutaEmprendimiento.setCreadoPor(rutaPrimeraAtencionDTO.getCreado_por());
+            if (rutaPrimeraAtencionDTO.getIdEtapaRuta() == 1L) {
+                return asignarEtapaSonar(rutaPrimeraAtencionDTO, proyectoEmprendimiento);
+            } else {
+                return asignarEtapaPensar(rutaPrimeraAtencionDTO, proyectoEmprendimiento);
+            }
+        } else {
+            throw new Exception("No se encontró el proyecto de emprendimiento");
+        }
+    }
 
-            RutaProyectoEmprendimiento isRegistered = entityManager.merge(etapaRutaEmprendimiento);
+    private boolean asignarEtapaSonar(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO, ProyectoEmprendimiento proyectoEmprendimiento) throws Exception {
+        Date fechaActual = new Date();
 
-            if (isRegistered != null) {
-                proyectoEmprendimiento.setEstadoEmprendimiento(T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO);
+        RutaProyectoEmprendimiento etapaRutaEmprendimiento = new RutaProyectoEmprendimiento();
+        etapaRutaEmprendimiento.setIdProyectoEmprendimiento(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
+        etapaRutaEmprendimiento.setIdEtapa(rutaPrimeraAtencionDTO.getIdEtapaRuta());
+        etapaRutaEmprendimiento.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
+        etapaRutaEmprendimiento.setFechaCreacion(fechaActual);
+        etapaRutaEmprendimiento.setFechaInicio(fechaActual);
+        etapaRutaEmprendimiento.setFechaModificacion(fechaActual);
+        etapaRutaEmprendimiento.setCreadoPor(rutaPrimeraAtencionDTO.getCreado_por());
 
-                boolean isUpdated = proyectoEmprendimientoDAO.updateProyecto(proyectoEmprendimiento);
+        RutaProyectoEmprendimiento isRegistered = entityManager.merge(etapaRutaEmprendimiento);
 
-                if (isUpdated) {
-                    if (rutaPrimeraAtencionDTO.getIdMentorPrincipal() != null) {
-                        Asesoramiento asesoramiento = new Asesoramiento();
-                        asesoramiento.setFechaInicio(fechaActual);
-                        asesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO);
-                        asesoramiento.setIdRutaEmprendimiento(isRegistered.getId());
-                        asesoramiento.setIdMentor(rutaPrimeraAtencionDTO.getIdMentorPrincipal());
-                        asesoramiento.setFechaCreacion(fechaActual);
-                        asesoramiento.setFechaModificacion(fechaActual);
+        if (isRegistered != null) {
+            proyectoEmprendimiento.setEstadoEmprendimiento(T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO);
 
-                        Asesoramiento asesoramientoNew = entityManager.merge(asesoramiento);
-                        entityManager.flush();
+            boolean isUpdated = proyectoEmprendimientoDAO.updateProyecto(proyectoEmprendimiento);
 
-                        if (asesoramientoNew != null) {
-                            return true;
-                        } else {
-                            throw new Exception("Problema al almacenar el asesoramiento");
+            if (isUpdated) {
+                if (rutaPrimeraAtencionDTO.getIdMentorPrincipal() != null) {
+                    Asesoramiento asesoramiento = new Asesoramiento();
+                    asesoramiento.setFechaInicio(fechaActual);
+                    asesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO);
+                    asesoramiento.setIdRutaEmprendimiento(isRegistered.getId());
+                    asesoramiento.setIdMentor(rutaPrimeraAtencionDTO.getIdMentorPrincipal());
+                    asesoramiento.setFechaCreacion(fechaActual);
+                    asesoramiento.setFechaModificacion(fechaActual);
+
+                    Asesoramiento asesoramientoNew = entityManager.merge(asesoramiento);
+                    entityManager.flush();
+
+                    if (asesoramientoNew != null) {
+                        return true;
+                    } else {
+                        throw new Exception("Problema al almacenar el asesoramiento");
+                    }
+                }
+            } else {
+                throw new Exception("Problema al actualizar proyecto de emprendimiento");
+            }
+
+        } else {
+            throw new Exception("Problema registrar la etapa de emprendimiento");
+        }
+        return true;
+    }
+
+    private boolean asignarEtapaPensar(AsignarRutaPrimeraAtencionDTO rutaPrimeraAtencionDTO, ProyectoEmprendimiento proyectoEmprendimiento) throws Exception {
+        Date fechaActual = new Date();
+
+        for (int i = 1; i <= rutaPrimeraAtencionDTO.getIdEtapaRuta(); i++) {
+            if (i == rutaPrimeraAtencionDTO.getIdEtapaRuta()) {
+                RutaProyectoEmprendimiento etapaRutaEmprendimiento = new RutaProyectoEmprendimiento();
+                etapaRutaEmprendimiento.setIdProyectoEmprendimiento(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
+                etapaRutaEmprendimiento.setIdEtapa(rutaPrimeraAtencionDTO.getIdEtapaRuta());
+                etapaRutaEmprendimiento.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_DEFAULT_ESTADO);
+                etapaRutaEmprendimiento.setFechaCreacion(fechaActual);
+                etapaRutaEmprendimiento.setFechaInicio(fechaActual);
+                etapaRutaEmprendimiento.setFechaModificacion(fechaActual);
+                etapaRutaEmprendimiento.setCreadoPor(rutaPrimeraAtencionDTO.getCreado_por());
+
+                RutaProyectoEmprendimiento isRegistered = entityManager.merge(etapaRutaEmprendimiento);
+
+                if (isRegistered != null) {
+                    proyectoEmprendimiento.setEstadoEmprendimiento(T_SINAPSIS_PROY_EMPRENDIMIENTO_ESTADO_APROBADO);
+
+                    boolean isUpdated = proyectoEmprendimientoDAO.updateProyecto(proyectoEmprendimiento);
+
+                    if (isUpdated) {
+                        if (rutaPrimeraAtencionDTO.getIdMentorPrincipal() != null) {
+                            Asesoramiento asesoramiento = new Asesoramiento();
+                            asesoramiento.setFechaInicio(fechaActual);
+                            asesoramiento.setEstado(T_SINAPSIS_ASESORAMIENTO_ESTADO_ENCURSO);
+                            asesoramiento.setIdRutaEmprendimiento(isRegistered.getId());
+                            asesoramiento.setIdMentor(rutaPrimeraAtencionDTO.getIdMentorPrincipal());
+                            asesoramiento.setFechaCreacion(fechaActual);
+                            asesoramiento.setFechaModificacion(fechaActual);
+
+                            Asesoramiento asesoramientoNew = entityManager.merge(asesoramiento);
+                            entityManager.flush();
+
+                            if (asesoramientoNew != null) {
+                                return true;
+                            } else {
+                                throw new Exception("Problema al almacenar el asesoramiento");
+                            }
+                        }
+                    } else {
+                        throw new Exception("Problema al actualizar proyecto de emprendimiento");
+                    }
+
+                } else {
+                    throw new Exception("Problema registrar la etapa de emprendimiento");
+                }
+            } else {
+                RutaProyectoEmprendimiento etapaRutaEmprendimiento = new RutaProyectoEmprendimiento();
+                etapaRutaEmprendimiento.setIdProyectoEmprendimiento(rutaPrimeraAtencionDTO.getIdProyectoEmprendimiento());
+                etapaRutaEmprendimiento.setIdEtapa(Long.valueOf(i));
+                etapaRutaEmprendimiento.setEstadoRuta(T_SINAPSIS_RUT_EMPRENDIMIENTO_ESTADO_COMPLETADO);
+                etapaRutaEmprendimiento.setFechaCreacion(fechaActual);
+                etapaRutaEmprendimiento.setFechaInicio(fechaActual);
+                etapaRutaEmprendimiento.setFechaFin(fechaActual);
+                etapaRutaEmprendimiento.setFechaModificacion(fechaActual);
+                etapaRutaEmprendimiento.setCreadoPor(rutaPrimeraAtencionDTO.getCreado_por());
+                etapaRutaEmprendimiento.setFechaEstadoRuta(fechaActual);
+
+
+                RutaProyectoEmprendimiento isRegistered = entityManager.merge(etapaRutaEmprendimiento);
+                entityManager.flush();
+
+                if (isRegistered != null) {
+                    // Busca actividades creadas
+                    String sqlActRutaEmp = "SELECT * FROM T_SINAPSIS_ACT_RUTA_EMP WHERE RUTAS_EMPRENDIMIENTOS_ID = ?1 AND ESTADO = 'COMPLETADO'";
+                    Query query = entityManager.createNativeQuery(sqlActRutaEmp, ActividadRutaEmp.class);
+                    query.setParameter(1, isRegistered.getId());
+
+                    List<ActividadRutaEmp> actividadRutaEmps = query.getResultList();
+
+                    if (actividadRutaEmps.size() > 0) {
+                        for (ActividadRutaEmp actividadRutaEmp : actividadRutaEmps) {
+
+                            String sqlSubActRuta = "SELECT * FROM T_SINAPSIS_SUB_ACT_RUTA WHERE ACTIVIDADES_RUTAS_ID = ?1";
+                            Query querySubAct = entityManager.createNativeQuery(sqlSubActRuta, SubActividadRuta.class);
+                            querySubAct.setParameter(1, actividadRutaEmp.getActividadRutaEmpId().getIdActividad());
+
+                            List<SubActividadRuta> subActividadRutas = querySubAct.getResultList();
+
+                            for (SubActividadRuta sub : subActividadRutas) {
+                                SubActividadRutaEmp newSubActividadRutaEmp = new SubActividadRutaEmp();
+
+                                newSubActividadRutaEmp.setEstadoActividad("COMPLETADO");
+                                newSubActividadRutaEmp.setSubActividadRutaId(sub.getId());
+                                newSubActividadRutaEmp.setRutaEmprendimientoId(isRegistered.getId());
+                                newSubActividadRutaEmp.setFechaEstadoActividad(new Date());
+                                newSubActividadRutaEmp.setFechaCreacion(new Date());
+                                newSubActividadRutaEmp.setFechaModificacion(new Date());
+                                entityManager.persist(newSubActividadRutaEmp);
+                            }
+
+                            actividadRutaEmp.setEstado("COMPLETADO");
+                            entityManager.merge(actividadRutaEmp);
                         }
                     }
-                } else {
-                    throw new Exception("Problema al actualizar proyecto de emprendimiento");
-                }
 
-            } else {
-                throw new Exception("Problema registrar la etapa de emprendimiento");
+                } else {
+                    throw new Exception("Problema registrar la etapa de emprendimiento");
+                }
             }
-        } else  {
-            throw new Exception("No se encontro el proyecto de emprendimiento");
         }
-        return false;
+
+        return true;
     }
 
     @Override
@@ -238,10 +356,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
                     throw new Exception("Problema al almacenar el asesoramiento");
                 }
             } else {
-                throw new Exception("No se encontro el la etapa en la ruta del proyecto de emprendimiento");
+                throw new Exception("No se encontró el la etapa en la ruta del proyecto de emprendimiento");
             }
-        } else  {
-            throw new Exception("No se encontro el proyecto de emprendimiento");
+        } else {
+            throw new Exception("No se encontró el proyecto de emprendimiento");
         }
     }
 
@@ -272,7 +390,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
         List<RutaProyectoEmprendimiento> result = query.getResultList();
 
-        if (result.size() > 0 ) {
+        if (result.size() > 0) {
             return result;
         } else {
             return null;
@@ -368,7 +486,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
     @Override
     public TareasProyectoEmprendimientoView obtenerTareasPorId(Long idTarea) {
-        String  sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
+        String sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
                 "WHERE ID_TAREA = " + idTarea;
 
         Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
@@ -471,7 +589,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         entityManager.flush();
 
         if (isRegistered == null) {
-            throw new Exception("Problema al programar la consultoria");
+            throw new Exception("Problema al programar la consultoría");
         }
 
         return isRegistered;
@@ -490,10 +608,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             entityManager.flush();
 
             if (isRegistered == null) {
-                throw new Exception("Problema al iniciar la consultoria");
+                throw new Exception("Problema al iniciar la consultoría");
             }
         } else {
-            throw new Exception("Problema al buscar la consultoria");
+            throw new Exception("Problema al buscar la consultoría");
         }
         return true;
     }
@@ -511,10 +629,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             entityManager.flush();
 
             if (isRegistered == null) {
-                throw new Exception("Problema al marcar inasistencia de la consultoria");
+                throw new Exception("Problema al marcar inasistencia de la consultoría");
             }
         } else {
-            throw new Exception("Problema al buscar la consultoria");
+            throw new Exception("Problema al buscar la consultoría");
         }
         return true;
     }
@@ -533,18 +651,30 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             entityManager.flush();
 
             if (isRegistered == null) {
-                throw new Exception("Problema al marcar terminar la consultoria");
+                throw new Exception("Problema al marcar terminar la consultoría");
             }
         } else {
-            throw new Exception("Problema al buscar la consultoria");
+            throw new Exception("Problema al buscar la consultoría");
         }
         return true;
     }
 
     @Override
     public List<EmprendedoresView> obtenerEmprendedores(EmprendedoresAdmFilterDTO emprendedoresAdmFilterDTO) {
-        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDEDORES WHERE ESTADO_CUENTA = 1 ";
+        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDEDORES WHERE ";
 
+
+        if (emprendedoresAdmFilterDTO.getEstadosCuenta() != null &&
+                !(emprendedoresAdmFilterDTO.getEstadosCuenta().trim().isEmpty())) {
+            if (!(emprendedoresAdmFilterDTO.getEstadosCuenta().equalsIgnoreCase("-1"))) {
+                sql += "ESTADO_CUENTA = " + emprendedoresAdmFilterDTO.getEstadosCuenta();
+            } else {
+                sql += "ESTADO_CUENTA in (1,0) ";
+            }
+
+        } else {
+            sql += "  ESTADO_CUENTA = 1";
+        }
 
         if (emprendedoresAdmFilterDTO.getNumeroDocumento() != null &&
                 !(emprendedoresAdmFilterDTO.getNumeroDocumento().trim().isEmpty())) {
@@ -567,7 +697,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
             sql += " AND ESTADO = " + emprendedoresAdmFilterDTO.getEstadoEnRuta();
         }
 
-        sql += "ORDER BY NOMBRES DESC, APELLIDOS DESC";
+        sql += " ORDER BY NOMBRES DESC, APELLIDOS DESC";
 
         Query query = entityManager.createNativeQuery(sql, EmprendedoresView.class);
 
@@ -595,7 +725,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         tareaNueva.setFechaCreacion(new Date());
         tareaNueva.setFechaModificacion(new Date());
         tareaNueva.setIdProyectoEmprendimiento(crearTareaDTO.getIdProyectoEmprendimiento());
-        tareaNueva.setUrlMaterialApoyo(crearTareaDTO.getFileTareaURL() == null ? null : crearTareaDTO.getFileTareaURL() );
+        tareaNueva.setUrlMaterialApoyo(crearTareaDTO.getFileTareaURL() == null ? null : crearTareaDTO.getFileTareaURL());
         tareaNueva.setDescripcion(crearTareaDTO.getDescripcionTarea());
 
         Tarea isRegistered = entityManager.merge(tareaNueva);
@@ -677,12 +807,18 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
 
     @Override
     public AsesoramientosView buscarAsesoramientoPorIdProyectoEmprendimiento(Long idProyectoEmprendimiento) {
-        String sql = "SELECT ROW_NUMBER() OVER (ORDER BY ID_PROY_EMPRENDIMIENTO) AS ID_VIEW, V.* FROM V_SINAPSIS_ASESORAMIENTOS V WHERE ID_PROY_EMPRENDIMIENTO = ?1";
+        String sql = "SELECT ROW_NUMBER() OVER (ORDER BY ID_PROY_EMPRENDIMIENTO) AS ID_VIEW, V.* FROM V_SINAPSIS_ASESORAMIENTOS V WHERE ID_PROY_EMPRENDIMIENTO = ?1 ORDER BY ID_RUTA_EMPRENDI DESC";
 
         Query query = entityManager.createNativeQuery(sql, AsesoramientosView.class);
         query.setParameter(1, idProyectoEmprendimiento);
 
-        return (AsesoramientosView) query.getSingleResult();
+        List<AsesoramientosView> result = query.getResultList();
+
+        if (result.size() > 0) {
+            return result.get(0);
+        } else {
+            return null;
+        }
     }
 
     @Override

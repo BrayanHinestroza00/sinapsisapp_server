@@ -41,7 +41,10 @@ public class AuthController {
         }catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseDTO responseDTO = new ResponseDTO();
+            responseDTO.setCode(-1);
+            responseDTO.setMessage(e.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -66,7 +69,10 @@ public class AuthController {
         }catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseDTO responseDTO = new ResponseDTO();
+            responseDTO.setCode(-1);
+            responseDTO.setMessage(e.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -87,7 +93,10 @@ public class AuthController {
         }catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseDTO responseDTO = new ResponseDTO();
+            responseDTO.setCode(-1);
+            responseDTO.setMessage(e.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -110,8 +119,10 @@ public class AuthController {
             }
         }catch (Exception e) {
             e.printStackTrace();
-            System.out.println(e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseDTO responseDTO = new ResponseDTO();
+                    responseDTO.setCode(-1);
+            responseDTO.setMessage(e.getMessage());
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

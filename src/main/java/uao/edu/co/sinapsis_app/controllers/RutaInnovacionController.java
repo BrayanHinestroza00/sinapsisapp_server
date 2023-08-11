@@ -23,11 +23,9 @@ import uao.edu.co.sinapsis_app.dto.request.ProgramarConsultoriaDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPAFilterDTO;
 import uao.edu.co.sinapsis_app.dto.request.SolicitudesPEFilterDTO;
 import uao.edu.co.sinapsis_app.dto.response.ResponseDTO;
-import uao.edu.co.sinapsis_app.exceptions.StorageException;
 import uao.edu.co.sinapsis_app.model.ActividadRuta;
 import uao.edu.co.sinapsis_app.model.HerramientaRuta;
 import uao.edu.co.sinapsis_app.model.view.ActividadesEmprendedorView;
-import uao.edu.co.sinapsis_app.model.view.AsesoramientosView;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
 import uao.edu.co.sinapsis_app.model.view.EmprendedoresView;
 import uao.edu.co.sinapsis_app.model.view.ListadoProyectoEmprendimientoView;
@@ -138,13 +136,13 @@ public class RutaInnovacionController {
         try {
             boolean esRegistrado = rutaInnovacionService.asignarRutaPrimeraAtencion(rutaPrimeraAtencionDTO);
             if (esRegistrado) {
-                response.setCode(0);
+                response.setCode(STATUS_EMPTY);
                 response.setMessage("OK");
                 return new ResponseEntity<>(response, HttpStatus.OK);
 
             } else {
                 response.setCode(STATUS_EMPTY);
-                response.setMessage("Ha ocurrido algun error");
+                response.setMessage("Ha ocurrido algún error");
                 return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
             }
         }catch (Exception e) {
