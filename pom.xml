@@ -102,7 +102,7 @@
 				<connection.driver>oracle.jdbc.OracleDriver</connection.driver>
 				<connection.dialect>org.hibernate.dialect.Oracle12cDialect</connection.dialect>
 				<connection.url>jdbc:oracle:thin:@//localhost:49161/xe</connection.url>
-				<connection.username>SINAPSIS_TEST_LINA</connection.username>
+				<connection.username>SINAPSIS_APP_QA</connection.username>
 				<connection.password>DEV_MOVILIDAD_ACTIVOS</connection.password>
 
 				<email.host>smtp.gmail.com</email.host>

@@ -544,7 +544,21 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     public List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
                 "WHERE EMPRENDEDORES_ID = " + idEmprendedor + " " +
-                "AND FECHA_CONSULTORIA >= TRUNC(SYSDATE) " +
+                "AND (FECHA_CONSULTORIA - SYSDATE) <= 1 " +
+                "AND (ESTADO_CONSULTORIA = 'PROGRAMADA' OR ESTADO_CONSULTORIA = 'EN CURSO') " +
+                "ORDER BY FECHA_CONSULTORIA DESC";
+
+        Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+
+        return (List<ConsultoriasView>) query.getResultList();
+    }
+
+    @Override
+    public List<ConsultoriasView> obtenerConsultoriaProgramadaProyectoEmprendimiento(Long idEmprendedor, Long idProyectoEmprendimiento) {
+        String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
+                "WHERE EMPRENDEDORES_ID = " + idEmprendedor + " " +
+                "AND ID_PROYECTO_EMPRENDIMIENTO = "+ idProyectoEmprendimiento + " " +
+                "AND (FECHA_CONSULTORIA - SYSDATE) <= 1 " +
                 "AND (ESTADO_CONSULTORIA = 'PROGRAMADA' OR ESTADO_CONSULTORIA = 'EN CURSO') " +
                 "ORDER BY FECHA_CONSULTORIA DESC";
 
@@ -557,7 +571,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     public List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
                 "WHERE ID_MENTOR = " + idMentor + " " +
-                "AND TRUNC(FECHA_CONSULTORIA) >= TRUNC(SYSDATE) " +
+                "AND (FECHA_CONSULTORIA - SYSDATE) <= 1 " +
                 "AND ESTADO_CONSULTORIA = 'PROGRAMADA' ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
@@ -721,7 +735,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         tareaNueva.setEstadoEntrega(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_PENDIENTE);
         tareaNueva.setTitulo(crearTareaDTO.getNombreTarea());
         tareaNueva.setUsuarioCrea(crearTareaDTO.getUsuarioCrea());
-        tareaNueva.setFechaLimiteEntrega(getFormatoFecha(crearTareaDTO.getFechaEntrega(), "dd/MM/yyyy hh:mm:ss"));
+//        tareaNueva.setFechaLimiteEntrega(getFormatoFecha(crearTareaDTO.getFechaEntrega(), "dd/MM/yyyy hh:mm:ss"));
         tareaNueva.setFechaCreacion(new Date());
         tareaNueva.setFechaModificacion(new Date());
         tareaNueva.setIdProyectoEmprendimiento(crearTareaDTO.getIdProyectoEmprendimiento());
@@ -753,9 +767,9 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
                     + ". Por lo que no se pudo realizar la entrega.");
         }
 
-        if (tarea.getFechaLimiteEntrega().compareTo(new Date()) < 0) {
-            throw new Exception("La tarea se encuentra vencida");
-        }
+//        if (tarea.getFechaLimiteEntrega().compareTo(new Date()) < 0) {
+//            throw new Exception("La tarea se encuentra vencida");
+//        }
 
         tarea.setEstadoEntrega(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_ENTREGADA);
         tarea.setFechaEntrega(new Date());

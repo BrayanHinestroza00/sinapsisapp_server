@@ -390,7 +390,7 @@ public class ReportesDAO implements IReportesDAO {
 
     @Override
     public List<NroEmprendedoresXEtapa> consultarNroEmprendedoresXEtapa() {
-        String sql = "SELECT COUNT(ID_RUTA_EMPRENDIMIENTO) NRO_PROYECTOS_EMPRENDIMIENTO, TSER.NOMBRE ETAPA_RUTA FROM (\n" +
+        String sql = "SELECT COUNT(ID_RUTA_EMPRENDIMIENTO) NRO_PROYECTOS_EMPRENDIMIENTO, TSER.NOMBRE ETAPA_RUTA, TSER.ID FROM (\n" +
                 "    SELECT \n" +
                 "        ID_RUTA_EMPRENDIMIENTO, ETAPAS_ID \n" +
                 "    FROM T_SINAPSIS_EMPRENDEDORES TE \n" +
@@ -405,7 +405,7 @@ public class ReportesDAO implements IReportesDAO {
                 "    ORDER BY ID_RUTA_EMPRENDIMIENTO DESC\n" +
                 ") VPE RIGHT JOIN T_SINAPSIS_ETAPAS_RUTA TSER ON VPE.ETAPAS_ID = TSER.ID\n" +
                 "\n" +
-                "GROUP BY TSER.NOMBRE";
+                "GROUP BY TSER.NOMBRE, TSER.ID ORDER BY TSER.ID";
 
         Query query = entityManager.createNativeQuery(sql, NroEmprendedoresXEtapa.class);
 
@@ -416,7 +416,7 @@ public class ReportesDAO implements IReportesDAO {
     public List<NroEmprendedoresXTipoContacto> consultarNroEmprendedoresXTipoContacto() {
         String sql = "SELECT \n" +
                 "    COUNT(TE.id) nro_emprendedores, TC.nombre vinculo_con_u     \n" +
-                "FROM T_SINAPSIS_EMPRENDEDORES TE JOIN T_SINAPSIS_TIPOS_CONTACTO TC ON TE.tipo_contacto = TC.ID\n" +
+                "FROM T_SINAPSIS_EMPRENDEDORES TE RIGHT JOIN T_SINAPSIS_TIPOS_CONTACTO TC ON TE.tipo_contacto = TC.ID\n" +
                 "GROUP BY TC.nombre";
 
         Query query = entityManager.createNativeQuery(sql, NroEmprendedoresXTipoContacto.class);

@@ -26,8 +26,8 @@ public class Tarea {
     private String descripcion;
     @Column(name = "FECHA_ENTREGA")
     private Date fechaEntrega;
-    @Column(name = "FECHA_LIMITE_ENTREGA")
-    private Date fechaLimiteEntrega;
+//    @Column(name = "FECHA_LIMITE_ENTREGA")
+//    private Date fechaLimiteEntrega;
     @Column(name = "URL_MATERIAL_APOYO")
     private Long urlMaterialApoyo;
     @Column(name = "ESTADO_ENTREGA")

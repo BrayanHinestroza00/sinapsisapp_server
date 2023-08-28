@@ -20,8 +20,8 @@ public class TareasProyectoEmprendimientoView {
     private String descripcionTarea;
     @Column(name = "FECHA_ENTREGA")
     private String fechaEntrega;
-    @Column(name = "FECHA_LIMITE_ENTREGA")
-    private String fechaLimiteEntrega;
+//    @Column(name = "FECHA_LIMITE_ENTREGA")
+//    private String fechaLimiteEntrega;
     @Column(name = "URL_MATERIAL_APOYO")
     private String urlMaterialApoyo;
     @Column(name = "ESTADO_ENTREGA")

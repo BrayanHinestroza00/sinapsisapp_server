@@ -70,6 +70,7 @@ public interface IRutaInnovacionDAO {
     List<ConsultoriasView> obtenerHistoricoConsultoria(Long idProyectoEmprendimiento);
 
     List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor);
+    List<ConsultoriasView> obtenerConsultoriaProgramadaProyectoEmprendimiento(Long idEmprendedor, Long idProyectoEmprendimiento);
     List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
 
     Consultoria programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception;

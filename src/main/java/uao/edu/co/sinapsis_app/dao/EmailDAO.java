@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import uao.edu.co.sinapsis_app.beans.EmailDetails;
 import uao.edu.co.sinapsis_app.dao.interfaces.IEmailDAO;
@@ -23,6 +24,7 @@ public class EmailDAO implements IEmailDAO {
     private String sender;
 
     @Override
+    @Async
     public void sendEmail(EmailDetails details) {
         try {
 
@@ -41,6 +43,7 @@ public class EmailDAO implements IEmailDAO {
     }
 
     @Override
+    @Async
     public void sendEmailMultiple(EmailDetails details) {
         try {
 

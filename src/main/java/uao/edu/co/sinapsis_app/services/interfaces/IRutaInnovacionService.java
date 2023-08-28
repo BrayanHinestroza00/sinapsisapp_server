@@ -61,6 +61,7 @@ public interface IRutaInnovacionService {
     List<ConsultoriasView> obtenerHistoricoConsultoria(Long idProyectoEmprendimiento);
 
     List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor);
+    List<ConsultoriasView> obtenerConsultoriaProgramadaProyectoEmprendimiento(Long idEmprendedor, Long idProyectoEmprendimiento);
     List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor);
 
     boolean programarConsultoriaEmprendedor(ProgramarConsultoriaDTO programarConsultoriaDTO) throws Exception;

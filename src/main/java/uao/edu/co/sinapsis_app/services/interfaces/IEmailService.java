@@ -7,11 +7,11 @@ public interface IEmailService {
 
     boolean notificarAsignacionEtapaRuta(String destinatario, String etapaAsignada);
 
-    boolean notificarAsignacionTarea(String destinatario, String titulo, String fechaLimiteEntrega, String usuarioRegistra, String nombreEmprendimiento);
+    boolean notificarAsignacionTarea(String destinatario, String titulo, /*String fechaLimiteEntrega,*/ String usuarioRegistra, String nombreEmprendimiento);
 
     boolean notificarCalificacionTarea(String destinatario, String titulo, String fechaEntrega, String usuarioCalifica, String calificacion, String nombreEmprendimiento);
 
-    boolean notificarEntregaTarea(String destinatarios[], String titulo, String fechaLimiteEntrega, String fechaEntrega, String emprendedorEntrega, String nombreEmprendimiento);
+    boolean notificarEntregaTarea(String destinatarios[], String titulo, /*String fechaLimiteEntrega,*/ String fechaEntrega, String emprendedorEntrega, String nombreEmprendimiento);
 
     // Para emprendedor y (Mentor o Administrador)
     boolean notificarProgramacionConsultoria(String[] destinatarios, String asuntoConsultoria, String fechaConsultoria, String horaInicioProgramada,

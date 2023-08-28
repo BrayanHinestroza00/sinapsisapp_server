@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Base64Utils;
 import uao.edu.co.sinapsis_app.model.view.ConsultoriasView;
+import uao.edu.co.sinapsis_app.util.AppUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -60,15 +61,17 @@ public class ReporteConsultoriasMentorExportExcel {
             createCell(fila, 4, consultoria.getNumeroDocumentoEmprendedor());
             createCell(fila, 5, consultoria.getNombreEmprendedor() + " " +  consultoria.getApellidoEmprendedor());
             createCell(fila, 6, consultoria.getCorreoInstitucionalEmprendedor() != null ? consultoria.getCorreoInstitucionalEmprendedor() : consultoria.getCorreoPersonalEmprendedor());
-            createCell(fila, 7, consultoria.getFechaConsultoria());
+            createCell(fila, 7, AppUtil.formatStringDate("yyyy-MM-dd HH:mm", "dd/MM/yyyy", consultoria.getFechaConsultoria()));
             createCell(fila, 8, consultoria.getHoraInicioConsultoria());
             createCell(fila, 9, consultoria.getHoraFinConsultoria());
-            createCell(fila, 10, consultoria.getEstadoConsultoria());
-            createCell(fila, 11, consultoria.getComentariosConsultoria());
-            createCell(fila, 12, consultoria.getNombreMentor() + " " +  consultoria.getApellidoMentor());
-            createCell(fila, 13, consultoria.getFacultadMentor() != null ? consultoria.getFacultadMentor() : consultoria.getDependenciaMentor());
-            createCell(fila, 14, consultoria.getCorreoInstitucionalMentor() != null ? consultoria.getCorreoInstitucionalMentor() : "No Registra");
-            createCell(fila, 15, consultoria.getCargoMentor());
+            createCell(fila, 10, consultoria.getFechaInicioReal() != null ? AppUtil.formatStringDate("yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss", consultoria.getFechaInicioReal()) : "");
+            createCell(fila, 11, consultoria.getFechaFinalizacionReal() != null ? AppUtil.formatStringDate("yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss", consultoria.getFechaFinalizacionReal()) : "");
+            createCell(fila, 12, consultoria.getEstadoConsultoria());
+            createCell(fila, 13, consultoria.getComentariosConsultoria() != null ? consultoria.getComentariosConsultoria() : "");
+            createCell(fila, 14, consultoria.getNombreMentor() + " " +  consultoria.getApellidoMentor());
+            createCell(fila, 15, consultoria.getCorreoInstitucionalMentor() != null ? consultoria.getCorreoInstitucionalMentor() : "No Registra");
+            createCell(fila, 16, consultoria.getFacultadMentor() != null ? consultoria.getFacultadMentor() : consultoria.getDependenciaMentor());
+            createCell(fila, 17, consultoria.getCargoMentor());
 
             filaSeleccionada++;
         }

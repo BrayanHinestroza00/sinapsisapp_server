@@ -227,6 +227,11 @@ public class RutaInnovacionService implements IRutaInnovacionService {
     }
 
     @Override
+    public List<ConsultoriasView> obtenerConsultoriaProgramadaProyectoEmprendimiento(Long idEmprendedor, Long idProyectoEmprendimiento) {
+        return rutaInnovacionDAO.obtenerConsultoriaProgramadaProyectoEmprendimiento(idEmprendedor, idProyectoEmprendimiento);
+    }
+
+    @Override
     public List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor) {
         return rutaInnovacionDAO.obtenerConsultoriaProgramadaMentor(idMentor);
     }
@@ -298,7 +303,7 @@ public class RutaInnovacionService implements IRutaInnovacionService {
 
             String nombreCompletoRegistra = tarea.getNombresCrea() + " " + tarea.getApellidosCrea();
 
-            emailService.notificarAsignacionTarea(correoEmprendedor, tarea.getTitulo(), tarea.getFechaLimiteEntrega(),
+            emailService.notificarAsignacionTarea(correoEmprendedor, tarea.getTitulo(), /*tarea.getFechaLimiteEntrega(),*/
                     nombreCompletoRegistra, tarea.getNombreEmprendimiento());
 
             return true;
@@ -327,7 +332,7 @@ public class RutaInnovacionService implements IRutaInnovacionService {
 
             String[] destinatarios = new String[] {correoCrea, correoEmprendedor};
 
-            emailService.notificarEntregaTarea(destinatarios, tarea.getTitulo(), tarea.getFechaLimiteEntrega(), tarea.getFechaEntrega(),
+            emailService.notificarEntregaTarea(destinatarios, tarea.getTitulo(), /*tarea.getFechaLimiteEntrega(),*/ tarea.getFechaEntrega(),
                     tarea.getNombreCompletoEmprendedor(), tarea.getNombreEmprendimiento());
 
             return true;

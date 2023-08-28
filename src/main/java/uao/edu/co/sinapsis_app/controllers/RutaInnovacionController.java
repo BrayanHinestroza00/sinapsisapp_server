@@ -405,7 +405,8 @@ public class RutaInnovacionController {
     @RequestMapping(value = "/consultorias_programadas", method = RequestMethod.GET,  produces = "application/json;charset=UTF-8")
     public ResponseEntity<ResponseDTO> obtenerConsultorias(
             @RequestParam(required = true) Long idUsuario,
-            @RequestParam(required = true) Integer tipoUsuario){
+            @RequestParam(required = true) Integer tipoUsuario,
+            @RequestParam(required = false) Long idProyectoEmprendimiento){
 
         ResponseDTO response = new ResponseDTO();
         try {
@@ -421,7 +422,11 @@ public class RutaInnovacionController {
                 final int TYPE_ADMINISTRADOR = 3;
 
                 if (tipoUsuario == TYPE_EMPRENDEDOR || tipoUsuario == TYPE_ADMINISTRADOR) {
-                    data =rutaInnovacionService.obtenerConsultoriaProgramadaEmprendedor(idUsuario);
+                    if (idProyectoEmprendimiento != null) {
+                        data =rutaInnovacionService.obtenerConsultoriaProgramadaProyectoEmprendimiento(idUsuario, idProyectoEmprendimiento);
+                    } else {
+                        data =rutaInnovacionService.obtenerConsultoriaProgramadaEmprendedor(idUsuario);
+                    }
                 } else if (tipoUsuario == TYPE_MENTOR){
                     data =rutaInnovacionService.obtenerConsultoriaProgramadaMentor(idUsuario);
                 } else {

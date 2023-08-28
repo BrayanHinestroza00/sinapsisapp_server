@@ -234,7 +234,7 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public boolean notificarAsignacionTarea(String destinatario, String titulo, String fechaLimiteEntrega, String usuarioRegistra, String nombreEmprendimiento) {
+    public boolean notificarAsignacionTarea(String destinatario, String titulo, /*String fechaLimiteEntrega,*/ String usuarioRegistra, String nombreEmprendimiento) {
         String contenidoMensaje = "<div\n" +
                 "      style=\"\n" +
                 "        text-align: center;\n" +
@@ -256,7 +256,7 @@ public class EmailService implements IEmailService {
                 "      </p>\n" +
                 "      <p>\n" +
                 "        <b>Titulo:</b> $titulo <br />\n" +
-                "        <b>Fecha limite de entrega:</b> $fechaLimiteEntrega <br />\n" +
+//                "        <b>Fecha limite de entrega:</b> $fechaLimiteEntrega <br />\n" +
                 "        <b>Usuario que registra:</b> $usuarioRegistra <br />\n" +
                 "        <b>Proyecto emprendimiento:</b> $nombreEmprendimiento <br />\n" +
                 "        <br />\n" +
@@ -324,7 +324,7 @@ public class EmailService implements IEmailService {
                 "    </div>";
 
         contenidoMensaje = contenidoMensaje.replace("$titulo",titulo)
-                .replace("$fechaLimiteEntrega",fechaLimiteEntrega)
+//                .replace("$fechaLimiteEntrega",fechaLimiteEntrega)
                 .replace("$usuarioRegistra",usuarioRegistra)
                 .replace("$nombreEmprendimiento",nombreEmprendimiento);
 
@@ -457,7 +457,7 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public boolean notificarEntregaTarea(String[] destinatarios, String titulo, String fechaLimiteEntrega, String fechaEntrega, String emprendedorEntrega, String nombreEmprendimiento) {
+    public boolean notificarEntregaTarea(String[] destinatarios, String titulo, /*String fechaLimiteEntrega,*/ String fechaEntrega, String emprendedorEntrega, String nombreEmprendimiento) {
         String contenidoMensaje = "<div\n" +
                 "      style=\"\n" +
                 "        text-align: center;\n" +
@@ -479,7 +479,7 @@ public class EmailService implements IEmailService {
                 "      </p>\n" +
                 "      <p>\n" +
                 "        <b>Titulo:</b> $titulo <br />\n" +
-                "        <b>Fecha limite de entrega:</b> $fechaLimiteEntrega <br />\n" +
+//                "        <b>Fecha limite de entrega:</b> $fechaLimiteEntrega <br />\n" +
                 "        <b>Fecha entrega:</b> $fechaEntrega <br />\n" +
                 "        <b>Emprendedor:</b> $emprendedorEntrega <br />\n" +
                 "        <b>Proyecto emprendimiento:</b> $nombreEmprendimiento <br />\n" +
@@ -549,7 +549,7 @@ public class EmailService implements IEmailService {
 
 
         contenidoMensaje = contenidoMensaje.replace("$titulo", titulo)
-                .replace("$fechaLimiteEntrega", fechaLimiteEntrega)
+//                .replace("$fechaLimiteEntrega", fechaLimiteEntrega)
                 .replace("$fechaEntrega", fechaEntrega)
                 .replace("$emprendedorEntrega", emprendedorEntrega)
                 .replace("$nombreEmprendimiento", nombreEmprendimiento);
