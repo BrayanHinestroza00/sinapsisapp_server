@@ -408,7 +408,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ActividadRuta> obtenerActividadesEtapaById(Long idEtapa) {
         String sql = "SELECT * FROM T_SINAPSIS_ACTIVIDADES_RUTA " +
-                "WHERE ESTADO = 'A' AND ETAPAS_RUTAS_ID = ?1";
+                "WHERE ESTADO = 'A' AND ETAPAS_RUTAS_ID = ?1 ORDER BY ID ASC";
 
         Query query = entityManager.createNativeQuery(sql, ActividadRuta.class);
         query.setParameter(1, idEtapa);
