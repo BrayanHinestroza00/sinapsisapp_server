@@ -50,30 +50,42 @@ public class AppDAO implements IAppDAO {
 
     @Override
     public List<TipoDocumento> getTipoDocumentoById(int idTipoDocumento) {
-        String sql = "SELECT * FROM T_SINAPSIS_TIPOS_DOCUMENTO WHERE id = " + idTipoDocumento;
+        String sql = "SELECT * FROM T_SINAPSIS_TIPOS_DOCUMENTO WHERE id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, TipoDocumento.class);
+        q.setParameter(1, idTipoDocumento);
+
         return (List<TipoDocumento>) q.getResultList();
     }
 
     @Override
     public List<UsuarioRol> getRolesByUser(long idUsuario) {
-        String sql = "SELECT usu_rol.* FROM T_SINAPSIS_USUARIOS_ROL usu_rol WHERE USUARIOS_ID = " + idUsuario;
+        String sql = "SELECT usu_rol.* FROM T_SINAPSIS_USUARIOS_ROL usu_rol WHERE USUARIOS_ID = ?1";
+
         Query q = entityManager.createNativeQuery(sql, UsuarioRol.class);
+        q.setParameter(1, idUsuario);
+
         return (List<UsuarioRol>) q.getResultList();
     }
 
     @Override
     public int getPreFetchEmprendedor(long idUsuario) {
-        String sql = "SELECT vse.* FROM V_SINAPSIS_EMPRENDEDORES vse WHERE ID = " + idUsuario;
+        String sql = "SELECT vse.* FROM V_SINAPSIS_EMPRENDEDORES vse WHERE ID = ?1";
+
         Query q = entityManager.createNativeQuery(sql, EmprendedoresView.class);
+        q.setParameter(1, idUsuario);
+
         EmprendedoresView emprendedoresView = (EmprendedoresView) q.getSingleResult();
         return emprendedoresView.getPrimeraVez();
     }
 
     @Override
     public List<EmprendimientosEmprendedorView> getProyectosEmprendimientoEmprendedor(int idUsuario) {
-        String sql = "SELECT * FROM V_SINAPSIS_PROY_EMPRENDIMIENTO WHERE ID_EMPRENDEDOR = " + idUsuario;
+        String sql = "SELECT * FROM V_SINAPSIS_PROY_EMPRENDIMIENTO WHERE ID_EMPRENDEDOR = ?1";
+
         Query q = entityManager.createNativeQuery(sql, EmprendimientosEmprendedorView.class);
+        q.setParameter(1, idUsuario);
+
         return (List<EmprendimientosEmprendedorView>) q.getResultList();
     }
 
@@ -88,8 +100,11 @@ public class AppDAO implements IAppDAO {
     public List<Departamento> getDepartamentosByMunicipio(long idMunicipio) {
         String sql = "SELECT departamentos.* FROM T_SINAPSIS_DEPARTAMENTOS departamentos " +
                 "JOIN T_SINAPSIS_MUNICIPIOS municipios ON departamentos.id = municipios.departamentos_id " +
-                "WHERE municipios.id =" + idMunicipio;
+                "WHERE municipios.id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, Departamento.class);
+        q.setParameter(1, idMunicipio);
+
         return (List<Departamento>) q.getResultList();
     }
 
@@ -102,15 +117,21 @@ public class AppDAO implements IAppDAO {
 
     @Override
     public List<Municipio> getMunicipiosByDepartamento(int idDepartamento) {
-        String sql = "SELECT * FROM T_SINAPSIS_MUNICIPIOS WHERE departamentos_id = " + idDepartamento;
+        String sql = "SELECT * FROM T_SINAPSIS_MUNICIPIOS WHERE departamentos_id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, Municipio.class);
+        q.setParameter(1, idDepartamento);
+
         return (List<Municipio>) q.getResultList();
     }
 
     @Override
     public List<Municipio> getMunicipiosById(long idMunicipio) {
-        String sql = "SELECT * FROM T_SINAPSIS_MUNICIPIOS WHERE id = " + idMunicipio;
+        String sql = "SELECT * FROM T_SINAPSIS_MUNICIPIOS WHERE id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, Municipio.class);
+        q.setParameter(1, idMunicipio);
+
         return (List<Municipio>) q.getResultList();
     }
 
@@ -125,22 +146,31 @@ public class AppDAO implements IAppDAO {
     public List<Facultad> getFacultadesByProgramaAcademico(int idPrograma) {
         String sql = "SELECT facultades.* FROM T_SINAPSIS_FACULTADES facultades " +
                 "JOIN T_SINAPSIS_PROGRAMAS programas ON facultades.id = programas.facultades_id " +
-                "WHERE programas.id =" + idPrograma;
+                "WHERE programas.id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, Facultad.class);
+        q.setParameter(1, idPrograma);
+
         return (List<Facultad>) q.getResultList();
     }
 
     @Override
     public List<ProgramaAcademico> getProgramasAcademicosByidFacultad(int idFacultad) {
-        String sql = "SELECT * FROM T_SINAPSIS_PROGRAMAS WHERE facultades_id = " + idFacultad;
+        String sql = "SELECT * FROM T_SINAPSIS_PROGRAMAS WHERE facultades_id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, ProgramaAcademico.class);
+        q.setParameter(1, idFacultad);
+
         return (List<ProgramaAcademico>) q.getResultList();
     }
 
     @Override
     public List<ProgramaAcademico> getProgramasAcademicosById(long idPrograma) {
-        String sql = "SELECT * FROM T_SINAPSIS_PROGRAMAS WHERE id = " + idPrograma;
+        String sql = "SELECT * FROM T_SINAPSIS_PROGRAMAS WHERE id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, ProgramaAcademico.class);
+        q.setParameter(1, idPrograma);
+
         return (List<ProgramaAcademico>) q.getResultList();
     }
 
@@ -161,8 +191,11 @@ public class AppDAO implements IAppDAO {
     @Override
     public List<Asignatura> getAsignaturasById(int idAsignatura) {
         String sql = "SELECT asignaturas.* FROM T_SINAPSIS_ASIGNATURAS asignaturas " +
-                "WHERE asignaturas.id =" + idAsignatura;
+                "WHERE asignaturas.id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, Asignatura.class);
+        q.setParameter(1, idAsignatura);
+
         return (List<Asignatura>) q.getResultList();
     }
 
@@ -201,8 +234,11 @@ public class AppDAO implements IAppDAO {
 
     @Override
     public List<TipoContacto> getTipoContactoById(long idTipoContacto) {
-        String sql = "SELECT * FROM T_SINAPSIS_TIPOS_CONTACTO WHERE id = " + idTipoContacto;
+        String sql = "SELECT * FROM T_SINAPSIS_TIPOS_CONTACTO WHERE id = ?1";
+
         Query q = entityManager.createNativeQuery(sql, TipoContacto.class);
+        q.setParameter(1, idTipoContacto);
+
         return (List<TipoContacto>) q.getResultList();
     }
 
@@ -231,15 +267,21 @@ public class AppDAO implements IAppDAO {
     @Override
     public List<ActividadesEtapaView> obtenerTematicasEtapasRutaInnovacionEmprendimiento(Long idEtapa) {
         String sql = "SELECT * FROM V_SINAPSIS_ACTIVIDADES_ETAPA " +
-                "WHERE ID_ETAPA_RUTA =" + idEtapa;
+                "WHERE ID_ETAPA_RUTA = ?1";
+
         Query q = entityManager.createNativeQuery(sql, ActividadesEtapaView.class);
+        q.setParameter(1, idEtapa);
+
         return (List<ActividadesEtapaView>) q.getResultList();
     }
 
     @Override
     public UsuariosView getInformacionUsuario(Long idUsuario) {
-        String sql = "SELECT vsu.* FROM V_SINAPSIS_USUARIOS vsu WHERE vsu.ID = " + idUsuario;
+        String sql = "SELECT vsu.* FROM V_SINAPSIS_USUARIOS vsu WHERE vsu.ID = ?1";
+
         Query q = entityManager.createNativeQuery(sql, UsuariosView.class);
+        q.setParameter(1, idUsuario);
+
         return (UsuariosView) q.getSingleResult();
     }
 

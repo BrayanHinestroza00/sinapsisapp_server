@@ -408,8 +408,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ActividadRuta> obtenerActividadesEtapaById(Long idEtapa) {
         String sql = "SELECT * FROM T_SINAPSIS_ACTIVIDADES_RUTA " +
-                "WHERE ESTADO = 'A' AND ETAPAS_RUTAS_ID = " + idEtapa;
+                "WHERE ESTADO = 'A' AND ETAPAS_RUTAS_ID = ?1";
+
         Query query = entityManager.createNativeQuery(sql, ActividadRuta.class);
+        query.setParameter(1, idEtapa);
 
         return (List<ActividadRuta>) query.getResultList();
     }
@@ -427,8 +429,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         String sql = "SELECT TH.* FROM T_SINAPSIS_HERRAMIENTAS TH \n" +
                 "    JOIN T_SINAPSIS_SUB_ACT_RUTA TSAR ON TH.SUB_ACTIVIDADES_RUTAS_ID = TSAR.ID\n" +
                 "    JOIN T_SINAPSIS_ACTIVIDADES_RUTA TAR ON TSAR.ACTIVIDADES_RUTAS_ID = TAR.ID\n" +
-                "    WHERE TAR.ETAPAS_RUTAS_ID = " + idEtapa + " AND TSAR.TIPO = 2";
+                "    WHERE TAR.ETAPAS_RUTAS_ID = ?1 AND TSAR.TIPO = 2";
+
         Query query = entityManager.createNativeQuery(sql, HerramientaRuta.class);
+        query.setParameter(1, idEtapa);
 
         return (List<HerramientaRuta>) query.getResultList();
     }
@@ -437,8 +441,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     public List<SubActividadesEmprendedorView> obtenerSubActividadesEmprendedor(Long idProyectoEmprendimiento, Long idRutaEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_ACT_EMPRENDEDOR \n" +
                 "    WHERE ESTADO_ACTIVIDAD = 'COMPLETADO' \n " +
-                "    AND RUTAS_EMPRENDIMIENTOS_ID = " + idRutaEmprendimiento;
+                "    AND RUTAS_EMPRENDIMIENTOS_ID = ?1";
+
         Query query = entityManager.createNativeQuery(sql, SubActividadesEmprendedorView.class);
+        query.setParameter(1, idRutaEmprendimiento);
 
         return (List<SubActividadesEmprendedorView>) query.getResultList();
     }
@@ -458,10 +464,11 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<TareasProyectoEmprendimientoView> obtenerTareasPendientes(Long idProyectoEmprendimiento, String tipoBusqueda) {
         String sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
-                "WHERE ESTADO_ENTREGA = '" + tipoBusqueda + "' " +
-                "AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+                "WHERE ESTADO_ENTREGA = ?1 AND PROYECTOS_EMPRENDIMIENTOS_ID = ?2";
 
         Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
+        query.setParameter(1, tipoBusqueda);
+        query.setParameter(2, idProyectoEmprendimiento);
 
         return (List<TareasProyectoEmprendimientoView>) query.getResultList();
     }
@@ -473,13 +480,14 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         if (historico) {
             sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
                     "WHERE ESTADO_ENTREGA NOT IN ('PENDIENTE', 'ENTREGADA') " +
-                    "AND PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+                    "AND PROYECTOS_EMPRENDIMIENTOS_ID = ?1";
         } else {
             sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
-                    "WHERE PROYECTOS_EMPRENDIMIENTOS_ID = " + idProyectoEmprendimiento;
+                    "WHERE PROYECTOS_EMPRENDIMIENTOS_ID = ?1";
         }
 
         Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
 
         return (List<TareasProyectoEmprendimientoView>) query.getResultList();
     }
@@ -487,9 +495,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public TareasProyectoEmprendimientoView obtenerTareasPorId(Long idTarea) {
         String sql = "SELECT * FROM V_SINAPSIS_TAREAS_PROYECTO_EMP " +
-                "WHERE ID_TAREA = " + idTarea;
+                "WHERE ID_TAREA = ?1";
 
         Query query = entityManager.createNativeQuery(sql, TareasProyectoEmprendimientoView.class);
+        query.setParameter(1, idTarea);
 
         return (TareasProyectoEmprendimientoView) query.getSingleResult();
     }
@@ -497,10 +506,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ConsultoriasView> obtenerConsultoria(Long idConsultoria) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
-                "WHERE ID_CONSULTORIA = " + idConsultoria + " " +
-                "ORDER BY FECHA_CONSULTORIA DESC";
+                "WHERE ID_CONSULTORIA = ?1 ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+        query.setParameter(1, idConsultoria);
 
         return (List<ConsultoriasView>) query.getResultList();
     }
@@ -509,10 +518,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     public List<ConsultoriasView> obtenerConsultoriaNormal(Long idProyectoEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
                 "WHERE ID_SUB_ACT_RUTA IS NULL " +
-                "AND ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
-                "ORDER BY FECHA_CONSULTORIA DESC";
+                "AND ID_PROYECTO_EMPRENDIMIENTO = ?1 ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
 
         return (List<ConsultoriasView>) query.getResultList();
     }
@@ -521,10 +530,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     public List<ConsultoriasView> obtenerConsultoriaEspecializada(Long idProyectoEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
                 "WHERE ID_SUB_ACT_RUTA IS NOT NULL " +
-                "AND ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
-                "ORDER BY FECHA_CONSULTORIA DESC";
+                "AND ID_PROYECTO_EMPRENDIMIENTO = ?1 ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
 
         return (List<ConsultoriasView>) query.getResultList();
     }
@@ -532,10 +541,10 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ConsultoriasView> obtenerHistoricoConsultoria(Long idProyectoEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
-                "WHERE ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
-                "ORDER BY FECHA_CONSULTORIA DESC";
+                "WHERE ID_PROYECTO_EMPRENDIMIENTO = ?1 ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
 
         return (List<ConsultoriasView>) query.getResultList();
     }
@@ -543,12 +552,13 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ConsultoriasView> obtenerConsultoriaProgramadaEmprendedor(Long idEmprendedor) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
-                "WHERE EMPRENDEDORES_ID = " + idEmprendedor + " " +
+                "WHERE EMPRENDEDORES_ID = ?1 " +
                 "AND (FECHA_CONSULTORIA - SYSDATE) <= 1 " +
                 "AND (ESTADO_CONSULTORIA = 'PROGRAMADA' OR ESTADO_CONSULTORIA = 'EN CURSO') " +
                 "ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+        query.setParameter(1, idEmprendedor);
 
         return (List<ConsultoriasView>) query.getResultList();
     }
@@ -556,13 +566,15 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ConsultoriasView> obtenerConsultoriaProgramadaProyectoEmprendimiento(Long idEmprendedor, Long idProyectoEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
-                "WHERE EMPRENDEDORES_ID = " + idEmprendedor + " " +
-                "AND ID_PROYECTO_EMPRENDIMIENTO = "+ idProyectoEmprendimiento + " " +
+                "WHERE EMPRENDEDORES_ID = ?1 " +
+                "AND ID_PROYECTO_EMPRENDIMIENTO = ?2 " +
                 "AND (FECHA_CONSULTORIA - SYSDATE) <= 1 " +
                 "AND (ESTADO_CONSULTORIA = 'PROGRAMADA' OR ESTADO_CONSULTORIA = 'EN CURSO') " +
                 "ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
+        query.setParameter(2, idProyectoEmprendimiento);
 
         return (List<ConsultoriasView>) query.getResultList();
     }
@@ -570,11 +582,12 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
     @Override
     public List<ConsultoriasView> obtenerConsultoriaProgramadaMentor(Long idMentor) {
         String sql = "SELECT * FROM V_SINAPSIS_CONSULTORIAS " +
-                "WHERE ID_MENTOR = " + idMentor + " " +
+                "WHERE ID_MENTOR = ?1 " +
                 "AND (FECHA_CONSULTORIA - SYSDATE) <= 1 " +
                 "AND ESTADO_CONSULTORIA = 'PROGRAMADA' ORDER BY FECHA_CONSULTORIA DESC";
 
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
+        query.setParameter(1, idMentor);
 
         return (List<ConsultoriasView>) query.getResultList();
     }
@@ -805,6 +818,7 @@ public class RutaInnovacionDAO implements IRutaInnovacionDAO {
         tarea.setEstadoEntrega(T_SINAPSIS_TAREAS_ESTADO_ENTREGA_CALIFICADA);
         tarea.setFechaModificacion(new Date());
         tarea.setCalificacion(calificarTareaDTO.getCalificacionEntrega());
+        tarea.setCalificacionCuantitativa(calificarTareaDTO.getCalificacionCuantitativaEntrega());
         if (calificarTareaDTO.getComentariosEntrega() != null) {
             tarea.setComentariosEntregaUsuario(calificarTareaDTO.getComentariosEntrega());
         }

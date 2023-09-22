@@ -35,9 +35,11 @@ public class AuthDAO implements IAuthDAO {
 
     @Override
     public Usuario buscarUsuarioPorTipoDocumentoYNumeroDocumento(long tipoDocumento, String numeroDocumento) {
-        String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE TIPOS_DOCUMENTO_ID = '"+tipoDocumento+"' AND NUMERO_DOCUMENTO = '"+numeroDocumento+"'";
+        String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE TIPOS_DOCUMENTO_ID = ?1 AND NUMERO_DOCUMENTO = ?2";
 
         Query q = entityManager.createNativeQuery(sql, Usuario.class);
+        q.setParameter(1, tipoDocumento);
+        q.setParameter(2, numeroDocumento);
 
         List<Usuario> resultado = q.getResultList();
 
@@ -50,11 +52,13 @@ public class AuthDAO implements IAuthDAO {
 
     @Override
     public Usuario buscarUsuario(int tipoDocumento, String numeroDocumento, String usuario) {
-        String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios WHERE TIPOS_DOCUMENTO_ID = '"
-                +tipoDocumento+"' AND NUMERO_DOCUMENTO = '"
-                +numeroDocumento+"' AND USERNAME = '"+usuario+"'";
+        String sql = "SELECT usuarios.* FROM T_SINAPSIS_USUARIOS usuarios " +
+                "WHERE TIPOS_DOCUMENTO_ID = ?1 AND NUMERO_DOCUMENTO = ?2 AND USERNAME = ?3";
 
         Query q = entityManager.createNativeQuery(sql, Usuario.class);
+        q.setParameter(1, tipoDocumento);
+        q.setParameter(2, numeroDocumento);
+        q.setParameter(3, usuario);
 
         List<Usuario> resultado = q.getResultList();
 
@@ -69,11 +73,11 @@ public class AuthDAO implements IAuthDAO {
     public Usuario buscarUsuarioByCorreo(String correo) {
         String sql = "SELECT usuarios.* \n" +
                 "FROM T_SINAPSIS_USUARIOS usuarios \n" +
-                "WHERE CORREO_PERSONAL = '" +
-                correo +"' OR CORREO_INSTITUCIONAL = '" +
-                correo + "'";
+                "WHERE CORREO_PERSONAL = ?1 OR CORREO_INSTITUCIONAL = ?2";
 
         Query q = entityManager.createNativeQuery(sql, Usuario.class);
+        q.setParameter(1, correo);
+        q.setParameter(2, correo);
 
         List<Usuario> resultado = q.getResultList();
 
@@ -88,10 +92,10 @@ public class AuthDAO implements IAuthDAO {
     public Usuario buscarUsuarioById(Long idUsuario) {
         String sql = "SELECT usuarios.* \n" +
                 "FROM T_SINAPSIS_USUARIOS usuarios \n" +
-                "WHERE ID = '" +
-                idUsuario + "'";
+                "WHERE ID = ?1";
 
         Query q = entityManager.createNativeQuery(sql, Usuario.class);
+        q.setParameter(1, idUsuario);
 
         List<Usuario> resultado = q.getResultList();
 
@@ -268,9 +272,10 @@ public class AuthDAO implements IAuthDAO {
     public boolean restablecerContraseña(Long idUsuario) {
         String sql = "UPDATE T_SINAPSIS_USUARIOS " +
                 "SET PASSWORD = (UPPER(SUBSTR(APELLIDOS, 1 ,1)) || LOWER(SUBSTR(APELLIDOS, 2 ,1)) || NUMERO_DOCUMENTO || '.') " +
-                "WHERE ID = " + idUsuario;
+                "WHERE ID = ?1";
 
         Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, idUsuario);
 
         int result = query.executeUpdate();
 
@@ -282,9 +287,10 @@ public class AuthDAO implements IAuthDAO {
     public boolean desactivarUsuario(Long idUsuario) {
         String sql = "UPDATE T_SINAPSIS_USUARIOS " +
                 "SET ESTADO_CUENTA = 0 " +
-                "WHERE ID = " + idUsuario;
+                "WHERE ID = ?1";
 
         Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, idUsuario);
 
         int result = query.executeUpdate();
 

@@ -53,8 +53,11 @@ public class EmprendedorDAO implements IEmprendedorDAO {
 
     @Override
     public List<EmprendedoresView> getInformacionEmprendedor(long idUsuario) {
-        String sql = "SELECT vse.* FROM V_SINAPSIS_EMPRENDEDORES vse WHERE vse.ID = " + idUsuario;
+        String sql = "SELECT vse.* FROM V_SINAPSIS_EMPRENDEDORES vse WHERE vse.ID = ?1";
+
         Query q = entityManager.createNativeQuery(sql, EmprendedoresView.class);
+        q.setParameter(1, idUsuario);
+
         return (List<EmprendedoresView>) q.getResultList();
     }
 
@@ -383,8 +386,9 @@ public class EmprendedorDAO implements IEmprendedorDAO {
              */
             if (emprendedorUpdateDTO.getCursosEmprendimiento() != null &&
                     emprendedorUpdateDTO.getCursosEmprendimiento().size() > 0 ) {
-                String sqlDelete = "DELETE FROM T_SINAPSIS_ASIG_EMPRENDEDOR WHERE EMPRENDEDORES_ID = " + emprendedorUpdateDTO.getIdEmprendedor();
+                String sqlDelete = "DELETE FROM T_SINAPSIS_ASIG_EMPRENDEDOR WHERE EMPRENDEDORES_ID = ?1";
                 Query queryDelete = entityManager.createNativeQuery(sqlDelete);
+                queryDelete.setParameter(1, emprendedorUpdateDTO.getIdEmprendedor());
 
                 if (queryDelete.executeUpdate() > 0)  {
                     for (String cursoEmprendimiento: emprendedorUpdateDTO.getCursosEmprendimiento()) {
@@ -409,8 +413,10 @@ public class EmprendedorDAO implements IEmprendedorDAO {
 
     @Override
     public List<AsignaturaEmprendedor> obtenerAsignaturasEmprendedor(long idUsuario) {
-        String sql = "SELECT * FROM T_SINAPSIS_ASIG_EMPRENDEDOR WHERE EMPRENDEDORES_ID = " + idUsuario;
+        String sql = "SELECT * FROM T_SINAPSIS_ASIG_EMPRENDEDOR WHERE EMPRENDEDORES_ID = ?1";
+
         Query query = entityManager.createNativeQuery(sql, AsignaturaEmprendedor.class);
+        query.setParameter(1, idUsuario);
 
         return (List<AsignaturaEmprendedor>) query.getResultList();
     }
@@ -421,25 +427,30 @@ public class EmprendedorDAO implements IEmprendedorDAO {
                 "    TE.* \n" +
                 "FROM T_SINAPSIS_EMPRENDIMIENTOS TE \n" +
                 "JOIN T_SINAPSIS_PROY_EMPRENDIMIENTO TPE ON TPE.EMPRENDIMIENTOS_ID = TE.ID " +
-                "WHERE TPE.EMPRENDEDORES_ID = " + idEmprendedor;
+                "WHERE TPE.EMPRENDEDORES_ID = ?1";
 
         Query query = entityManager.createNativeQuery(sql, Emprendimiento.class);
+        query.setParameter(1, idEmprendedor);
 
         return (List<Emprendimiento>) query.getResultList();
     }
 
     @Override
     public List<Emprendimiento> obtenerEmprendimiento(String idEmprendimiento) {
-        String sql = "SELECT * FROM T_SINAPSIS_EMPRENDIMIENTOS WHERE ID = " + idEmprendimiento;
+        String sql = "SELECT * FROM T_SINAPSIS_EMPRENDIMIENTOS WHERE ID = ?1";
+
         Query query = entityManager.createNativeQuery(sql, Emprendimiento.class);
+        query.setParameter(1, idEmprendimiento);
 
         return (List<Emprendimiento>) query.getResultList();
     }
 
     @Override
     public List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento) {
-        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDI_RED_SOCIAL WHERE ID_EMPRENDIMIENTO = " + idEmprendimiento;
+        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDI_RED_SOCIAL WHERE ID_EMPRENDIMIENTO = ?1";
+
         Query query = entityManager.createNativeQuery(sql, RedSocialEmprendimientoView.class);
+        query.setParameter(1, idEmprendimiento);
 
         return (List<RedSocialEmprendimientoView>) query.getResultList();
     }

@@ -196,9 +196,10 @@ public class EmprendimientoDAO implements IEmprendimientoDAO {
     }
 
     private boolean deleteRedesSocialesEmprendimiento (Long idEmprendimiento) {
-        String sql = "DELETE T_SINAPSIS_EMPREN_RED_SOCIAL WHERE EMPRENDIMIENTOS_ID = " + idEmprendimiento;
+        String sql = "DELETE T_SINAPSIS_EMPREN_RED_SOCIAL WHERE EMPRENDIMIENTOS_ID = ?1";
 
         Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, idEmprendimiento);
 
         int result = query.executeUpdate();
 

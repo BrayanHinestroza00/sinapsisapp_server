@@ -38,14 +38,14 @@ public class ReportesDAO implements IReportesDAO {
     public List<ConsultoriasView> generarReporteConsultoriasPorMentor(ReporteConsultoriasMentorDTO reportesFilters) {
         String sql = "SELECT * \n" +
                 "FROM V_SINAPSIS_CONSULTORIAS \n" +
-                "WHERE ID_MENTOR =:id \n" +
-                "    AND FECHA_CONSULTORIA >= TO_DATE('"+reportesFilters.getFechaInicio()+"', 'YYYY-MM-DD') \n" +
-                "    AND FECHA_CONSULTORIA <= TO_DATE('"+reportesFilters.getFechaFin()+"', 'YYYY-MM-DD')";
+                "WHERE ID_MENTOR = ?1 \n" +
+                "    AND FECHA_CONSULTORIA >= TO_DATE(?2, 'YYYY-MM-DD') \n" +
+                "    AND FECHA_CONSULTORIA <= TO_DATE(?3, 'YYYY-MM-DD')";
         Query query = entityManager.createNativeQuery(sql, ConsultoriasView.class);
 
-        query.setParameter("id", reportesFilters.getIdMentor());
-//        query.setParameter("desde", reportesFilters.getFechaInicio());
-//        query.setParameter("hasta", reportesFilters.getFechaFin());
+        query.setParameter(1, reportesFilters.getIdMentor());
+        query.setParameter(2, reportesFilters.getFechaInicio());
+        query.setParameter(3, reportesFilters.getFechaFin());
 
         return query.getResultList();
     }

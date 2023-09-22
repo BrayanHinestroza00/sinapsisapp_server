@@ -54,24 +54,23 @@ public class ReporteConsultoriasMentorExportExcel {
                 fila = sheet.createRow(rowNumb);
             }
 
-            createCell(fila, 0, consultoria.getIdConsultoria());
-            createCell(fila, 1, consultoria.getTipoConsultoria());
-            createCell(fila, 2, consultoria.getTipoConsultoria().equalsIgnoreCase("N") ? "N/A" : consultoria.getNombreSubActRuta());
-            createCell(fila, 3, consultoria.getTipoDocumentoEmprendedor());
-            createCell(fila, 4, consultoria.getNumeroDocumentoEmprendedor());
-            createCell(fila, 5, consultoria.getNombreEmprendedor() + " " +  consultoria.getApellidoEmprendedor());
-            createCell(fila, 6, consultoria.getCorreoInstitucionalEmprendedor() != null ? consultoria.getCorreoInstitucionalEmprendedor() : consultoria.getCorreoPersonalEmprendedor());
-            createCell(fila, 7, AppUtil.formatStringDate("yyyy-MM-dd HH:mm", "dd/MM/yyyy", consultoria.getFechaConsultoria()));
-            createCell(fila, 8, consultoria.getHoraInicioConsultoria());
-            createCell(fila, 9, consultoria.getHoraFinConsultoria());
-            createCell(fila, 10, consultoria.getFechaInicioReal() != null ? AppUtil.formatStringDate("yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss", consultoria.getFechaInicioReal()) : "");
-            createCell(fila, 11, consultoria.getFechaFinalizacionReal() != null ? AppUtil.formatStringDate("yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss", consultoria.getFechaFinalizacionReal()) : "");
-            createCell(fila, 12, consultoria.getEstadoConsultoria());
-            createCell(fila, 13, consultoria.getComentariosConsultoria() != null ? consultoria.getComentariosConsultoria() : "");
-            createCell(fila, 14, consultoria.getNombreMentor() + " " +  consultoria.getApellidoMentor());
-            createCell(fila, 15, consultoria.getCorreoInstitucionalMentor() != null ? consultoria.getCorreoInstitucionalMentor() : "No Registra");
-            createCell(fila, 16, consultoria.getFacultadMentor() != null ? consultoria.getFacultadMentor() : consultoria.getDependenciaMentor());
-            createCell(fila, 17, consultoria.getCargoMentor());
+            createCell(fila, 0, consultoria.getTipoConsultoria());
+            createCell(fila, 1, consultoria.getTipoConsultoria().equalsIgnoreCase("N") ? "N/A" : consultoria.getNombreSubActRuta());
+            createCell(fila, 2, consultoria.getTipoDocumentoEmprendedor());
+            createCell(fila, 3, consultoria.getNumeroDocumentoEmprendedor());
+            createCell(fila, 4, consultoria.getNombreEmprendedor() + " " +  consultoria.getApellidoEmprendedor());
+            createCell(fila, 5, consultoria.getCorreoInstitucionalEmprendedor() != null ? consultoria.getCorreoInstitucionalEmprendedor() : consultoria.getCorreoPersonalEmprendedor());
+            createCell(fila, 6, AppUtil.formatStringDate("yyyy-MM-dd HH:mm", "dd/MM/yyyy", consultoria.getFechaConsultoria()));
+            createCell(fila, 7, consultoria.getHoraInicioConsultoria());
+            createCell(fila, 8, consultoria.getHoraFinConsultoria());
+            createCell(fila, 9, consultoria.getFechaInicioReal() != null ? AppUtil.formatStringDate("yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss", consultoria.getFechaInicioReal()) : "");
+            createCell(fila, 10, consultoria.getFechaFinalizacionReal() != null ? AppUtil.formatStringDate("yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm:ss", consultoria.getFechaFinalizacionReal()) : "");
+            createCell(fila, 11, consultoria.getEstadoConsultoria());
+            createCell(fila, 12, consultoria.getComentariosConsultoria() != null ? consultoria.getComentariosConsultoria() : "");
+            createCell(fila, 13, consultoria.getNombreMentor() + " " +  consultoria.getApellidoMentor());
+            createCell(fila, 14, consultoria.getCorreoInstitucionalMentor() != null ? consultoria.getCorreoInstitucionalMentor() : "No Registra");
+            createCell(fila, 15, consultoria.getFacultadMentor() != null ? consultoria.getFacultadMentor() : consultoria.getDependenciaMentor());
+            createCell(fila, 16, consultoria.getCargoMentor());
 
             filaSeleccionada++;
         }
@@ -86,7 +85,7 @@ public class ReporteConsultoriasMentorExportExcel {
      */
     private void createCell(Row row, int columnCount, Object value) {
         Cell cell = row.createCell(columnCount);
-        if (columnCount == 3) {
+        if (columnCount == 2) {
             int valor = Integer.parseInt(String.valueOf(value));
 
             if (valor == 1) {
@@ -99,13 +98,11 @@ public class ReporteConsultoriasMentorExportExcel {
                 cell.setCellValue("N/A");
             }
 
-        } else if (columnCount == 1) {
-            if (columnCount == 1) {
-                if (String.valueOf(value).equalsIgnoreCase("N")) {
-                    cell.setCellValue("NORMAL");
-                } else {
-                    cell.setCellValue("ESPECIALIZADA");
-                }
+        } else if (columnCount == 0) {
+            if (String.valueOf(value).equalsIgnoreCase("N")) {
+                cell.setCellValue("NORMAL");
+            } else {
+                cell.setCellValue("ESPECIALIZADA");
             }
         } else if (value instanceof BigDecimal){
             cell.setCellValue(Integer.parseInt(String.valueOf(value)));

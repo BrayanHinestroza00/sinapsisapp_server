@@ -38,6 +38,8 @@ public class Tarea {
     private String comentariosEntregaUsuario;
     @Column(name = "CALIFICACION")
     private String calificacion;
+    @Column(name = "CALIFICACION_CUANTITATIVA")
+    private Integer calificacionCuantitativa;
     @Column(name = "COMENTARIOS_EMP_ENTREGA")
     private String comentariosEntregaEmprendedor;
     @Column(name = "PROYECTOS_EMPRENDIMIENTOS_ID")

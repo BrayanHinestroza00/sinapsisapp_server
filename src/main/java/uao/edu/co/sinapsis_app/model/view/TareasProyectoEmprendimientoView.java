@@ -32,6 +32,8 @@ public class TareasProyectoEmprendimientoView {
     private String comentariosEntrega;
     @Column(name = "CALIFICACION")
     private String calificacion;
+    @Column(name = "CALIFICACION_CUANTITATIVA")
+    private String calificacionCuantitativa;
     @Column(name = "COMENTARIOS_EMP_ENTREGA")
     private String comentariosEntregaEmprendedor;
     @Column(name = "PROYECTOS_EMPRENDIMIENTOS_ID")

@@ -37,9 +37,10 @@ public class MentoresDAO implements IMentoresDAO {
     @Override
     public List<MentoresProyectoEmprendimientoView> obtenerMentoresPorRutaEmprendimiento(Long idRutaEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_MENTORES_PROYECTO " +
-                "WHERE ID_RUTA_EMPRENDIMIENTO = " + idRutaEmprendimiento;
+                "WHERE ID_RUTA_EMPRENDIMIENTO = ?1";
 
         Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
+        query.setParameter(1, idRutaEmprendimiento);
 
         return (List<MentoresProyectoEmprendimientoView>) query.getResultList();
     }
@@ -47,10 +48,10 @@ public class MentoresDAO implements IMentoresDAO {
     @Override
     public List<MentoresProyectoEmprendimientoView> obtenerMentoresPorProyectoEmprendimiento(Long idProyectoEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_MENTORES_PROYECTO " +
-                "WHERE ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
-                "AND ESTADO_ASESORAMIENTO = 'FINALIZADA'";
+                "WHERE ID_PROYECTO_EMPRENDIMIENTO = ?1 AND ESTADO_ASESORAMIENTO = 'FINALIZADA'";
 
         Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
 
         return (List<MentoresProyectoEmprendimientoView>) query.getResultList();
     }
@@ -58,10 +59,10 @@ public class MentoresDAO implements IMentoresDAO {
     @Override
     public List<MentoresProyectoEmprendimientoView> obtenerMentorPrincipalPorProyectoEmprendimiento(Long idProyectoEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_MENTORES_PROYECTO " +
-                "WHERE ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
-                "AND ESTADO_ASESORAMIENTO = 'EN CURSO'";
+                "WHERE ID_PROYECTO_EMPRENDIMIENTO = ?1 AND ESTADO_ASESORAMIENTO = 'EN CURSO'";
 
         Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
 
         return (List<MentoresProyectoEmprendimientoView>) query.getResultList();
     }
@@ -69,10 +70,10 @@ public class MentoresDAO implements IMentoresDAO {
     @Override
     public List<MentoresProyectoEmprendimientoView> obtenerHistoricoMentoresPorProyectoEmprendimiento(Long idProyectoEmprendimiento) {
         String sql = "SELECT * FROM V_SINAPSIS_MENTORES_PROYECTO " +
-                "WHERE ID_PROYECTO_EMPRENDIMIENTO = " + idProyectoEmprendimiento + " " +
-                "AND ESTADO_ASESORAMIENTO = 'FINALIZADA'";
+                "WHERE ID_PROYECTO_EMPRENDIMIENTO = ?1 AND ESTADO_ASESORAMIENTO = 'FINALIZADA'";
 
         Query query = entityManager.createNativeQuery(sql, MentoresProyectoEmprendimientoView.class);
+        query.setParameter(1, idProyectoEmprendimiento);
 
         return (List<MentoresProyectoEmprendimientoView>) query.getResultList();
     }
@@ -145,9 +146,10 @@ public class MentoresDAO implements IMentoresDAO {
     @Override
     public List<MentoresView> obtenerMentoresPorId(Long idMentor) {
         String sql = "SELECT * FROM V_SINAPSIS_MENTORES WHERE " +
-                "ID = "+ idMentor + " ORDER BY CREATED_AT DESC";
+                "ID = ?1 ORDER BY CREATED_AT DESC";
 
         Query query = entityManager.createNativeQuery(sql, MentoresView.class);
+        query.setParameter(1, idMentor);
 
         return (List<MentoresView>) query.getResultList();
     }
@@ -155,9 +157,10 @@ public class MentoresDAO implements IMentoresDAO {
     @Override
     public List<MentoresView> obtenerMentoresPorEtapaRutaInnovacion(Long idEtapaRutaInnovacion) {
         String sql = "SELECT * FROM V_SINAPSIS_MENTORES WHERE " +
-                "ETAPAS_RUTA_ID = "+ idEtapaRutaInnovacion + " AND ESTADO_CUENTA = 1 ORDER BY ID";
+                "ETAPAS_RUTA_ID = ?1 AND ESTADO_CUENTA = 1 ORDER BY ID";
 
         Query query = entityManager.createNativeQuery(sql, MentoresView.class);
+        query.setParameter(1, idEtapaRutaInnovacion);
 
         return (List<MentoresView>) query.getResultList();
     }
@@ -272,17 +275,20 @@ public class MentoresDAO implements IMentoresDAO {
                 "JOIN T_SINAPSIS_PROY_EMPRENDIMIENTO TPE ON TPE.EMPRENDIMIENTOS_ID = TE.ID \n" +
                 "JOIN T_SINAPSIS_RUT_EMPRENDIMIENTO TRE ON TRE.PROYECTOS_EMPRENDIMIENTOS_ID = TPE.ID\n" +
                 "JOIN T_SINAPSIS_ASESORAMIENTO TA ON TA.RUTA_EMPRENDIMIENTO_EMP_ID = TRE.ID\n" +
-                "WHERE TRE.ESTADO_RUTA != 'COMPLETADO' AND TA.ESTADO = 'EN CURSO' AND TA.MENTOR_ID =" + idMentor;
+                "WHERE TRE.ESTADO_RUTA != 'COMPLETADO' AND TA.ESTADO = 'EN CURSO' AND TA.MENTOR_ID = ?1";
 
         Query query = entityManager.createNativeQuery(sql, Emprendimiento.class);
+        query.setParameter(1, idMentor);
 
         return (List<Emprendimiento>) query.getResultList();
     }
 
     @Override
     public List<RedSocialEmprendimientoView> obtenerRedesSocialesEmprendimiento(String idEmprendimiento) {
-        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDI_RED_SOCIAL WHERE ID_EMPRENDIMIENTO = " + idEmprendimiento;
+        String sql = "SELECT * FROM V_SINAPSIS_EMPRENDI_RED_SOCIAL WHERE ID_EMPRENDIMIENTO = ?1";
+
         Query query = entityManager.createNativeQuery(sql, RedSocialEmprendimientoView.class);
+        query.setParameter(1, idEmprendimiento);
 
         return (List<RedSocialEmprendimientoView>) query.getResultList();
     }
